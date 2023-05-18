@@ -24,4 +24,22 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  background-color: "#080808";
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: Rawgly, serif;
+}
+
+@font-face {
+  font-family: Rawgly;
+  src: url("/fonts/Rawgly.otf");
+}
+
+@font-face {
+  font-family: Karla;
+  src: url("/fonts/Karla-VariableFont_wght.ttf");
 }
