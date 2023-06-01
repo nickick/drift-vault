@@ -42,9 +42,19 @@ export const Vaulted = (props: VaultedProps) => {
     }
   };
 
+  enum vaultTimeOptions {
+    "1Year" = "1 Year",
+    "5Year" = "5 Years",
+    "10Years" = "10 Years",
+  }
+
+  const [vaultTime, setVaultTime] = useState<vaultTimeOptions>(
+    vaultTimeOptions["1Year"]
+  );
+
   return (
     <Tab active={props.active}>
-      <div className="flex flex-col p-2 space-y-2">
+      <div className="flex flex-col p-2 space-y-2 relative">
         <div className="flex">Vaulted</div>
         <div className="flex">
           {vaulted.map((nft: Nft) => {
@@ -81,6 +91,27 @@ export const Vaulted = (props: VaultedProps) => {
               </div>
             );
           })}
+        </div>
+      </div>
+      <div className="flex space-x-2 absolute right-0 bottom-0">
+        <select
+          value={vaultTime}
+          onChange={(e) => {
+            setVaultTime(e.target.value as vaultTimeOptions);
+          }}
+          className="rounded-xl p-2 border border-gray-200 h-10 w-48"
+        >
+          {Object.values(vaultTimeOptions).map((option) => {
+            return <option key={option}>{option}</option>;
+          })}
+        </select>
+        <div>
+          <button
+            className="rounded-xl p-2 border border-gray-200 h-10 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
+            disabled={checkedTokenIds.length === 0}
+          >
+            Vault
+          </button>
         </div>
       </div>
     </Tab>
