@@ -13,13 +13,23 @@ export const Tab = (props: TabProps) => {
   const [loaded, setLoaded] = React.useState(false);
 
   useEffect(() => {
-    setTimeout(() => {
-      setLoaded(true);
-    }, 1000);
+    setLoaded(true);
   }, [address]);
 
+  if (!loaded) {
+    return (
+      <div className="flex w-full h-96 relative justify-center items-center">
+        <div>Loading...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className={`flex w-full h-96 ${props.active ? "" : "hidden"}`}>
+    <div
+      className={`flex w-full min-h-[20rem] ${
+        props.active ? "" : "hidden"
+      } relative`}
+    >
       {address && loaded ? (
         props.children
       ) : (
@@ -29,6 +39,7 @@ export const Tab = (props: TabProps) => {
       )}
       {address && loaded && (
         <button
+          className="rounded-xl p-2 border border-gray-200 h-10 absolute top-2 right-2"
           onClick={() => {
             disconnect();
           }}
