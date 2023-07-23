@@ -3,19 +3,22 @@
 import { Nft } from "alchemy-sdk";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { TransactionModal } from "../TransactionModal";
-import { NftCard } from "./NftCard";
-import { TransactionContext } from "../TransactionContext";
 import { Spinner } from "../Spinner";
+import { TransactionContext } from "../TransactionContext";
+import { NftCard } from "./NftCard";
 
 interface Props {
-  contractAddress: string;
-  title: string;
-  checkedTokenIds: string[];
-  setCheckedTokenIds: (ids: string[]) => void;
-  transactNode: React.ReactNode;
-  hash?: `0x${string}`;
-  nftsLoadTransform?: (nfts: Nft[]) => Promise<NftWithVaultedData[]>;
+  contractAddress: string; // Address of the contract to load NFTs from
+  title: string; // Title of the component
+  checkedTokenIds: string[]; // List of tokenIds that are checked
+  setCheckedTokenIds: (ids: string[]) => void; // Callback to set the checkedTokenIds
+  transactNode: React.ReactNode; // Button that activates the transform
+  hash?: `0x${string}`; // Txn hash of the transform action
+  nftsLoadTransform?: (nfts: Nft[]) => Promise<NftWithVaultedData[]>; // Transform the NFTs after loading them
+  instructions?: React.ReactNode; // Instructions for how to use this NFT load/select/transform
+  noNftsMessage?: string; // Used when there are no NFTs to display after loading
+  nftNamePrefix?: string; // Used in front of the NFT tokenId: FDO => "FDO #13"
+  actionPrefix?: string; // used in front of the check: "Vault FDO #13" or "Unvault FDO #13"
 }
 
 export type NftWithVaultedData = Nft & {
@@ -26,7 +29,11 @@ const LoadSelectTransact = (props: Props) => {
   const { hash, toggleButton } = useContext(TransactionContext);
   const { address } = useAccount();
   const [nfts, setNfts] = useState<Nft[]>([]);
+  const [loading, setLoading] = useState(false);
+  const noNftsMessage = props.noNftsMessage ?? "You have no NFTs to vault.";
+
   const fetchNfts = async () => {
+    setLoading(true);
     const nfts = await fetch(`/api/nfts/${address}/${props.contractAddress}`, {
       method: "GET",
       headers: {
@@ -41,6 +48,7 @@ const LoadSelectTransact = (props: Props) => {
     } else {
       setNfts(result);
     }
+    setLoading(false);
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -63,13 +71,21 @@ const LoadSelectTransact = (props: Props) => {
   return (
     <>
       <div className="flex flex-col p-2 pb-14 space-y-8 relative w-full">
-        <div className="flex">{props.title}</div>
-        {nfts.length < 1 && (
+        <div className="flex flex-col">
+          <h2 className="text-xl">{props.title}</h2>
+          {props.instructions}
+        </div>
+        {loading && (
           <div className="flex w-full h-96 relative justify-center items-center">
             <div>
               Loading...
               <Spinner className="ml-2" />
             </div>
+          </div>
+        )}
+        {!loading && !nfts.length && (
+          <div className="h-full w-full flex items-center justify-center">
+            {noNftsMessage}
           </div>
         )}
         <div className="grid grid-cols-4 gap-4 mx-auto">
@@ -81,6 +97,8 @@ const LoadSelectTransact = (props: Props) => {
                 nft={nft}
                 toggleCheckedTokenId={toggleCheckedTokenId}
                 key={nft.tokenId + nft.title}
+                nftNamePrefix={props.nftNamePrefix}
+                actionPrefix={props.actionPrefix}
               />
             );
           })}

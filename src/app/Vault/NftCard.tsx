@@ -7,27 +7,53 @@ interface Props {
   nft: NftWithVaultedData;
   selected: boolean;
   toggleCheckedTokenId: (tokenId: string) => void;
+  nftNamePrefix?: string;
+  actionPrefix?: string;
 }
-const NftCard = ({ nft, selected, toggleCheckedTokenId }: Props) => {
+const NftCard = ({
+  nft,
+  selected,
+  toggleCheckedTokenId,
+  nftNamePrefix,
+  actionPrefix,
+}: Props) => {
+  if (nft.rawMetadata?.animation) {
+    console.log(nft.rawMetadata?.animation);
+  }
   return (
     <div key={nft.tokenId + nft.title}>
       <label className="flex flex-col space-y-2 cursor-pointer">
         <div
           className={twMerge(
-            "flex flex-col border w-48 space-y-3 p-4 hover:border-gray-100 transition-colors",
+            "flex flex-col border w-48 space-y-3 hover:border-gray-100 transition-colors",
             `${selected ? "border-gray-300" : "border-gray-500"}`
           )}
         >
-          <div className="leading-snug text-xl font-bold">{nft.title}</div>
-          <div className="leading-snug font-xs">{nft.description}</div>
-          <div>
-            <Image
-              src={nft.media[0]?.raw}
-              height={200}
-              width={200}
-              alt={nft.title}
-              className=" w-full h-36 mx-auto"
-            />
+          <div className="h-[22rem]">
+            {nft.rawMetadata?.animation ? (
+              <video
+                autoPlay
+                loop
+                muted
+                className="object-cover w-full h-full"
+                width="100%"
+                height="100%"
+              >
+                <source src={nft.rawMetadata.animation} />
+              </video>
+            ) : (
+              <Image
+                src={nft.media[0]?.raw}
+                height={200}
+                width={200}
+                alt={nft.title}
+                className="w-full h-36 mx-auto"
+              />
+            )}
+          </div>
+          <div className="px-4 pb-4 space-y-4">
+            <div className="leading-snug text-xl font-bold">{nft.title}</div>
+            <div className="leading-snug font-xs">{nft.description}</div>
           </div>
         </div>
         <div className="w-full flex items-center justify-center space-x-2">
@@ -37,7 +63,9 @@ const NftCard = ({ nft, selected, toggleCheckedTokenId }: Props) => {
             checked={selected}
             onChange={() => toggleCheckedTokenId(nft.tokenId)}
           />
-          <div>#{nft.tokenId}</div>
+          <div>
+            {actionPrefix} {nftNamePrefix} #{nft.tokenId}
+          </div>
         </div>
       </label>
       <VaultedDetails details={nft.vaultedData} />

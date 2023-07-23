@@ -82,6 +82,8 @@ export const YourVault = (props: YourVaultProps) => {
         transactNode={<div />}
         nftsLoadTransform={nftsLoadTransform}
         hash={vaultHash}
+        noNftsMessage="You have no NFTs in your vault."
+        actionPrefix="Unvault"
       />
     </Tab>
   );

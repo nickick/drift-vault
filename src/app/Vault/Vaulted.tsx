@@ -93,12 +93,15 @@ export const Vaulted = (props: VaultedProps) => {
     <Tab active={props.active}>
       <LoadSelectTransact
         title="Vaulted"
+        instructions={<div>Select which pieces you want to vault.</div>}
         contractAddress={
           process.env.NEXT_PUBLIC_CREATOR_ADDRESS as `0x${string}`
         }
         checkedTokenIds={checkedTokenIds}
         setCheckedTokenIds={setCheckedTokenIds}
         transactNode={selectedAction}
+        nftNamePrefix="FDO"
+        actionPrefix="Vault"
       />
     </Tab>
   );
