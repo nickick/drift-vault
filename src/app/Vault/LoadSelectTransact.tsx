@@ -6,6 +6,7 @@ import { useAccount } from "wagmi";
 import { TransactionModal } from "../TransactionModal";
 import { NftCard } from "./NftCard";
 import { TransactionContext } from "../TransactionContext";
+import { Spinner } from "../Spinner";
 
 interface Props {
   contractAddress: string;
@@ -63,6 +64,14 @@ const LoadSelectTransact = (props: Props) => {
     <>
       <div className="flex flex-col p-2 pb-14 space-y-8 relative w-full">
         <div className="flex">{props.title}</div>
+        {nfts.length < 1 && (
+          <div className="flex w-full h-96 relative justify-center items-center">
+            <div>
+              Loading...
+              <Spinner className="ml-2" />
+            </div>
+          </div>
+        )}
         <div className="grid grid-cols-4 gap-4 mx-auto">
           {nfts.map((nft: NftWithVaultedData) => {
             const selected = props.checkedTokenIds.includes(nft.tokenId);

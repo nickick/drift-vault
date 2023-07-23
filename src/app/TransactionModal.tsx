@@ -37,7 +37,7 @@ function TransactionModal(props: Props) {
       ? "https://goerli.etherscan.io/tx"
       : "https://etherscan.io/tx";
 
-  const { data, isError, isLoading } = useWaitForTransaction({
+  const { data, isError, isLoading, isSuccess } = useWaitForTransaction({
     hash: props.hash,
   });
 
@@ -95,6 +95,9 @@ function TransactionModal(props: Props) {
                         JSON.stringify(data, (k, v) => {
                           typeof v === "bigint" ? v.toString() : v;
                         })}
+                      {isSuccess && !isLoading && !isError && (
+                        <div>Success!</div>
+                      )}
                     </p>
                   )}
                   {!props.hash && !props.error && (

@@ -23,15 +23,9 @@ const TransactionContextWrapper = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [isTransactionWindowOpen, setIsTTransactionWindowOpen] =
-    useState(false);
+  const [isTransactionWindowOpen, setIsTransactionWindowOpen] = useState(false);
   const [hash, setHash] = useState<`0x${string}`>();
   const [error, setError] = useState<string>();
-
-  const setIsTransactionWindowOpen = (isOpen: boolean) => {
-    console.log("here!!!!");
-    setIsTTransactionWindowOpen(isOpen);
-  };
 
   const toggleButton = (
     <button
