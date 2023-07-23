@@ -39,6 +39,7 @@ function TransactionModal(props: Props) {
 
   const { data, isError, isLoading, isSuccess } = useWaitForTransaction({
     hash: props.hash,
+    confirmations: 3,
   });
 
   return (

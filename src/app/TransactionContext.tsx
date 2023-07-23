@@ -5,7 +5,7 @@ const TransactionContext = createContext<{
   isTransactionWindowOpen: boolean;
   setIsTransactionWindowOpen: (isOpen: boolean) => void;
   hash?: `0x${string}`;
-  setHash: (hash: `0x${string}`) => void;
+  setHash: (hash: `0x${string}` | undefined) => void;
   error?: string;
   setError: (error: string) => void;
   toggleButton: React.ReactNode;
@@ -13,7 +13,7 @@ const TransactionContext = createContext<{
   isTransactionWindowOpen: false,
   setIsTransactionWindowOpen: (isOpen: boolean) => {},
   hash: undefined,
-  setHash: (hash: `0x${string}`) => {},
+  setHash: (hash: `0x${string}` | undefined) => {},
   setError: (error: string) => {},
   toggleButton: <></>,
 });

@@ -17,9 +17,6 @@ const NftCard = ({
   nftNamePrefix,
   actionPrefix,
 }: Props) => {
-  if (nft.rawMetadata?.animation) {
-    console.log(nft.rawMetadata?.animation);
-  }
   return (
     <div key={nft.tokenId + nft.title}>
       <label className="flex flex-col space-y-2 cursor-pointer">
@@ -75,7 +72,6 @@ const NftCard = ({
 
 const VaultedDetails = ({ details }: { details?: (string | bigint)[] }) => {
   if (!details) return null;
-  console.log(details);
 
   const columns = ["Vaulted", "", "Unlocks", "", "", ""];
 

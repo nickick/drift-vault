@@ -48,11 +48,24 @@ export const Vaulted = (props: VaultedProps) => {
   });
 
   const { writeAsync } = useContractWrite(config);
-  const { trigger } = useRequestApproval(true);
+  const { isAlreadyApproved, writeAsync: approvalWriteAsync } =
+    useRequestApproval(true);
 
   const vaultForTime = async () => {
-    trigger();
+    setHash(undefined);
     setIsTransactionWindowOpen(true);
+    if (!isAlreadyApproved) {
+      try {
+        const { hash } = (await approvalWriteAsync?.()) as {
+          hash: `0x${string}`;
+        };
+        setHash(hash);
+      } catch (e: any) {
+        setError(e.shortMessage ?? e.message ?? e);
+        return;
+      }
+    }
+
     try {
       const { hash } = (await writeAsync?.()) as { hash: `0x${string}` };
       setHash(hash);

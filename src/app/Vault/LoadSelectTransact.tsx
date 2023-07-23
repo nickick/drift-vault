@@ -88,7 +88,11 @@ const LoadSelectTransact = (props: Props) => {
             {noNftsMessage}
           </div>
         )}
-        <div className="grid grid-cols-4 gap-4 mx-auto">
+        <div
+          className={`grid grid-cols-${
+            nfts.length > 4 ? 4 : nfts.length
+          } gap-4 mx-auto`}
+        >
           {nfts.map((nft: NftWithVaultedData) => {
             const selected = props.checkedTokenIds.includes(nft.tokenId);
             return (
