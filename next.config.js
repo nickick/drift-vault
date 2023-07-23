@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["arweave.net"],
+    domains: ["arweave.net", "assets.manifold.xyz"],
   },
 };
 

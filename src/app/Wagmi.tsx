@@ -3,12 +3,12 @@
 import { RainbowKitProvider, getDefaultWallets } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { WagmiConfig, configureChains, createConfig } from "wagmi";
-import { arbitrum, mainnet, optimism, polygon } from "wagmi/chains";
+import { mainnet, goerli } from "wagmi/chains";
 
 import { publicProvider } from "wagmi/providers/public";
 
 const { chains, publicClient } = configureChains(
-  [mainnet, polygon, optimism, arbitrum],
+  [goerli, mainnet],
   [publicProvider()]
 );
 

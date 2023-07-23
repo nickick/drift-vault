@@ -8,13 +8,11 @@ const alchemy = new Alchemy({
       : Network.ETH_MAINNET,
 });
 
-export const fetchNfts = async (address: string) => {
+export const fetchNfts = async (address: string, contract: string) => {
   const nfts = await alchemy.nft.getNftsForOwner(address);
 
   const filteredNfts = nfts.ownedNfts.filter((nft) => {
-    return (
-      nft.contract.address === process.env.VAULT_ADDRESS?.toLocaleLowerCase()
-    );
+    return nft.contract.address === contract?.toLocaleLowerCase();
   });
 
   return {
