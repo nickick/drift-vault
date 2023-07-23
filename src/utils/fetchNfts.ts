@@ -1,7 +1,7 @@
 import { Alchemy, Network } from "alchemy-sdk";
 
 const alchemy = new Alchemy({
-  apiKey: process.env.ALCHEMY_API_KEY,
+  apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
   network:
     process.env.NEXT_PUBLIC_CHAIN_NAME === "goerli"
       ? Network.ETH_GOERLI

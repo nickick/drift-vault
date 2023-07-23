@@ -6,26 +6,31 @@ import { Spinner } from "./Spinner";
 
 type Props = {
   hash?: `0x${string}`;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  error?: string;
+  setError: (error: string) => void;
 };
 
 function TransactionModal(props: Props) {
-  const [isOpen, setIsOpen] = useState(false);
   const [hadHash, setHadHash] = useState(false);
 
   function closeModal() {
-    setIsOpen(false);
+    props.setIsOpen(false);
+    props.setError("");
   }
 
   function openModal() {
-    setIsOpen(true);
+    props.setIsOpen(true);
   }
 
   useEffect(() => {
-    if (!isOpen && !hadHash && props.hash) {
+    if (!props.isOpen && !hadHash && props.hash) {
       setHadHash(true);
       openModal();
     }
-  }, [props.hash, hadHash, isOpen]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.hash, hadHash, props.isOpen]);
 
   const etherscanUrl =
     process.env.NEXT_PUBLIC_CHAIN_NAME === "goerli"
@@ -37,50 +42,43 @@ function TransactionModal(props: Props) {
   });
 
   return (
-    <>
-      {props.hash && (
-        <button
-          type="button"
-          onClick={openModal}
-          className="absolute left-0 bottom-0 bg-black border-white border rounded bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+    <Transition appear show={props.isOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-10" onClose={closeModal}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
         >
-          Open transaction window
-        </button>
-      )}
+          <div className="fixed inset-0 bg-black bg-opacity-75" />
+        </Transition.Child>
 
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black bg-opacity-25" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded bg-black border border-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-gray-100"
-                  >
-                    Transaction status
-                  </Dialog.Title>
-                  <div className="mt-2">
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden bg-black border border-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg font-medium leading-6 text-gray-100"
+                >
+                  Transaction status
+                </Dialog.Title>
+                <div className="mt-2">
+                  {props.error && (
+                    <p className="text-sm text-red-700">Error: {props.error}</p>
+                  )}
+                  {props.hash && (
                     <p className="text-sm text-gray-300">
                       Transaction:{" "}
                       <a
@@ -98,24 +96,27 @@ function TransactionModal(props: Props) {
                           typeof v === "bigint" ? v.toString() : v;
                         })}
                     </p>
-                  </div>
+                  )}
+                  {!props.hash && !props.error && (
+                    <div>Waiting for transaction...</div>
+                  )}
+                </div>
 
-                  <div className="mt-4">
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded border border-transparent bg-gray-900 px-4 py-2 text-sm font-medium text-gray-100 hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
-                      onClick={closeModal}
-                    >
-                      Close
-                    </button>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
+                <div className="mt-4">
+                  <button
+                    type="button"
+                    className="inline-flex justify-center border border-transparent bg-gray-900 px-4 py-2 text-sm font-medium text-gray-100 hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+                    onClick={closeModal}
+                  >
+                    Close
+                  </button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
-        </Dialog>
-      </Transition>
-    </>
+        </div>
+      </Dialog>
+    </Transition>
   );
 }
 

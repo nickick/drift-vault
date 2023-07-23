@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Tab } from "./Tab";
 import { useAccount, usePublicClient } from "wagmi";
-import { LoadSelectTransact } from "./LoadSelectTransact";
+import { LoadSelectTransact, NftWithVaultedData } from "./LoadSelectTransact";
 import { Nft } from "alchemy-sdk";
 import vaultedAbi from "../vaultedAbi.json";
 
@@ -41,12 +41,31 @@ export const YourVault = (props: YourVaultProps) => {
       }
     );
 
-    console.log(tokenIds);
+    // get vault info and use it somewhere here
 
     const nftsTransformed = await nftsTransformedRes.json();
-    const filteredNfts = nftsTransformed.filter((nft: Nft) =>
-      tokenIds.includes(nft.tokenId)
+    const filteredNfts: NftWithVaultedData[] = nftsTransformed.filter(
+      (nft: Nft) => tokenIds.includes(nft.tokenId)
     );
+
+    const vaultedData = (await Promise.all(
+      filteredNfts.map((nft: Nft) => {
+        const data = nftsData.find(
+          (datum) => datum[1].toString() === nft.tokenId
+        ) as string[];
+
+        return publicClient.readContract({
+          address: process.env.NEXT_PUBLIC_VAULTED_ADDRESS as `0x${string}`,
+          abi: vaultedAbi,
+          functionName: "contractTokenIdToVaulting",
+          args: [data[0], data[1]],
+        });
+      })
+    )) as string[][];
+
+    vaultedData.forEach((data, i) => {
+      filteredNfts[i].vaultedData = data;
+    });
 
     return filteredNfts;
   };
@@ -55,7 +74,7 @@ export const YourVault = (props: YourVaultProps) => {
     <Tab active={props.active}>
       <LoadSelectTransact
         contractAddress={
-          process.env.NEXT_PUBLIC_VAULTING_FROM_ADDRESS as `0x${string}`
+          process.env.NEXT_PUBLIC_SBT_CREATOR_ADDRESS as `0x${string}`
         }
         title="Your Vault"
         checkedTokenIds={checkedTokenIds}

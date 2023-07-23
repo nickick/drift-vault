@@ -42,7 +42,7 @@ export const Tab = (props: TabProps) => {
         <div className="absolute top-2 right-2 flex space-x-2">
           <NetworkSwitch />
           <button
-            className="rounded p-2 border border-gray-200 h-10"
+            className=" p-2 border border-gray-200 h-10"
             onClick={() => {
               disconnect();
             }}

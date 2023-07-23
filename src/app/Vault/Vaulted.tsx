@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useContractWrite, usePrepareContractWrite } from "wagmi";
 import { Tab } from "./Tab";
 
 import { useRequestApproval } from "@/utils/useRequestApproval";
+import { TransactionContext } from "../TransactionContext";
 import vaultedABI from "../vaultedAbi.json";
 import { LoadSelectTransact } from "./LoadSelectTransact";
 
@@ -13,7 +14,8 @@ type VaultedProps = {
 };
 
 export const Vaulted = (props: VaultedProps) => {
-  const [vaultHash, setVaultHash] = useState<`0x${string}`>();
+  const { setHash, setError, setIsTransactionWindowOpen } =
+    useContext(TransactionContext);
 
   const [checkedTokenIds, setCheckedTokenIds] = useState<string[]>([]);
 
@@ -50,8 +52,13 @@ export const Vaulted = (props: VaultedProps) => {
 
   const vaultForTime = async () => {
     trigger();
-    const { hash } = (await writeAsync?.()) as { hash: `0x${string}` };
-    setVaultHash(hash);
+    setIsTransactionWindowOpen(true);
+    try {
+      const { hash } = (await writeAsync?.()) as { hash: `0x${string}` };
+      setHash(hash);
+    } catch (e: any) {
+      setError(e.shortMessage ?? e.message ?? e);
+    }
   };
 
   const selectedAction = (
@@ -64,7 +71,7 @@ export const Vaulted = (props: VaultedProps) => {
           );
           setVaultTime(index);
         }}
-        className="rounded p-2 border border-gray-200 h-10 w-48"
+        className="p-2 border border-gray-200 h-10 w-48"
       >
         {vaultTimeOptions.map((option, index) => {
           return <option key={index}>{option}</option>;
@@ -72,7 +79,7 @@ export const Vaulted = (props: VaultedProps) => {
       </select>
       <div>
         <button
-          className="rounded p-2 border border-gray-200 h-10 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
+          className="p-2 border border-gray-200 h-10 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
           disabled={checkedTokenIds.length === 0}
           onClick={vaultForTime}
         >
@@ -92,7 +99,6 @@ export const Vaulted = (props: VaultedProps) => {
         checkedTokenIds={checkedTokenIds}
         setCheckedTokenIds={setCheckedTokenIds}
         transactNode={selectedAction}
-        hash={vaultHash}
       />
     </Tab>
   );

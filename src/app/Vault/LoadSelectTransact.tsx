@@ -1,10 +1,11 @@
 /** Generic component to load NFTs, select some of them, and then make a transaction for them */
 
 import { Nft } from "alchemy-sdk";
-import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { TransactionModal } from "../TransactionModal";
+import { NftCard } from "./NftCard";
+import { TransactionContext } from "../TransactionContext";
 
 interface Props {
   contractAddress: string;
@@ -13,10 +14,15 @@ interface Props {
   setCheckedTokenIds: (ids: string[]) => void;
   transactNode: React.ReactNode;
   hash?: `0x${string}`;
-  nftsLoadTransform?: (nfts: Nft[]) => Promise<Nft[]>;
+  nftsLoadTransform?: (nfts: Nft[]) => Promise<NftWithVaultedData[]>;
 }
 
+export type NftWithVaultedData = Nft & {
+  vaultedData?: (string | bigint)[];
+};
+
 const LoadSelectTransact = (props: Props) => {
+  const { hash, toggleButton } = useContext(TransactionContext);
   const { address } = useAccount();
   const [nfts, setNfts] = useState<Nft[]>([]);
   const fetchNfts = async () => {
@@ -58,43 +64,20 @@ const LoadSelectTransact = (props: Props) => {
       <div className="flex flex-col p-2 pb-14 space-y-8 relative w-full">
         <div className="flex">{props.title}</div>
         <div className="grid grid-cols-4 gap-4 mx-auto">
-          {nfts.map((nft: Nft) => {
+          {nfts.map((nft: NftWithVaultedData) => {
+            const selected = props.checkedTokenIds.includes(nft.tokenId);
             return (
-              <div key={nft.tokenId + nft.title}>
-                <label className="flex flex-col space-y-2 cursor-pointer">
-                  <div className="flex flex-col border rounded w-48 space-y-3 p-4 border-gray-500 hover:border-gray-100 transition-colors">
-                    <div className="leading-snug text-xl font-bold">
-                      {nft.title}
-                    </div>
-                    <div className="leading-snug font-xs">
-                      {nft.description}
-                    </div>
-                    <div>
-                      <Image
-                        src={nft.media[0]?.raw}
-                        height={200}
-                        width={200}
-                        alt={nft.title}
-                        className="rounded w-full h-36 mx-auto"
-                      />
-                    </div>
-                  </div>
-                  <div className="w-full flex items-center justify-center space-x-2">
-                    <input
-                      type="checkbox"
-                      value={nft.tokenId}
-                      checked={props.checkedTokenIds.includes(nft.tokenId)}
-                      onChange={() => toggleCheckedTokenId(nft.tokenId)}
-                    />
-                    <div>#{nft.tokenId}</div>
-                  </div>
-                </label>
-              </div>
+              <NftCard
+                selected={selected}
+                nft={nft}
+                toggleCheckedTokenId={toggleCheckedTokenId}
+                key={nft.tokenId + nft.title}
+              />
             );
           })}
         </div>
       </div>
-      <TransactionModal hash={props.hash} />
+      {hash && toggleButton}
       <div className="flex space-x-2 absolute right-0 bottom-0">
         {props.transactNode}
       </div>
