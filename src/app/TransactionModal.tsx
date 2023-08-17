@@ -1,23 +1,33 @@
 import { shortenAddress } from "@/utils/shortenAddress";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
-import { useWaitForTransaction } from "wagmi";
+import { usePublicClient, useWaitForTransaction } from "wagmi";
 import { Spinner } from "./Spinner";
+import { WriteAsyncPromise } from "./TransactionContext";
 
 type Props = {
-  hash?: `0x${string}`;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   error?: string;
   setError: (error: string) => void;
+  writeQueue: WriteAsyncPromise[];
+  setWriteQueue: (fn: WriteAsyncPromise[]) => void;
 };
 
 function TransactionModal(props: Props) {
   const [hadHash, setHadHash] = useState(false);
+  const [hash, setHash] = useState<`0x${string}`>();
+  const [error, setError] = useState<string>();
+  const publicClient = usePublicClient();
+  const [currentTxn, setCurrentTxn] =
+    useState<() => Promise<{ hash: `0x${string}` } | undefined>>();
 
   function closeModal() {
     props.setIsOpen(false);
-    props.setError("");
+    if (error) {
+      setHash(undefined);
+    }
+    setError("");
   }
 
   function openModal() {
@@ -25,12 +35,12 @@ function TransactionModal(props: Props) {
   }
 
   useEffect(() => {
-    if (!props.isOpen && !hadHash && props.hash) {
+    if (!props.isOpen && !hadHash && hash) {
       setHadHash(true);
       openModal();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.hash, hadHash, props.isOpen]);
+  }, [hash, hadHash, props.isOpen]);
 
   const etherscanUrl =
     process.env.NEXT_PUBLIC_CHAIN_NAME === "goerli"
@@ -38,9 +48,51 @@ function TransactionModal(props: Props) {
       : "https://etherscan.io/tx";
 
   const { data, isError, isLoading, isSuccess } = useWaitForTransaction({
-    hash: props.hash,
+    hash,
     confirmations: 3,
   });
+
+  // if no currentTxn, set currentTxn to first item in queue
+  useEffect(() => {
+    if (!currentTxn && props.writeQueue && props.writeQueue[0]) {
+      setCurrentTxn(() => props.writeQueue[0]);
+      props.setWriteQueue(props.writeQueue.slice(1));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.writeQueue, currentTxn]);
+
+  // if currentTxn, run it
+  useEffect(() => {
+    if (currentTxn) {
+      const runTxn = async () => {
+        try {
+          const txn = await currentTxn();
+          if (txn) {
+            setHash(txn.hash);
+            const result = await publicClient.waitForTransactionReceipt({
+              hash: txn.hash,
+              confirmations: 1,
+            });
+            // move on to next txn if there's one in the queue after 2 seconds
+            if (result && props.writeQueue.length > 0) {
+              setTimeout(() => {
+                setCurrentTxn(undefined);
+              }, 2000);
+            }
+          }
+        } catch (e: any) {
+          setError(e.shortMessage ?? e.message ?? e);
+          // clear entire queue on error
+          setCurrentTxn(undefined);
+          props.setWriteQueue([]);
+          return;
+        }
+      };
+
+      runTxn();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTxn]);
 
   return (
     <Transition appear show={props.isOpen} as={Fragment}>
@@ -76,19 +128,19 @@ function TransactionModal(props: Props) {
                   Transaction status
                 </Dialog.Title>
                 <div className="mt-2">
-                  {props.error && (
-                    <p className="text-sm text-red-700">Error: {props.error}</p>
+                  {error && (
+                    <p className="text-sm text-red-700">Error: {error}</p>
                   )}
-                  {props.hash && (
+                  {hash && (
                     <p className="text-sm text-gray-300">
                       Transaction:{" "}
                       <a
-                        href={`${etherscanUrl}/${props.hash}`}
+                        href={`${etherscanUrl}/${hash}`}
                         className="underline"
                         target="_blank"
                         rel="noreferrer"
                       >
-                        {shortenAddress(props.hash, 14)}
+                        {shortenAddress(hash, 14)}
                       </a>
                       {isLoading && <Spinner className="ml-2" />}
                       {isError && <div>Error!</div>}
@@ -101,9 +153,7 @@ function TransactionModal(props: Props) {
                       )}
                     </p>
                   )}
-                  {!props.hash && !props.error && (
-                    <div>Waiting for transaction...</div>
-                  )}
+                  {!hash && !error && <div>Waiting for transaction...</div>}
                 </div>
 
                 <div className="mt-4">

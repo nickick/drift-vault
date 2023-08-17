@@ -26,7 +26,7 @@ const NftCard = ({
             `${selected ? "border-gray-300" : "border-gray-500"}`
           )}
         >
-          <div className="h-[22rem]">
+          <div className="h-[22rem] relative">
             {nft.rawMetadata?.animation ? (
               <video
                 autoPlay
@@ -41,16 +41,17 @@ const NftCard = ({
             ) : (
               <Image
                 src={nft.media[0]?.raw}
-                height={200}
-                width={200}
+                fill
                 alt={nft.title}
                 className="w-full h-36 mx-auto"
               />
             )}
           </div>
           <div className="px-4 pb-4 space-y-4">
-            <div className="leading-snug text-xl font-bold">{nft.title}</div>
-            <div className="leading-snug font-xs">{nft.description}</div>
+            <div className="leading-snug text-lg font-bold">{nft.title}</div>
+            <div className="leading-snug text-xs whitespace-pre-wrap">
+              {nft.description}
+            </div>
           </div>
         </div>
         <div className="w-full flex items-center justify-center space-x-2">

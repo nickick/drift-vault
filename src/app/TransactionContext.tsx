@@ -1,21 +1,27 @@
 import { createContext, useState } from "react";
 import { TransactionModal } from "./TransactionModal";
 
+export type WriteAsyncPromise = () => Promise<
+  { hash: `0x${string}` } | undefined
+>;
+
 const TransactionContext = createContext<{
   isTransactionWindowOpen: boolean;
   setIsTransactionWindowOpen: (isOpen: boolean) => void;
-  hash?: `0x${string}`;
-  setHash: (hash: `0x${string}` | undefined) => void;
   error?: string;
   setError: (error: string) => void;
   toggleButton: React.ReactNode;
+  writeQueue?: WriteAsyncPromise[];
+  setWriteQueue: (fn: WriteAsyncPromise[]) => void;
+  appendToQueue: (fn: WriteAsyncPromise) => void;
 }>({
   isTransactionWindowOpen: false,
   setIsTransactionWindowOpen: (isOpen: boolean) => {},
-  hash: undefined,
-  setHash: (hash: `0x${string}` | undefined) => {},
   setError: (error: string) => {},
   toggleButton: <></>,
+  writeQueue: [],
+  setWriteQueue: (fn: WriteAsyncPromise[]) => {},
+  appendToQueue: (fn: WriteAsyncPromise) => {},
 });
 
 const TransactionContextWrapper = ({
@@ -24,8 +30,12 @@ const TransactionContextWrapper = ({
   children: React.ReactNode;
 }) => {
   const [isTransactionWindowOpen, setIsTransactionWindowOpen] = useState(false);
-  const [hash, setHash] = useState<`0x${string}`>();
   const [error, setError] = useState<string>();
+
+  const [writeQueue, setWriteQueue] = useState<WriteAsyncPromise[]>([]);
+  const appendToQueue = (fn: WriteAsyncPromise) => {
+    setWriteQueue([...writeQueue, fn]);
+  };
 
   const toggleButton = (
     <button
@@ -44,18 +54,20 @@ const TransactionContextWrapper = ({
         setIsTransactionWindowOpen,
         error,
         setError,
-        hash,
-        setHash,
         toggleButton,
+        writeQueue,
+        setWriteQueue,
+        appendToQueue,
       }}
     >
       {children}
       <TransactionModal
         isOpen={isTransactionWindowOpen}
         setIsOpen={setIsTransactionWindowOpen}
-        hash={hash}
         error={error}
         setError={setError}
+        writeQueue={writeQueue}
+        setWriteQueue={setWriteQueue}
       />
     </TransactionContext.Provider>
   );

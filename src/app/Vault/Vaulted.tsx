@@ -14,7 +14,7 @@ type VaultedProps = {
 };
 
 export const Vaulted = (props: VaultedProps) => {
-  const { setHash, setError, setIsTransactionWindowOpen } =
+  const { setIsTransactionWindowOpen, setWriteQueue } =
     useContext(TransactionContext);
 
   const [checkedTokenIds, setCheckedTokenIds] = useState<string[]>([]);
@@ -36,13 +36,13 @@ export const Vaulted = (props: VaultedProps) => {
 
   const { config } = usePrepareContractWrite({
     abi: vaultedABI,
-    address: process.env.NEXT_PUBLIC_VAULTED_ADDRESS as `0x${string}`,
+    address: process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
     functionName: "vaultBatch",
     args: [
       Array(checkedTokenIds.length).fill(vaultTime + 1),
       [...checkedTokenIds],
       Array(checkedTokenIds.length).fill(
-        process.env.NEXT_PUBLIC_CREATOR_ADDRESS as `0x${string}`
+        process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`
       ),
     ],
   });
@@ -52,25 +52,14 @@ export const Vaulted = (props: VaultedProps) => {
     useRequestApproval(true);
 
   const vaultForTime = async () => {
-    setHash(undefined);
     setIsTransactionWindowOpen(true);
-    if (!isAlreadyApproved) {
-      try {
-        const { hash } = (await approvalWriteAsync?.()) as {
-          hash: `0x${string}`;
-        };
-        setHash(hash);
-      } catch (e: any) {
-        setError(e.shortMessage ?? e.message ?? e);
-        return;
-      }
-    }
 
-    try {
-      const { hash } = (await writeAsync?.()) as { hash: `0x${string}` };
-      setHash(hash);
-    } catch (e: any) {
-      setError(e.shortMessage ?? e.message ?? e);
+    if (approvalWriteAsync && writeAsync) {
+      if (isAlreadyApproved) {
+        setWriteQueue([approvalWriteAsync, writeAsync]);
+      } else {
+        setWriteQueue([writeAsync]);
+      }
     }
   };
 
@@ -108,7 +97,7 @@ export const Vaulted = (props: VaultedProps) => {
         title="Vaulted"
         instructions={<div>Select which pieces you want to vault.</div>}
         contractAddress={
-          process.env.NEXT_PUBLIC_CREATOR_ADDRESS as `0x${string}`
+          process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`
         }
         checkedTokenIds={checkedTokenIds}
         setCheckedTokenIds={setCheckedTokenIds}

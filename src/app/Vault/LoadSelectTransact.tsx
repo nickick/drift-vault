@@ -26,7 +26,7 @@ export type NftWithVaultedData = Nft & {
 };
 
 const LoadSelectTransact = (props: Props) => {
-  const { hash, toggleButton } = useContext(TransactionContext);
+  const { toggleButton, writeQueue } = useContext(TransactionContext);
   const { address } = useAccount();
   const [nfts, setNfts] = useState<Nft[]>([]);
   const [loading, setLoading] = useState(false);
@@ -90,7 +90,7 @@ const LoadSelectTransact = (props: Props) => {
         )}
         <div
           className={`grid grid-cols-${
-            nfts.length > 4 ? 4 : nfts.length
+            nfts.length > 3 ? 4 : nfts.length
           } gap-4 mx-auto`}
         >
           {nfts.map((nft: NftWithVaultedData) => {
@@ -108,7 +108,11 @@ const LoadSelectTransact = (props: Props) => {
           })}
         </div>
       </div>
-      {hash && toggleButton}
+      {/* Adding empty divs with the correct grid col classes to make tailwind compile them */}
+      <div className="grid-cols-2" />
+      <div className="grid-cols-3" />
+      <div className="grid-cols-4" />
+      {(writeQueue?.length ?? 0 > 0) && <>{toggleButton}</>}
       <div className="flex space-x-2 absolute right-0 bottom-0">
         {props.transactNode}
       </div>
