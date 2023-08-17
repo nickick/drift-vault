@@ -112,7 +112,7 @@ const LoadSelectTransact = (props: Props) => {
       <div className="grid-cols-2" />
       <div className="grid-cols-3" />
       <div className="grid-cols-4" />
-      {(writeQueue?.length ?? 0 > 0) && <>{toggleButton}</>}
+      {writeQueue?.length ?? 0 > 0 ? <>{toggleButton}</> : null}
       <div className="flex space-x-2 absolute right-0 bottom-0">
         {props.transactNode}
       </div>

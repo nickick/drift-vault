@@ -5,7 +5,7 @@ import { useContractWrite, usePrepareContractWrite } from "wagmi";
 import { Tab } from "./Tab";
 
 import { useRequestApproval } from "@/utils/useRequestApproval";
-import { TransactionContext } from "../TransactionContext";
+import { NamedTransaction, TransactionContext } from "../TransactionContext";
 import vaultedABI from "../vaultedAbi.json";
 import { LoadSelectTransact } from "./LoadSelectTransact";
 
@@ -55,10 +55,26 @@ export const Vaulted = (props: VaultedProps) => {
     setIsTransactionWindowOpen(true);
 
     if (approvalWriteAsync && writeAsync) {
+      const approveContractNamedTransaction: NamedTransaction = {
+        name: "Approve Vault Contract",
+        fn: approvalWriteAsync,
+        description: "",
+        status: "pending",
+      };
+
+      const vaultContractNamedTransaction: NamedTransaction = {
+        name: "Vault NFTs",
+        fn: writeAsync,
+        description: "",
+        status: "pending",
+      };
       if (isAlreadyApproved) {
-        setWriteQueue([approvalWriteAsync, writeAsync]);
+        setWriteQueue([
+          approveContractNamedTransaction,
+          vaultContractNamedTransaction,
+        ]);
       } else {
-        setWriteQueue([writeAsync]);
+        setWriteQueue([vaultContractNamedTransaction]);
       }
     }
   };

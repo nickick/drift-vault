@@ -3,15 +3,15 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
 import { usePublicClient, useWaitForTransaction } from "wagmi";
 import { Spinner } from "./Spinner";
-import { WriteAsyncPromise } from "./TransactionContext";
+import { NamedTransaction } from "./TransactionContext";
 
 type Props = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   error?: string;
   setError: (error: string) => void;
-  writeQueue: WriteAsyncPromise[];
-  setWriteQueue: (fn: WriteAsyncPromise[]) => void;
+  writeQueue: NamedTransaction[];
+  setWriteQueue: (fn: NamedTransaction[]) => void;
 };
 
 function TransactionModal(props: Props) {
@@ -19,8 +19,7 @@ function TransactionModal(props: Props) {
   const [hash, setHash] = useState<`0x${string}`>();
   const [error, setError] = useState<string>();
   const publicClient = usePublicClient();
-  const [currentTxn, setCurrentTxn] =
-    useState<() => Promise<{ hash: `0x${string}` } | undefined>>();
+  const [currentTxn, setCurrentTxn] = useState<NamedTransaction>();
 
   function closeModal() {
     props.setIsOpen(false);
@@ -66,7 +65,7 @@ function TransactionModal(props: Props) {
     if (currentTxn) {
       const runTxn = async () => {
         try {
-          const txn = await currentTxn();
+          const txn = await currentTxn.fn();
           if (txn) {
             setHash(txn.hash);
             const result = await publicClient.waitForTransactionReceipt({
@@ -130,6 +129,9 @@ function TransactionModal(props: Props) {
                 <div className="mt-2">
                   {error && (
                     <p className="text-sm text-red-700">Error: {error}</p>
+                  )}
+                  {props.writeQueue.length + (currentTxn ? 1 : 0) > 1 && (
+                    <div>{props.writeQueue.length + (currentTxn ? 1 : 0)}</div>
                   )}
                   {hash && (
                     <p className="text-sm text-gray-300">

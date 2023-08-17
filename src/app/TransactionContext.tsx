@@ -1,9 +1,20 @@
 import { createContext, useState } from "react";
 import { TransactionModal } from "./TransactionModal";
 
-export type WriteAsyncPromise = () => Promise<
-  { hash: `0x${string}` } | undefined
->;
+type WriteAsyncPromise = () => Promise<{ hash: `0x${string}` } | undefined>;
+
+export type NamedTransactionStatus =
+  | "pending"
+  | "in progress"
+  | "failed"
+  | "succeeded";
+
+export type NamedTransaction = {
+  name: string;
+  description: string;
+  fn: WriteAsyncPromise;
+  status: NamedTransactionStatus;
+};
 
 const TransactionContext = createContext<{
   isTransactionWindowOpen: boolean;
@@ -11,17 +22,17 @@ const TransactionContext = createContext<{
   error?: string;
   setError: (error: string) => void;
   toggleButton: React.ReactNode;
-  writeQueue?: WriteAsyncPromise[];
-  setWriteQueue: (fn: WriteAsyncPromise[]) => void;
-  appendToQueue: (fn: WriteAsyncPromise) => void;
+  writeQueue?: NamedTransaction[];
+  setWriteQueue: (namedTransaction: NamedTransaction[]) => void;
+  appendToQueue: (namedTransaction: NamedTransaction) => void;
 }>({
   isTransactionWindowOpen: false,
   setIsTransactionWindowOpen: (isOpen: boolean) => {},
   setError: (error: string) => {},
   toggleButton: <></>,
   writeQueue: [],
-  setWriteQueue: (fn: WriteAsyncPromise[]) => {},
-  appendToQueue: (fn: WriteAsyncPromise) => {},
+  setWriteQueue: (namedTransaction: NamedTransaction[]) => {},
+  appendToQueue: (namedTransaction: NamedTransaction) => {},
 });
 
 const TransactionContextWrapper = ({
@@ -32,8 +43,8 @@ const TransactionContextWrapper = ({
   const [isTransactionWindowOpen, setIsTransactionWindowOpen] = useState(false);
   const [error, setError] = useState<string>();
 
-  const [writeQueue, setWriteQueue] = useState<WriteAsyncPromise[]>([]);
-  const appendToQueue = (fn: WriteAsyncPromise) => {
+  const [writeQueue, setWriteQueue] = useState<NamedTransaction[]>([]);
+  const appendToQueue = (fn: NamedTransaction) => {
     setWriteQueue([...writeQueue, fn]);
   };
 
