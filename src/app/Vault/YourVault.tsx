@@ -18,13 +18,26 @@ export const YourVault = (props: YourVaultProps) => {
   const publicClient = usePublicClient();
 
   const nftsLoadTransform = async (nfts: Nft[]) => {
+    const data = (await publicClient.readContract({
+      address: process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
+      abi: vaultedAbi,
+      functionName: "getVaultedTokensCount",
+      args: [address as `0x${string}`],
+    })) as BigInt;
+
+    const tokensIndexArray = [];
+
+    for (let i = 0; i < Number(data); i++) {
+      tokensIndexArray.push(i);
+    }
+
     const nftsData = (await Promise.all(
-      nfts.map((nft) => {
+      tokensIndexArray.map((nft) => {
         return publicClient.readContract({
-          address: process.env.NEXT_PUBLIC_VAULTED_ADDRESS as `0x${string}`,
+          address: process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
           abi: vaultedAbi,
           functionName: "vaultedTokens",
-          args: [address as `0x${string}`, nft.tokenId],
+          args: [address as `0x${string}`, nft],
         });
       })
     )) as string[][];
@@ -32,7 +45,7 @@ export const YourVault = (props: YourVaultProps) => {
     const tokenIds = nftsData.map((nftData) => nftData[1].toString());
 
     const nftsTransformedRes = await fetch(
-      `/api/nfts/${process.env.NEXT_PUBLIC_VAULTED_ADDRESS}/${process.env.NEXT_PUBLIC_CREATOR_ADDRESS}`,
+      `/api/nfts/${process.env.NEXT_PUBLIC_VAULT_ADDRESS}/${process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS}`,
       {
         method: "GET",
         headers: {
@@ -40,8 +53,6 @@ export const YourVault = (props: YourVaultProps) => {
         },
       }
     );
-
-    // get vault info and use it somewhere here
 
     const nftsTransformed = await nftsTransformedRes.json();
     const filteredNfts: NftWithVaultedData[] = nftsTransformed.filter(
@@ -55,7 +66,7 @@ export const YourVault = (props: YourVaultProps) => {
         ) as string[];
 
         return publicClient.readContract({
-          address: process.env.NEXT_PUBLIC_VAULTED_ADDRESS as `0x${string}`,
+          address: process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
           abi: vaultedAbi,
           functionName: "contractTokenIdToVaulting",
           args: [data[0], data[1]],
@@ -73,9 +84,7 @@ export const YourVault = (props: YourVaultProps) => {
   return (
     <Tab active={props.active}>
       <LoadSelectTransact
-        contractAddress={
-          process.env.NEXT_PUBLIC_SBT_CREATOR_ADDRESS as `0x${string}`
-        }
+        contractAddress={process.env.NEXT_PUBLIC_SBT_ADDRESS as `0x${string}`}
         title="Your Vault"
         checkedTokenIds={checkedTokenIds}
         setCheckedTokenIds={setCheckedTokenIds}
