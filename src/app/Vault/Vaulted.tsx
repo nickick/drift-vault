@@ -83,7 +83,7 @@ export const Vaulted = (props: VaultedProps) => {
       };
 
       if (!isAlreadyApproved && !placeholderApproval) {
-        setPlaceholderApproval(true);
+        setPlaceholderApproval(true); // flags as approved temporarily until isAlreadyApproved is refetched
         setWriteQueue([
           approveContractNamedTransaction,
           vaultContractNamedTransaction,
