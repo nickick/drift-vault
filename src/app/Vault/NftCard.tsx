@@ -19,7 +19,7 @@ const NftCard = ({
 }: Props) => {
   return (
     <div key={nft.tokenId + nft.title}>
-      <label className="flex flex-col space-y-2 cursor-pointer">
+      <label className="flex flex-col space-y-2 cursor-pointer group">
         <div
           className={twMerge(
             "flex flex-col border w-56 space-y-3 hover:border-gray-100 transition-colors",
@@ -32,7 +32,7 @@ const NftCard = ({
                 autoPlay
                 loop
                 muted
-                className="object-cover h-[26rem] hover:scale-105 transition-transform"
+                className="object-cover h-[26rem] group-hover:scale-105 transition-transform"
                 width="100%"
                 height="100%"
               >
@@ -43,7 +43,7 @@ const NftCard = ({
                 src={nft.media[0]?.raw}
                 fill
                 alt={nft.title}
-                className="w-full h-36 mx-auto hover:scale-105 transition-transform"
+                className="w-full h-36 mx-auto group-hover:scale-105 transition-transform"
               />
             )}
           </div>
@@ -54,7 +54,7 @@ const NftCard = ({
             </div>
           </div>
         </div>
-        <div className="w-full flex items-center justify-center space-x-2">
+        <div className="w-full flex items-center justify-start space-x-2">
           <input
             type="checkbox"
             value={nft.tokenId}
