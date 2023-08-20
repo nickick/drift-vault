@@ -12,7 +12,7 @@ export type NamedTransactionStatus =
 export type NamedTransaction = {
   name: string;
   description: string;
-  fn: WriteAsyncPromise;
+  fn?: WriteAsyncPromise;
   status: NamedTransactionStatus;
 };
 
@@ -50,9 +50,11 @@ const TransactionContextWrapper = ({
 
   const toggleButton = (
     <button
-      type="button"
-      onClick={() => setIsTransactionWindowOpen(!isTransactionWindowOpen)}
-      className="absolute left-0 bottom-0 bg-black border-white border bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+      type='button'
+      onClick={() => {
+        setIsTransactionWindowOpen(!isTransactionWindowOpen);
+      }}
+      className='absolute left-0 bottom-0 bg-black border-white border bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 h-12'
     >
       Open transaction window
     </button>

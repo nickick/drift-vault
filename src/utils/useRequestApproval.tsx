@@ -5,7 +5,6 @@ import {
   usePrepareContractWrite,
 } from "wagmi";
 import manifoldAbi from "../app/manifoldAbi.json";
-import { useCallback, useEffect, useState } from "react";
 
 const useRequestApproval = (approval: boolean) => {
   const { address } = useAccount();

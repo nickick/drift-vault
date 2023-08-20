@@ -61,7 +61,7 @@ const LoadSelectTransact = (props: Props) => {
   const toggleCheckedTokenId = (tokenId: string) => {
     if (props.checkedTokenIds.includes(tokenId)) {
       props.setCheckedTokenIds(
-        props.checkedTokenIds.filter((id) => id !== tokenId)
+        props.checkedTokenIds.filter((id) => id !== tokenId),
       );
     } else {
       props.setCheckedTokenIds([...props.checkedTokenIds, tokenId]);
@@ -69,22 +69,22 @@ const LoadSelectTransact = (props: Props) => {
   };
 
   return (
-    <div className="flex flex-col w-full">
-      <div className="flex flex-col space-y-8 relative w-full border-r border-l border-b border-gray-500 p-4">
-        <div className="flex flex-col">
-          <h2 className="text-xl">{props.title}</h2>
+    <div className='flex flex-col w-full'>
+      <div className='flex flex-col space-y-8 relative w-full border-r border-l border-b border-gray-500 p-4'>
+        <div className='flex flex-col'>
+          <h2 className='text-xl'>{props.title}</h2>
           {props.instructions}
         </div>
         {loading && (
-          <div className="flex w-full h-96 relative justify-center items-center">
+          <div className='flex w-full h-96 relative justify-center items-center'>
             <div>
               Loading...
-              <Spinner className="ml-2" />
+              <Spinner className='ml-2' />
             </div>
           </div>
         )}
         {!loading && !nfts.length && (
-          <div className="h-full w-full flex items-center justify-center">
+          <div className='h-full w-full flex items-center justify-center'>
             {noNftsMessage}
           </div>
         )}
@@ -109,12 +109,12 @@ const LoadSelectTransact = (props: Props) => {
         </div>
       </div>
       {/* Adding empty divs with the correct grid col classes to make tailwind compile them */}
-      <div className="grid-cols-2" />
-      <div className="grid-cols-3" />
-      <div className="grid-cols-4" />
-      {writeQueue?.length ?? 0 > 0 ? <>{toggleButton}</> : null}
-      <div className="w-full h-16 relative">
-        <div className="flex space-x-4 absolute right-0 bottom-0">
+      <div className='grid-cols-2' />
+      <div className='grid-cols-3' />
+      <div className='grid-cols-4' />
+      <div className='w-full h-16 relative'>
+        {writeQueue?.length ?? 0 > 0 ? toggleButton : null}
+        <div className='flex space-x-4 absolute right-0 bottom-0'>
           {props.transactNode}
         </div>
       </div>

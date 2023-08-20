@@ -1,13 +1,18 @@
 "use client";
 
-import { useContext, useState } from "react";
-import { useContractWrite, usePrepareContractWrite } from "wagmi";
+import { useContext, useState, useEffect } from "react";
+import {
+  useContractWrite,
+  usePrepareContractWrite,
+  useContractRead,
+} from "wagmi";
 import { Tab } from "./Tab";
 
 import { useRequestApproval } from "@/utils/useRequestApproval";
 import { NamedTransaction, TransactionContext } from "../TransactionContext";
-import vaultedABI from "../vaultedAbi.json";
 import { LoadSelectTransact } from "./LoadSelectTransact";
+import vaultedABI from "../vaultedAbi.json";
+import manifoldAbi from "../manifoldAbi.json";
 
 type VaultedProps = {
   active: boolean;
@@ -18,6 +23,8 @@ export const Vaulted = (props: VaultedProps) => {
     useContext(TransactionContext);
 
   const [checkedTokenIds, setCheckedTokenIds] = useState<string[]>([]);
+  const [placeholderApproval, setPlaceholderApproval] =
+    useState<boolean>(false);
 
   const vaultTimeOptions = [
     "1 Year",
@@ -32,6 +39,12 @@ export const Vaulted = (props: VaultedProps) => {
     "10 Years",
   ];
 
+  const { data: tokenName } = useContractRead({
+    address: process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`,
+    abi: manifoldAbi,
+    functionName: "name",
+  });
+
   const [vaultTime, setVaultTime] = useState<number>(0);
 
   const { config } = usePrepareContractWrite({
@@ -42,7 +55,7 @@ export const Vaulted = (props: VaultedProps) => {
       Array(checkedTokenIds.length).fill(vaultTime + 1),
       [...checkedTokenIds],
       Array(checkedTokenIds.length).fill(
-        process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`
+        process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`,
       ),
     ],
   });
@@ -54,21 +67,23 @@ export const Vaulted = (props: VaultedProps) => {
   const vaultForTime = async () => {
     setIsTransactionWindowOpen(true);
 
-    if (approvalWriteAsync && writeAsync) {
+    if (approvalWriteAsync) {
       const approveContractNamedTransaction: NamedTransaction = {
         name: "Approve Vault Contract",
         fn: approvalWriteAsync,
-        description: "",
+        description: `Allows access to selected ${tokenName} NFT(s)`,
         status: "pending",
       };
 
-      const vaultContractNamedTransaction: NamedTransaction = {
+      let vaultContractNamedTransaction: NamedTransaction = {
         name: "Vault NFTs",
         fn: writeAsync,
-        description: "",
+        description: `Vault selected ${tokenName} NFT(s)`,
         status: "pending",
       };
-      if (isAlreadyApproved) {
+
+      if (!isAlreadyApproved && !placeholderApproval) {
+        setPlaceholderApproval(true);
         setWriteQueue([
           approveContractNamedTransaction,
           vaultContractNamedTransaction,
@@ -80,16 +95,16 @@ export const Vaulted = (props: VaultedProps) => {
   };
 
   const selectedAction = (
-    <div className="flex space-x-4 absolute right-0 bottom-0">
+    <div className='flex space-x-4 absolute right-0 bottom-0'>
       <select
         value={vaultTimeOptions[vaultTime]}
         onChange={(e) => {
           const index = vaultTimeOptions.findIndex(
-            (option) => option === e.target.value
+            (option) => option === e.target.value,
           );
           setVaultTime(index);
         }}
-        className="p-2 border border-gray-200 h-12 w-48"
+        className='p-2 border border-gray-200 h-12 w-48'
       >
         {vaultTimeOptions.map((option, index) => {
           return <option key={index}>{option}</option>;
@@ -97,7 +112,7 @@ export const Vaulted = (props: VaultedProps) => {
       </select>
       <div>
         <button
-          className="p-2 border border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
+          className='p-2 border border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900'
           disabled={checkedTokenIds.length === 0}
           onClick={vaultForTime}
         >
@@ -110,7 +125,7 @@ export const Vaulted = (props: VaultedProps) => {
   return (
     <Tab active={props.active}>
       <LoadSelectTransact
-        title="Vaulted"
+        title='Vaulted'
         instructions={<div>Select which pieces you want to vault.</div>}
         contractAddress={
           process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`
@@ -118,8 +133,8 @@ export const Vaulted = (props: VaultedProps) => {
         checkedTokenIds={checkedTokenIds}
         setCheckedTokenIds={setCheckedTokenIds}
         transactNode={selectedAction}
-        nftNamePrefix="FDO"
-        actionPrefix="Vault"
+        nftNamePrefix='FDO'
+        actionPrefix='Vault'
       />
     </Tab>
   );
