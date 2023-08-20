@@ -28,25 +28,27 @@ export const Vault = () => {
       <div className="w-full space-y-4">
         <div className="text-3xl font-serif">{currentTab}</div>
         <div className="h-16">{tabExplanations[currentTab]}</div>
-        <div className="tabs">
-          {Object.values(TabNames).map((tabName) => {
-            return (
-              <a
-                key={tabName}
-                className={`tab tab-bordered ${
-                  currentTab === tabName ? "tab-active" : ""
-                }`}
-                onClick={() => setCurrentTab(tabName)}
-              >
-                {tabName}
-              </a>
-            );
-          })}
-        </div>
-        <div className="border border-gray-500 px-4 py-4 my-4">
-          {currentTab === TabNames.VAULTED && <Vaulted active />}
-          {currentTab === TabNames.YOUR_VAULT && <YourVault active />}
-          {currentTab === TabNames.LEADERBOARD && <Leaderboard active />}
+        <div className="">
+          <div className="tabs">
+            {Object.values(TabNames).map((tabName) => {
+              return (
+                <a
+                  key={tabName}
+                  className={`tab tab-bordered ${
+                    currentTab === tabName ? "tab-active" : ""
+                  }`}
+                  onClick={() => setCurrentTab(tabName)}
+                >
+                  {tabName}
+                </a>
+              );
+            })}
+          </div>
+          <div className="mb-4">
+            {currentTab === TabNames.VAULTED && <Vaulted active />}
+            {currentTab === TabNames.YOUR_VAULT && <YourVault active />}
+            {currentTab === TabNames.LEADERBOARD && <Leaderboard active />}
+          </div>
         </div>
       </div>
     </TransactionContextWrapper>

@@ -80,7 +80,7 @@ export const Vaulted = (props: VaultedProps) => {
   };
 
   const selectedAction = (
-    <div className="flex space-x-2 absolute right-0 bottom-0">
+    <div className="flex space-x-4 absolute right-0 bottom-0">
       <select
         value={vaultTimeOptions[vaultTime]}
         onChange={(e) => {
@@ -89,7 +89,7 @@ export const Vaulted = (props: VaultedProps) => {
           );
           setVaultTime(index);
         }}
-        className="p-2 border border-gray-200 h-10 w-48"
+        className="p-2 border border-gray-200 h-12 w-48"
       >
         {vaultTimeOptions.map((option, index) => {
           return <option key={index}>{option}</option>;
@@ -97,7 +97,7 @@ export const Vaulted = (props: VaultedProps) => {
       </select>
       <div>
         <button
-          className="p-2 border border-gray-200 h-10 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
+          className="p-2 border border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
           disabled={checkedTokenIds.length === 0}
           onClick={vaultForTime}
         >

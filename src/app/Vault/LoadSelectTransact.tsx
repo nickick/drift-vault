@@ -69,8 +69,8 @@ const LoadSelectTransact = (props: Props) => {
   };
 
   return (
-    <>
-      <div className="flex flex-col p-2 pb-14 space-y-8 relative w-full">
+    <div className="flex flex-col w-full">
+      <div className="flex flex-col space-y-8 relative w-full border-r border-l border-b border-gray-500 p-4">
         <div className="flex flex-col">
           <h2 className="text-xl">{props.title}</h2>
           {props.instructions}
@@ -113,10 +113,12 @@ const LoadSelectTransact = (props: Props) => {
       <div className="grid-cols-3" />
       <div className="grid-cols-4" />
       {writeQueue?.length ?? 0 > 0 ? <>{toggleButton}</> : null}
-      <div className="flex space-x-2 absolute right-0 bottom-0">
-        {props.transactNode}
+      <div className="w-full h-16 relative">
+        <div className="flex space-x-4 absolute right-0 bottom-0">
+          {props.transactNode}
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

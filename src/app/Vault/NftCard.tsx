@@ -22,17 +22,17 @@ const NftCard = ({
       <label className="flex flex-col space-y-2 cursor-pointer">
         <div
           className={twMerge(
-            "flex flex-col border w-48 space-y-3 hover:border-gray-100 transition-colors",
+            "flex flex-col border w-56 space-y-3 hover:border-gray-100 transition-colors",
             `${selected ? "border-gray-300" : "border-gray-500"}`
           )}
         >
-          <div className="h-[22rem] relative">
+          <div className="h-[22rem] relative overflow-hidden flex justify-center items-center">
             {nft.rawMetadata?.animation ? (
               <video
                 autoPlay
                 loop
                 muted
-                className="object-cover w-full h-full"
+                className="object-cover h-[26rem] hover:scale-105 transition-transform"
                 width="100%"
                 height="100%"
               >
@@ -43,7 +43,7 @@ const NftCard = ({
                 src={nft.media[0]?.raw}
                 fill
                 alt={nft.title}
-                className="w-full h-36 mx-auto"
+                className="w-full h-36 mx-auto hover:scale-105 transition-transform"
               />
             )}
           </div>
