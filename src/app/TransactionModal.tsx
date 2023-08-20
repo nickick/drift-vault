@@ -117,56 +117,56 @@ function TransactionModal(props: Props) {
       as={Fragment}
     >
       <Dialog
-        as='div'
-        className='relative z-10'
+        as="div"
+        className="relative z-10"
         onClose={closeModal}
       >
         <Transition.Child
           as={Fragment}
-          enter='ease-out duration-300'
-          enterFrom='opacity-0'
-          enterTo='opacity-100'
-          leave='ease-in duration-200'
-          leaveFrom='opacity-100'
-          leaveTo='opacity-0'
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
         >
-          <div className='fixed inset-0 bg-black bg-opacity-75' />
+          <div className="fixed inset-0 bg-black bg-opacity-75" />
         </Transition.Child>
 
-        <div className='fixed inset-0 overflow-y-auto'>
-          <div className='flex min-h-full items-center justify-center p-4 text-center'>
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
             <Transition.Child
               as={Fragment}
-              enter='ease-out duration-300'
-              enterFrom='opacity-0 scale-95'
-              enterTo='opacity-100 scale-100'
-              leave='ease-in duration-200'
-              leaveFrom='opacity-100 scale-100'
-              leaveTo='opacity-0 scale-95'
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className='w-full max-w-md transform overflow-hidden bg-black border border-white p-6 text-left align-middle shadow-xl transition-all'>
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden bg-black border border-white p-6 text-left align-middle shadow-xl transition-all">
                 <Dialog.Title
-                  as='h3'
-                  className='text-lg font-medium leading-6 text-gray-100'
+                  as="h3"
+                  className="text-lg font-medium leading-6 text-gray-100"
                 >
                   Transaction status
                 </Dialog.Title>
-                <div className='mt-2'>
+                <div className="mt-2">
                   {error && (
-                    <p className='text-sm text-red-700'>Error: {error}</p>
+                    <p className="text-sm text-red-700">Error: {error}</p>
                   )}
                   {hash && (
-                    <p className='text-sm text-gray-300'>
+                    <p className="text-sm text-gray-300">
                       Transaction:{" "}
                       <a
                         href={`${etherscanUrl}/${hash}`}
-                        className='underline'
-                        target='_blank'
-                        rel='noreferrer'
+                        className="underline"
+                        target="_blank"
+                        rel="noreferrer"
                       >
                         {shortenAddress(hash, 14)}
                       </a>
-                      {isLoading && <Spinner className='ml-2' />}
+                      {isLoading && <Spinner className="ml-2" />}
                       {isError && <div>Error!</div>}
                       {data &&
                         JSON.stringify(data, (k, v) => {
@@ -185,47 +185,47 @@ function TransactionModal(props: Props) {
                     <div
                       className={cx(
                         "flex space-x-2 mt-2",
-                        totalTransactions === 1 && "justify-center",
+                        totalTransactions === 1 && "justify-center"
                       )}
                     >
                       {completedTransactions.map((completedTxn) => (
                         <progress
                           key={completedTxn.name}
-                          className='progress progress-info w-48'
-                          value='100'
-                          max='100'
+                          className="progress progress-info w-48"
+                          value="100"
+                          max="100"
                         ></progress>
                       ))}
                       {currentTxn && (
                         <progress
                           key={currentTxn.name}
-                          className='progress progress-info w-48 animate-pulse'
-                          value='100'
-                          max='100'
+                          className="progress progress-info w-48 animate-pulse"
+                          value="100"
+                          max="100"
                         ></progress>
                       )}
                       {props.writeQueue.map((pendingTxn) => (
                         <progress
                           key={pendingTxn.name}
-                          className='progress w-48'
-                          value='100'
-                          max='100'
+                          className="progress w-48"
+                          value="100"
+                          max="100"
                         ></progress>
                       ))}
                     </div>
                   )}
                   {currentTxn && (
-                    <div className='flex flex-col items-center mt-2'>
-                      <p className='text-xl'>{currentTxn.name}</p>
-                      <p className='mt-2 text-sm'>{currentTxn.description}</p>
+                    <div className="flex flex-col items-center mt-2">
+                      <p className="text-xl">{currentTxn.name}</p>
+                      <p className="mt-2 text-sm">{currentTxn.description}</p>
                     </div>
                   )}
                 </div>
 
-                <div className='mt-4'>
+                <div className="mt-4">
                   <button
-                    type='button'
-                    className='inline-flex justify-center border border-transparent bg-gray-900 px-4 py-2 text-sm font-medium text-gray-100 hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
+                    type="button"
+                    className="inline-flex justify-center border border-transparent bg-gray-900 px-4 py-2 text-sm font-medium text-gray-100 hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
                     onClick={closeModal}
                   >
                     Close

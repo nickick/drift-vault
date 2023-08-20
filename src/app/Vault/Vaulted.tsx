@@ -55,7 +55,7 @@ export const Vaulted = (props: VaultedProps) => {
       Array(checkedTokenIds.length).fill(vaultTime + 1),
       [...checkedTokenIds],
       Array(checkedTokenIds.length).fill(
-        process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`,
+        process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`
       ),
     ],
   });
@@ -95,16 +95,16 @@ export const Vaulted = (props: VaultedProps) => {
   };
 
   const selectedAction = (
-    <div className='flex space-x-4 absolute right-0 bottom-0'>
+    <div className="flex space-x-4 absolute right-0 bottom-0">
       <select
         value={vaultTimeOptions[vaultTime]}
         onChange={(e) => {
           const index = vaultTimeOptions.findIndex(
-            (option) => option === e.target.value,
+            (option) => option === e.target.value
           );
           setVaultTime(index);
         }}
-        className='p-2 border border-gray-200 h-12 w-48'
+        className="p-2 border border-gray-200 h-12 w-48"
       >
         {vaultTimeOptions.map((option, index) => {
           return <option key={index}>{option}</option>;
@@ -112,7 +112,7 @@ export const Vaulted = (props: VaultedProps) => {
       </select>
       <div>
         <button
-          className='p-2 border border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900'
+          className="p-2 border border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
           disabled={checkedTokenIds.length === 0}
           onClick={vaultForTime}
         >
@@ -125,7 +125,7 @@ export const Vaulted = (props: VaultedProps) => {
   return (
     <Tab active={props.active}>
       <LoadSelectTransact
-        title='Vaulted'
+        title="Vaulted"
         instructions={<div>Select which pieces you want to vault.</div>}
         contractAddress={
           process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`
@@ -133,8 +133,8 @@ export const Vaulted = (props: VaultedProps) => {
         checkedTokenIds={checkedTokenIds}
         setCheckedTokenIds={setCheckedTokenIds}
         transactNode={selectedAction}
-        nftNamePrefix='FDO'
-        actionPrefix='Vault'
+        nftNamePrefix="FDO"
+        actionPrefix="Vault"
       />
     </Tab>
   );

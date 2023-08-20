@@ -39,7 +39,7 @@ export const YourVault = (props: YourVaultProps) => {
           functionName: "vaultedTokens",
           args: [address as `0x${string}`, nft],
         });
-      }),
+      })
     )) as string[][];
 
     const tokenIds = nftsData.map((nftData) => nftData[1].toString());
@@ -51,18 +51,18 @@ export const YourVault = (props: YourVaultProps) => {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
 
     const nftsTransformed = await nftsTransformedRes.json();
     const filteredNfts: NftWithVaultedData[] = nftsTransformed.filter(
-      (nft: Nft) => tokenIds.includes(nft.tokenId),
+      (nft: Nft) => tokenIds.includes(nft.tokenId)
     );
 
     const vaultedData = (await Promise.all(
       filteredNfts.map((nft: Nft) => {
         const data = nftsData.find(
-          (datum) => datum[1].toString() === nft.tokenId,
+          (datum) => datum[1].toString() === nft.tokenId
         ) as string[];
 
         return publicClient.readContract({
@@ -71,7 +71,7 @@ export const YourVault = (props: YourVaultProps) => {
           functionName: "contractTokenIdToVaulting",
           args: [data[0], data[1]],
         });
-      }),
+      })
     )) as string[][];
 
     vaultedData.forEach((data, i) => {
@@ -85,14 +85,14 @@ export const YourVault = (props: YourVaultProps) => {
     <Tab active={props.active}>
       <LoadSelectTransact
         contractAddress={process.env.NEXT_PUBLIC_SBT_ADDRESS as `0x${string}`}
-        title='Your Vault'
+        title="Your Vault"
         checkedTokenIds={checkedTokenIds}
         setCheckedTokenIds={setCheckedTokenIds}
         transactNode={<div />}
         nftsLoadTransform={nftsLoadTransform}
         hash={vaultHash}
-        noNftsMessage='You have no NFTs in your vault.'
-        actionPrefix='Unvault'
+        noNftsMessage="You have no NFTs in your vault."
+        actionPrefix="Unvault"
       />
     </Tab>
   );
