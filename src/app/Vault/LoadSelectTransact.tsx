@@ -26,8 +26,7 @@ export type NftWithVaultedData = Nft & {
 };
 
 const LoadSelectTransact = (props: Props) => {
-  const { toggleButton, writeQueue, currentTxn } =
-    useContext(TransactionContext);
+  const { toggleButton, currentTxn } = useContext(TransactionContext);
   const { address } = useAccount();
   const [nfts, setNfts] = useState<Nft[]>([]);
   const [loading, setLoading] = useState(false);
