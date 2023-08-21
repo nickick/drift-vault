@@ -19,8 +19,11 @@ type VaultedProps = {
 };
 
 export const Vaulted = (props: VaultedProps) => {
-  const { setIsTransactionWindowOpen, setWriteQueue } =
+  const { setIsTransactionWindowOpen, setWriteQueue, currentTxn } =
     useContext(TransactionContext);
+
+  const [isSubsequentRequest, setIsSubsequentRequest] =
+    useState<boolean>(false);
 
   const [checkedTokenIds, setCheckedTokenIds] = useState<string[]>([]);
 
@@ -59,13 +62,23 @@ export const Vaulted = (props: VaultedProps) => {
   });
 
   const { writeAsync } = useContractWrite(config);
-  const { isAlreadyApproved, writeAsync: approvalWriteAsync } =
-    useRequestApproval(true);
+  const {
+    isAlreadyApproved,
+    isRefetchingAlreadyLoaded,
+    refetchIsAlreadyLoaded,
+    writeAsync: approvalWriteAsync,
+  } = useRequestApproval(true);
 
   const vaultForTime = async () => {
     setIsTransactionWindowOpen(true);
 
-    if (approvalWriteAsync) {
+    let refetchedApprovalCheck;
+
+    if (isSubsequentRequest) {
+      refetchedApprovalCheck = await refetchIsAlreadyLoaded();
+    }
+
+    if (approvalWriteAsync && !isRefetchingAlreadyLoaded) {
       const approveContractNamedTransaction: NamedTransaction = {
         name: "Approve Vault Contract",
         fn: approvalWriteAsync,
@@ -80,7 +93,8 @@ export const Vaulted = (props: VaultedProps) => {
         status: "pending",
       };
 
-      if (!isAlreadyApproved) {
+      if (!isAlreadyApproved && !refetchedApprovalCheck?.data) {
+        setIsSubsequentRequest(true);
         setWriteQueue([
           approveContractNamedTransaction,
           vaultContractNamedTransaction,
@@ -110,7 +124,7 @@ export const Vaulted = (props: VaultedProps) => {
       <div>
         <button
           className="p-2 border border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
-          disabled={checkedTokenIds.length === 0}
+          disabled={checkedTokenIds.length === 0 || currentTxn !== undefined}
           onClick={vaultForTime}
         >
           Vault

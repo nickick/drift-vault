@@ -26,7 +26,8 @@ export type NftWithVaultedData = Nft & {
 };
 
 const LoadSelectTransact = (props: Props) => {
-  const { toggleButton, writeQueue } = useContext(TransactionContext);
+  const { toggleButton, writeQueue, currentTxn } =
+    useContext(TransactionContext);
   const { address } = useAccount();
   const [nfts, setNfts] = useState<Nft[]>([]);
   const [loading, setLoading] = useState(false);
@@ -113,7 +114,7 @@ const LoadSelectTransact = (props: Props) => {
       <div className="grid-cols-3" />
       <div className="grid-cols-4" />
       <div className="w-full h-16 relative">
-        {writeQueue?.length ?? 0 > 0 ? toggleButton : null}
+        {currentTxn ? toggleButton : null}
         <div className="flex space-x-4 absolute right-0 bottom-0">
           {props.transactNode}
         </div>

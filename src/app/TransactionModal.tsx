@@ -13,6 +13,8 @@ type Props = {
   setError: (error: string) => void;
   writeQueue: NamedTransaction[];
   setWriteQueue: (fn: NamedTransaction[]) => void;
+  currentTxn?: NamedTransaction;
+  setCurrentTxn: (fn: NamedTransaction | undefined) => void;
 };
 
 function TransactionModal(props: Props) {
@@ -20,7 +22,6 @@ function TransactionModal(props: Props) {
   const [hash, setHash] = useState<`0x${string}`>();
   const [error, setError] = useState<string>();
   const publicClient = usePublicClient();
-  const [currentTxn, setCurrentTxn] = useState<NamedTransaction>();
   const [totalTransactions, setTotalTransactions] = useState<number>(0);
   const [completedTransactions, setCompletedTransactions] = useState<
     NamedTransaction[]
@@ -58,22 +59,22 @@ function TransactionModal(props: Props) {
 
   // if no currentTxn, set currentTxn to first item in queue
   useEffect(() => {
-    if (!currentTxn && props.writeQueue && props.writeQueue[0]) {
+    if (!props.currentTxn && props.writeQueue && props.writeQueue[0]) {
       setTotalTransactions(props.writeQueue.length);
       props.writeQueue[0].status = "in progress";
 
-      setCurrentTxn(() => props.writeQueue[0]);
+      props.setCurrentTxn(props.writeQueue[0]);
       props.setWriteQueue(props.writeQueue.slice(1));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.writeQueue, currentTxn]);
+  }, [props.writeQueue, props.currentTxn]);
 
   // if currentTxn, run it
   useEffect(() => {
-    if (currentTxn) {
+    if (props.currentTxn) {
       const runTxn = async () => {
         try {
-          const txn = await currentTxn.fn();
+          const txn = await props.currentTxn!.fn!();
           if (txn) {
             setHash(txn.hash);
             const result = await publicClient.waitForTransactionReceipt({
@@ -86,9 +87,9 @@ function TransactionModal(props: Props) {
               setTimeout(() => {
                 setCompletedTransactions((prev) => [
                   ...prev,
-                  { ...currentTxn, status: "succeeded" },
+                  { ...props.currentTxn!, status: "succeeded" },
                 ]);
-                setCurrentTxn(undefined);
+                props.setCurrentTxn(undefined);
               }, 2000);
             }
           }
@@ -100,7 +101,7 @@ function TransactionModal(props: Props) {
           setCompletedTransactions([]);
 
           // clear entire queue on error
-          setCurrentTxn(undefined);
+          props.setCurrentTxn(undefined);
 
           return;
         }
@@ -109,7 +110,7 @@ function TransactionModal(props: Props) {
       runTxn();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTxn]);
+  }, [props.currentTxn]);
 
   return (
     <Transition
@@ -197,9 +198,9 @@ function TransactionModal(props: Props) {
                           max="100"
                         ></progress>
                       ))}
-                      {currentTxn && (
+                      {props.currentTxn && (
                         <progress
-                          key={currentTxn.name}
+                          key={props.currentTxn.name}
                           className="progress progress-info w-48 animate-pulse"
                           value="100"
                           max="100"
@@ -215,10 +216,12 @@ function TransactionModal(props: Props) {
                       ))}
                     </div>
                   )}
-                  {currentTxn && (
+                  {props.currentTxn && (
                     <div className="flex flex-col items-center mt-2">
-                      <p className="text-xl">{currentTxn.name}</p>
-                      <p className="mt-2 text-sm">{currentTxn.description}</p>
+                      <p className="text-xl">{props.currentTxn.name}</p>
+                      <p className="mt-2 text-sm">
+                        {props.currentTxn.description}
+                      </p>
                     </div>
                   )}
                 </div>

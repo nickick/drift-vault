@@ -25,6 +25,8 @@ const TransactionContext = createContext<{
   writeQueue?: NamedTransaction[];
   setWriteQueue: (namedTransaction: NamedTransaction[]) => void;
   appendToQueue: (namedTransaction: NamedTransaction) => void;
+  currentTxn?: NamedTransaction | undefined;
+  setCurrentTxn: (namedTransaction: NamedTransaction | undefined) => void;
 }>({
   isTransactionWindowOpen: false,
   setIsTransactionWindowOpen: (isOpen: boolean) => {},
@@ -33,6 +35,7 @@ const TransactionContext = createContext<{
   writeQueue: [],
   setWriteQueue: (namedTransaction: NamedTransaction[]) => {},
   appendToQueue: (namedTransaction: NamedTransaction) => {},
+  setCurrentTxn: (namedTransaction: NamedTransaction | undefined) => {},
 });
 
 const TransactionContextWrapper = ({
@@ -47,6 +50,8 @@ const TransactionContextWrapper = ({
   const appendToQueue = (fn: NamedTransaction) => {
     setWriteQueue([...writeQueue, fn]);
   };
+
+  const [currentTxn, setCurrentTxn] = useState<NamedTransaction>();
 
   const toggleButton = (
     <button
@@ -71,6 +76,8 @@ const TransactionContextWrapper = ({
         writeQueue,
         setWriteQueue,
         appendToQueue,
+        currentTxn,
+        setCurrentTxn,
       }}
     >
       {children}
@@ -81,6 +88,8 @@ const TransactionContextWrapper = ({
         setError={setError}
         writeQueue={writeQueue}
         setWriteQueue={setWriteQueue}
+        currentTxn={currentTxn}
+        setCurrentTxn={setCurrentTxn}
       />
     </TransactionContext.Provider>
   );
