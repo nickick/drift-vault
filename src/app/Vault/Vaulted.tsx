@@ -23,8 +23,6 @@ export const Vaulted = (props: VaultedProps) => {
     useContext(TransactionContext);
 
   const [checkedTokenIds, setCheckedTokenIds] = useState<string[]>([]);
-  const [placeholderApproval, setPlaceholderApproval] =
-    useState<boolean>(false);
 
   const vaultTimeOptions = [
     "1 Year",
@@ -71,14 +69,14 @@ export const Vaulted = (props: VaultedProps) => {
       const approveContractNamedTransaction: NamedTransaction = {
         name: "Approve Vault Contract",
         fn: approvalWriteAsync,
-        description: `Allows access to selected ${tokenName} NFT(s)`,
+        description: `Allows vaulting access to selected ${tokenName} NFT(s)`,
         status: "pending",
       };
 
       let vaultContractNamedTransaction: NamedTransaction = {
         name: "Vault NFTs",
         fn: writeAsync,
-        description: `Vault selected ${tokenName} NFT(s)`,
+        description: `Vaults selected ${tokenName} NFT(s)`,
         status: "pending",
       };
 
