@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import {
   useContractWrite,
   usePrepareContractWrite,
@@ -82,8 +82,7 @@ export const Vaulted = (props: VaultedProps) => {
         status: "pending",
       };
 
-      if (!isAlreadyApproved && !placeholderApproval) {
-        setPlaceholderApproval(true); // flags as approved temporarily until isAlreadyApproved is refetched
+      if (!isAlreadyApproved) {
         setWriteQueue([
           approveContractNamedTransaction,
           vaultContractNamedTransaction,

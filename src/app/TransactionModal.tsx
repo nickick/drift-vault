@@ -60,6 +60,7 @@ function TransactionModal(props: Props) {
   useEffect(() => {
     if (!currentTxn && props.writeQueue && props.writeQueue[0]) {
       setTotalTransactions(props.writeQueue.length);
+      props.writeQueue[0].status = "in progress";
 
       setCurrentTxn(() => props.writeQueue[0]);
       props.setWriteQueue(props.writeQueue.slice(1));
