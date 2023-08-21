@@ -93,14 +93,14 @@ export const Vaulted = (props: VaultedProps) => {
         status: "pending",
       };
 
-      if (!isAlreadyApproved && !refetchedApprovalCheck?.data) {
+      if (isAlreadyApproved || refetchedApprovalCheck?.data) {
+        setWriteQueue([vaultContractNamedTransaction]);
+      } else {
         setIsSubsequentRequest(true);
         setWriteQueue([
           approveContractNamedTransaction,
           vaultContractNamedTransaction,
         ]);
-      } else {
-        setWriteQueue([vaultContractNamedTransaction]);
       }
     }
   };
