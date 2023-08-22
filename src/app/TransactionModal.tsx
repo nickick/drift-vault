@@ -22,10 +22,13 @@ function TransactionModal(props: Props) {
   const [hash, setHash] = useState<`0x${string}`>();
   const [error, setError] = useState<string>();
   const publicClient = usePublicClient();
-  const [totalTransactions, setTotalTransactions] = useState<number>(0);
-  const [completedTransactions, setCompletedTransactions] = useState<
-    NamedTransaction[]
-  >([]);
+  const [currentSessionTransactions, setCurrentSessionTransactions] =
+    useState<NamedTransaction[]>();
+  const [recordedTotalTransactions, setRecordedTotalTransactions] =
+    useState<boolean>();
+  const [processingIndexNumber, setProcessingIndexNumber] = useState<number>(0);
+  const [isFinishedTransacting, setIsFinishedTransacting] =
+    useState<boolean>(false);
 
   function closeModal() {
     props.setIsOpen(false);
@@ -33,10 +36,22 @@ function TransactionModal(props: Props) {
       setHash(undefined);
     }
     setError("");
+
+    if (isFinishedTransacting) resetTransactionStatus();
   }
 
   function openModal() {
     props.setIsOpen(true);
+  }
+
+  function resetTransactionStatus() {
+    props.setWriteQueue([]);
+
+    setCurrentSessionTransactions([]);
+    setRecordedTotalTransactions(false);
+    setProcessingIndexNumber(0);
+
+    props.setCurrentTxn(undefined);
   }
 
   useEffect(() => {
@@ -60,8 +75,18 @@ function TransactionModal(props: Props) {
   // if no currentTxn, set currentTxn to first item in queue
   useEffect(() => {
     if (!props.currentTxn && props.writeQueue && props.writeQueue[0]) {
-      setTotalTransactions(props.writeQueue.length);
       props.writeQueue[0].status = "in progress";
+
+      if (!recordedTotalTransactions) {
+        setCurrentSessionTransactions(props.writeQueue);
+        setRecordedTotalTransactions(true);
+      } else {
+        const updatedTransactions = [...currentSessionTransactions!];
+        updatedTransactions[processingIndexNumber] = {
+          ...props.writeQueue[0],
+        };
+        setCurrentSessionTransactions(updatedTransactions);
+      }
 
       props.setCurrentTxn(props.writeQueue[0]);
       props.setWriteQueue(props.writeQueue.slice(1));
@@ -82,13 +107,22 @@ function TransactionModal(props: Props) {
               confirmations: 1,
             });
 
+            if (result) {
+              props.currentTxn!.status = "succeeded";
+              const updatedTransactions = [...currentSessionTransactions!];
+              updatedTransactions[processingIndexNumber] = {
+                ...props.currentTxn!,
+              };
+              setCurrentSessionTransactions(updatedTransactions);
+
+              processingIndexNumber < currentSessionTransactions!.length - 1
+                ? setProcessingIndexNumber(processingIndexNumber + 1)
+                : setIsFinishedTransacting(true);
+            }
+
             // move on to next txn if there's one in the queue after 2 seconds
             if (result && props.writeQueue.length > 0) {
               setTimeout(() => {
-                setCompletedTransactions((prev) => [
-                  ...prev,
-                  { ...props.currentTxn!, status: "succeeded" },
-                ]);
                 props.setCurrentTxn(undefined);
               }, 2000);
             }
@@ -96,12 +130,7 @@ function TransactionModal(props: Props) {
         } catch (e: any) {
           setError(e.shortMessage ?? e.message ?? e);
 
-          props.setWriteQueue([]);
-
-          setCompletedTransactions([]);
-
-          // clear entire queue on error
-          props.setCurrentTxn(undefined);
+          resetTransactionStatus();
 
           return;
         }
@@ -157,59 +186,41 @@ function TransactionModal(props: Props) {
                   {error && (
                     <p className="text-sm text-red-700">Error: {error}</p>
                   )}
-                  {hash && (
-                    <p className="text-sm text-gray-300">
-                      Transaction:{" "}
-                      <a
-                        href={`${etherscanUrl}/${hash}`}
-                        className="underline"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {shortenAddress(hash, 14)}
-                      </a>
-                      {isLoading && <Spinner className="ml-2" />}
-                      {isError && <div>Error!</div>}
-                      {data &&
-                        JSON.stringify(data, (k, v) => {
-                          typeof v === "bigint" ? v.toString() : v;
-                        })}
-                      {isSuccess && !isLoading && !error && <div>Success!</div>}
-                    </p>
-                  )}
-                  {!hash && !error && (
-                    <div>
-                      Waiting for transaction {completedTransactions.length + 1}{" "}
-                      / {totalTransactions}
+                  {!error && (
+                    <div className="flex justify-between">
+                      {!isLoading &&
+                        props.currentTxn?.status === "in progress" && (
+                          <p>{props.currentTxn?.name}</p>
+                        )}
+                      {isLoading && <p>{props.currentTxn?.hashingTitle}...</p>}
+                      {isSuccess &&
+                        props.currentTxn?.status === "succeeded" &&
+                        !isError && <p>Success!</p>}
+                      <p>
+                        Step {processingIndexNumber + 1} of{" "}
+                        {currentSessionTransactions?.length}
+                      </p>
                     </div>
                   )}
-                  {!error && (
+                  {!error && currentSessionTransactions && (
                     <div
                       className={cx(
                         "flex space-x-2 mt-2",
-                        totalTransactions === 1 && "justify-center"
+                        currentSessionTransactions?.length === 1 &&
+                          "justify-center"
                       )}
                     >
-                      {completedTransactions.map((completedTxn) => (
+                      {currentSessionTransactions.map((txn, i) => (
                         <progress
-                          key={completedTxn.name}
-                          className="progress progress-info w-48"
-                          value="100"
-                          max="100"
-                        ></progress>
-                      ))}
-                      {props.currentTxn && (
-                        <progress
-                          key={props.currentTxn.name}
-                          className="progress progress-info w-48 animate-pulse"
-                          value="100"
-                          max="100"
-                        ></progress>
-                      )}
-                      {props.writeQueue.map((pendingTxn) => (
-                        <progress
-                          key={pendingTxn.name}
-                          className="progress w-48"
+                          key={txn.name}
+                          className={cx(
+                            "progress w-48",
+                            txn.status === "succeeded" && "progress-success",
+                            txn.status === "in progress" && "progress-info",
+                            isLoading &&
+                              i === processingIndexNumber &&
+                              "animate-pulse"
+                          )}
                           value="100"
                           max="100"
                         ></progress>
@@ -217,15 +228,20 @@ function TransactionModal(props: Props) {
                     </div>
                   )}
                   {props.currentTxn && (
-                    <div className="flex flex-col items-center mt-2">
-                      <p className="text-xl">{props.currentTxn.name}</p>
+                    <div className="flex flex-col my-2">
                       <p className="mt-2 text-sm">
-                        {props.currentTxn.description}
+                        {isLoading
+                          ? "Please stand by, this could take a few seconds..."
+                          : props.currentTxn.description}
                       </p>
+                      {isLoading && (
+                        <div className="flex justify-center">
+                          <Spinner className="mt-4 h-48 w-48 " />
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
-
                 <div className="mt-4">
                   <button
                     type="button"
