@@ -46,12 +46,11 @@ function TransactionModal(props: Props) {
 
   function resetTransactionStatus() {
     props.setWriteQueue([]);
+    props.setCurrentTxn(undefined);
 
     setCurrentSessionTransactions([]);
     setRecordedTotalTransactions(false);
     setProcessingIndexNumber(0);
-
-    props.setCurrentTxn(undefined);
   }
 
   useEffect(() => {
@@ -192,14 +191,21 @@ function TransactionModal(props: Props) {
                         props.currentTxn?.status === "in progress" && (
                           <p>{props.currentTxn?.name}</p>
                         )}
-                      {isLoading && <p>{props.currentTxn?.hashingTitle}...</p>}
+                      {isLoading && (
+                        <div className="flex">
+                          <p>{props.currentTxn?.hashingTitle}...</p>
+                          <Spinner className="ml-2" />
+                        </div>
+                      )}
                       {isSuccess &&
                         props.currentTxn?.status === "succeeded" &&
                         !isError && <p>Success!</p>}
-                      <p>
-                        Step {processingIndexNumber + 1} of{" "}
-                        {currentSessionTransactions?.length}
-                      </p>
+                      {props.currentTxn && (
+                        <p>
+                          Step {processingIndexNumber + 1} of{" "}
+                          {currentSessionTransactions?.length}
+                        </p>
+                      )}
                     </div>
                   )}
                   {!error && currentSessionTransactions && (
@@ -214,11 +220,11 @@ function TransactionModal(props: Props) {
                         <progress
                           key={txn.name}
                           className={cx(
-                            "progress w-48",
+                            "progress w-full",
                             txn.status === "succeeded" && "progress-success",
                             txn.status === "in progress" && "progress-info",
-                            isLoading &&
-                              i === processingIndexNumber &&
+                            txn.status === "in progress" &&
+                              isLoading &&
                               "animate-pulse"
                           )}
                           value="100"
@@ -234,10 +240,27 @@ function TransactionModal(props: Props) {
                           ? "Please stand by, this could take a few seconds..."
                           : props.currentTxn.description}
                       </p>
-                      {isLoading && (
-                        <div className="flex justify-center">
-                          <Spinner className="mt-4 h-48 w-48 " />
-                        </div>
+                      {hash ? (
+                        <p className="text-sm text-gray-300">
+                          Transaction:{" "}
+                          <a
+                            href={`${etherscanUrl}/${hash}`}
+                            className="underline"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {shortenAddress(hash, 14)}
+                          </a>
+                          {isError && <div>Error!</div>}
+                          {data &&
+                            JSON.stringify(data, (k, v) => {
+                              typeof v === "bigint" ? v.toString() : v;
+                            })}
+                        </p>
+                      ) : (
+                        <p className="text-sm text-gray-300">
+                          Waiting for transaction...
+                        </p>
                       )}
                     </div>
                   )}
