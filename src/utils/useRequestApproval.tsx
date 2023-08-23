@@ -5,11 +5,14 @@ import {
   usePrepareContractWrite,
 } from "wagmi";
 import manifoldAbi from "../app/manifoldAbi.json";
-import { useCallback, useEffect, useState } from "react";
 
 const useRequestApproval = (approval: boolean) => {
   const { address } = useAccount();
-  const { data: isAlreadyApproved } = useContractRead({
+  const {
+    data: isAlreadyApproved,
+    isRefetching: isRefetchingAlreadyLoaded,
+    refetch: refetchIsAlreadyLoaded,
+  } = useContractRead({
     abi: manifoldAbi,
     address: process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`,
     functionName: "isApprovedForAll",
@@ -30,6 +33,8 @@ const useRequestApproval = (approval: boolean) => {
 
   return {
     isAlreadyApproved,
+    isRefetchingAlreadyLoaded,
+    refetchIsAlreadyLoaded,
     ...write,
   };
 };

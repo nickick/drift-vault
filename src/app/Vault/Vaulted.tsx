@@ -1,20 +1,25 @@
 "use client";
 
 import { useContext, useState } from "react";
-import { useContractWrite, usePrepareContractWrite } from "wagmi";
+import {
+  useContractWrite,
+  usePrepareContractWrite,
+  useContractRead,
+} from "wagmi";
 import { Tab } from "./Tab";
 
 import { useRequestApproval } from "@/utils/useRequestApproval";
 import { NamedTransaction, TransactionContext } from "../TransactionContext";
-import vaultedABI from "../vaultedAbi.json";
 import { LoadSelectTransact } from "./LoadSelectTransact";
+import vaultedABI from "../vaultedAbi.json";
+import manifoldAbi from "../manifoldAbi.json";
 
 type VaultedProps = {
   active: boolean;
 };
 
 export const Vaulted = (props: VaultedProps) => {
-  const { setIsTransactionWindowOpen, setWriteQueue } =
+  const { setIsTransactionWindowOpen, setWriteQueue, currentTxn } =
     useContext(TransactionContext);
 
   const [checkedTokenIds, setCheckedTokenIds] = useState<string[]>([]);
@@ -32,6 +37,12 @@ export const Vaulted = (props: VaultedProps) => {
     "10 Years",
   ];
 
+  const { data: tokenName } = useContractRead({
+    address: process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`,
+    abi: manifoldAbi,
+    functionName: "name",
+  });
+
   const [vaultTime, setVaultTime] = useState<number>(0);
 
   const { config } = usePrepareContractWrite({
@@ -48,33 +59,46 @@ export const Vaulted = (props: VaultedProps) => {
   });
 
   const { writeAsync } = useContractWrite(config);
-  const { isAlreadyApproved, writeAsync: approvalWriteAsync } =
-    useRequestApproval(true);
+  const {
+    isAlreadyApproved,
+    isRefetchingAlreadyLoaded,
+    refetchIsAlreadyLoaded,
+    writeAsync: approvalWriteAsync,
+  } = useRequestApproval(true);
 
   const vaultForTime = async () => {
     setIsTransactionWindowOpen(true);
 
-    if (approvalWriteAsync && writeAsync) {
+    let refetchedApprovalCheck;
+
+    if (currentTxn) {
+      refetchedApprovalCheck = await refetchIsAlreadyLoaded();
+    }
+
+    if (approvalWriteAsync && !isRefetchingAlreadyLoaded) {
       const approveContractNamedTransaction: NamedTransaction = {
         name: "Approve Vault Contract",
         fn: approvalWriteAsync,
-        description: "",
+        description: `Allows vaulting contract access to selected ${tokenName} NFT(s)`,
         status: "pending",
+        processingText: "Approving",
       };
 
-      const vaultContractNamedTransaction: NamedTransaction = {
+      let vaultContractNamedTransaction: NamedTransaction = {
         name: "Vault NFTs",
         fn: writeAsync,
-        description: "",
+        description: `Vaults selected ${tokenName} NFT(s)`,
         status: "pending",
+        processingText: "Vaulting",
       };
-      if (isAlreadyApproved) {
+
+      if (isAlreadyApproved || refetchedApprovalCheck?.data) {
+        setWriteQueue([vaultContractNamedTransaction]);
+      } else {
         setWriteQueue([
           approveContractNamedTransaction,
           vaultContractNamedTransaction,
         ]);
-      } else {
-        setWriteQueue([vaultContractNamedTransaction]);
       }
     }
   };
@@ -98,7 +122,7 @@ export const Vaulted = (props: VaultedProps) => {
       <div>
         <button
           className="p-2 border border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
-          disabled={checkedTokenIds.length === 0}
+          disabled={checkedTokenIds.length === 0 || currentTxn !== undefined}
           onClick={vaultForTime}
         >
           Vault

@@ -26,7 +26,7 @@ export type NftWithVaultedData = Nft & {
 };
 
 const LoadSelectTransact = (props: Props) => {
-  const { toggleButton, writeQueue } = useContext(TransactionContext);
+  const { toggleButton, currentTxn } = useContext(TransactionContext);
   const { address } = useAccount();
   const [nfts, setNfts] = useState<Nft[]>([]);
   const [loading, setLoading] = useState(false);
@@ -57,6 +57,16 @@ const LoadSelectTransact = (props: Props) => {
   useEffect(() => {
     fetchNftsCb();
   }, [address, fetchNftsCb]);
+
+  useEffect(() => {
+    if (
+      currentTxn?.name === "Vault NFTs" &&
+      currentTxn?.status === "succeeded"
+    ) {
+      setNfts([]);
+      fetchNftsCb();
+    }
+  }, [currentTxn, fetchNftsCb]);
 
   const toggleCheckedTokenId = (tokenId: string) => {
     if (props.checkedTokenIds.includes(tokenId)) {
@@ -112,8 +122,8 @@ const LoadSelectTransact = (props: Props) => {
       <div className="grid-cols-2" />
       <div className="grid-cols-3" />
       <div className="grid-cols-4" />
-      {writeQueue?.length ?? 0 > 0 ? <>{toggleButton}</> : null}
       <div className="w-full h-16 relative">
+        {currentTxn ? toggleButton : null}
         <div className="flex space-x-4 absolute right-0 bottom-0">
           {props.transactNode}
         </div>
