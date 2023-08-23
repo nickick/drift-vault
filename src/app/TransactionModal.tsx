@@ -45,12 +45,13 @@ function TransactionModal(props: Props) {
     props.setCurrentTxn(undefined);
 
     setProcessingIndexNumber(0);
+    setHash(undefined);
   }
 
   useEffect(() => {
     if (!props.isOpen && !hadHash && hash) {
       setHadHash(true);
-      openModal();
+      // openModal();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hash, hadHash, props.isOpen]);
@@ -72,8 +73,10 @@ function TransactionModal(props: Props) {
       props.writeQueue &&
       processingIndexNumber < props.writeQueue.length
     ) {
-      props.writeQueue[processingIndexNumber].status = "in progress";
+      const updatedQueue = [...props.writeQueue];
+      updatedQueue[processingIndexNumber].status = "in progress";
 
+      props.setWriteQueue([...updatedQueue]);
       props.setCurrentTxn(props.writeQueue[processingIndexNumber]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,7 +84,7 @@ function TransactionModal(props: Props) {
 
   // if currentTxn, run it
   useEffect(() => {
-    if (props.currentTxn) {
+    if (props.currentTxn?.status === "in progress") {
       const runTxn = async () => {
         try {
           const txn = await props.currentTxn!.fn!();
@@ -93,7 +96,15 @@ function TransactionModal(props: Props) {
             });
 
             if (result) {
-              props.writeQueue[processingIndexNumber].status = "succeeded";
+              const updatedQueue = [...props.writeQueue];
+              updatedQueue[processingIndexNumber].status = "succeeded";
+              props.setWriteQueue([...updatedQueue]);
+
+              const updatedTxn = {
+                ...props.currentTxn,
+                status: "succeeded",
+              } as NamedTransaction;
+              props.setCurrentTxn(updatedTxn);
             }
 
             // move on to next txn if there's one in the queue after 2 seconds
@@ -188,7 +199,7 @@ function TransactionModal(props: Props) {
                   )}
                   {!error && props.writeQueue.length > 1 && (
                     <div className="flex space-x-2 mt-2">
-                      {props.writeQueue.map((txn, i) => (
+                      {props.writeQueue.map((txn) => (
                         <progress
                           key={txn.name}
                           className={cx(

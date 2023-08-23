@@ -58,6 +58,16 @@ const LoadSelectTransact = (props: Props) => {
     fetchNftsCb();
   }, [address, fetchNftsCb]);
 
+  useEffect(() => {
+    if (
+      currentTxn?.name === "Vault NFTs" &&
+      currentTxn?.status === "succeeded"
+    ) {
+      setNfts([]);
+      fetchNftsCb();
+    }
+  }, [currentTxn, fetchNftsCb]);
+
   const toggleCheckedTokenId = (tokenId: string) => {
     if (props.checkedTokenIds.includes(tokenId)) {
       props.setCheckedTokenIds(
