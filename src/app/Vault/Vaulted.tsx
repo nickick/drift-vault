@@ -81,7 +81,7 @@ export const Vaulted = (props: VaultedProps) => {
         fn: approvalWriteAsync,
         description: `Allows vaulting contract access to selected ${tokenName} NFT(s)`,
         status: "pending",
-        inTransactionText: "Approving",
+        processingText: "Approving",
       };
 
       let vaultContractNamedTransaction: NamedTransaction = {
@@ -89,7 +89,7 @@ export const Vaulted = (props: VaultedProps) => {
         fn: writeAsync,
         description: `Vaults selected ${tokenName} NFT(s)`,
         status: "pending",
-        inTransactionText: "Vaulting",
+        processingText: "Vaulting",
       };
 
       if (isAlreadyApproved || refetchedApprovalCheck?.data) {

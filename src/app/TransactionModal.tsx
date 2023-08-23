@@ -171,7 +171,7 @@ function TransactionModal(props: Props) {
                         )}
                       {isLoading && (
                         <div className="flex items-center">
-                          <p>{props.currentTxn?.inTransactionText}...</p>
+                          <p>{props.currentTxn?.processingText}...</p>
                           <Spinner className="ml-2" />
                         </div>
                       )}
