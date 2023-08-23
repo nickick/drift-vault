@@ -22,9 +22,6 @@ export const Vaulted = (props: VaultedProps) => {
   const { setIsTransactionWindowOpen, setWriteQueue, currentTxn } =
     useContext(TransactionContext);
 
-  const [isSubsequentRequest, setIsSubsequentRequest] =
-    useState<boolean>(false);
-
   const [checkedTokenIds, setCheckedTokenIds] = useState<string[]>([]);
 
   const vaultTimeOptions = [
@@ -74,7 +71,7 @@ export const Vaulted = (props: VaultedProps) => {
 
     let refetchedApprovalCheck;
 
-    if (isSubsequentRequest) {
+    if (currentTxn) {
       refetchedApprovalCheck = await refetchIsAlreadyLoaded();
     }
 
@@ -82,9 +79,9 @@ export const Vaulted = (props: VaultedProps) => {
       const approveContractNamedTransaction: NamedTransaction = {
         name: "Approve Vault Contract",
         fn: approvalWriteAsync,
-        description: `Allows vaulting access to selected ${tokenName} NFT(s)`,
+        description: `Allows vaulting contract access to selected ${tokenName} NFT(s)`,
         status: "pending",
-        hashingTitle: "Approving",
+        inTransactionText: "Approving",
       };
 
       let vaultContractNamedTransaction: NamedTransaction = {
@@ -92,13 +89,12 @@ export const Vaulted = (props: VaultedProps) => {
         fn: writeAsync,
         description: `Vaults selected ${tokenName} NFT(s)`,
         status: "pending",
-        hashingTitle: "Vaulting",
+        inTransactionText: "Vaulting",
       };
 
       if (isAlreadyApproved || refetchedApprovalCheck?.data) {
         setWriteQueue([vaultContractNamedTransaction]);
       } else {
-        setIsSubsequentRequest(true);
         setWriteQueue([
           approveContractNamedTransaction,
           vaultContractNamedTransaction,

@@ -14,7 +14,7 @@ export type NamedTransaction = {
   description: string;
   fn?: WriteAsyncPromise;
   status: NamedTransactionStatus;
-  hashingTitle: string;
+  inTransactionText: string;
 };
 
 const TransactionContext = createContext<{

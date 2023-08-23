@@ -22,13 +22,8 @@ function TransactionModal(props: Props) {
   const [hash, setHash] = useState<`0x${string}`>();
   const [error, setError] = useState<string>();
   const publicClient = usePublicClient();
-  const [currentSessionTransactions, setCurrentSessionTransactions] =
-    useState<NamedTransaction[]>();
-  const [recordedTotalTransactions, setRecordedTotalTransactions] =
-    useState<boolean>();
   const [processingIndexNumber, setProcessingIndexNumber] = useState<number>(0);
-  const [isFinishedTransacting, setIsFinishedTransacting] =
-    useState<boolean>(false);
+  useState<boolean>(false);
 
   function closeModal() {
     props.setIsOpen(false);
@@ -37,7 +32,8 @@ function TransactionModal(props: Props) {
     }
     setError("");
 
-    if (isFinishedTransacting) resetTransactionStatus();
+    if (props.writeQueue[props.writeQueue.length - 1]?.status === "succeeded")
+      resetTransactionStatus();
   }
 
   function openModal() {
@@ -48,8 +44,6 @@ function TransactionModal(props: Props) {
     props.setWriteQueue([]);
     props.setCurrentTxn(undefined);
 
-    setCurrentSessionTransactions([]);
-    setRecordedTotalTransactions(false);
     setProcessingIndexNumber(0);
   }
 
@@ -73,22 +67,14 @@ function TransactionModal(props: Props) {
 
   // if no currentTxn, set currentTxn to first item in queue
   useEffect(() => {
-    if (!props.currentTxn && props.writeQueue && props.writeQueue[0]) {
-      props.writeQueue[0].status = "in progress";
+    if (
+      !props.currentTxn &&
+      props.writeQueue &&
+      processingIndexNumber < props.writeQueue.length
+    ) {
+      props.writeQueue[processingIndexNumber].status = "in progress";
 
-      if (!recordedTotalTransactions) {
-        setCurrentSessionTransactions(props.writeQueue);
-        setRecordedTotalTransactions(true);
-      } else {
-        const updatedTransactions = [...currentSessionTransactions!];
-        updatedTransactions[processingIndexNumber] = {
-          ...props.writeQueue[0],
-        };
-        setCurrentSessionTransactions(updatedTransactions);
-      }
-
-      props.setCurrentTxn(props.writeQueue[0]);
-      props.setWriteQueue(props.writeQueue.slice(1));
+      props.setCurrentTxn(props.writeQueue[processingIndexNumber]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.writeQueue, props.currentTxn]);
@@ -107,21 +93,13 @@ function TransactionModal(props: Props) {
             });
 
             if (result) {
-              props.currentTxn!.status = "succeeded";
-              const updatedTransactions = [...currentSessionTransactions!];
-              updatedTransactions[processingIndexNumber] = {
-                ...props.currentTxn!,
-              };
-              setCurrentSessionTransactions(updatedTransactions);
-
-              processingIndexNumber < currentSessionTransactions!.length - 1
-                ? setProcessingIndexNumber(processingIndexNumber + 1)
-                : setIsFinishedTransacting(true);
+              props.writeQueue[processingIndexNumber].status = "succeeded";
             }
 
             // move on to next txn if there's one in the queue after 2 seconds
-            if (result && props.writeQueue.length > 0) {
+            if (result && processingIndexNumber < props.writeQueue.length - 1) {
               setTimeout(() => {
+                setProcessingIndexNumber(processingIndexNumber + 1);
                 props.setCurrentTxn(undefined);
               }, 2000);
             }
@@ -192,31 +170,25 @@ function TransactionModal(props: Props) {
                           <p>{props.currentTxn?.name}</p>
                         )}
                       {isLoading && (
-                        <div className="flex">
-                          <p>{props.currentTxn?.hashingTitle}...</p>
+                        <div className="flex items-center">
+                          <p>{props.currentTxn?.inTransactionText}...</p>
                           <Spinner className="ml-2" />
                         </div>
                       )}
                       {isSuccess &&
                         props.currentTxn?.status === "succeeded" &&
                         !isError && <p>Success!</p>}
-                      {props.currentTxn && (
+                      {props.writeQueue.length > 1 && (
                         <p>
                           Step {processingIndexNumber + 1} of{" "}
-                          {currentSessionTransactions?.length}
+                          {props.writeQueue.length}
                         </p>
                       )}
                     </div>
                   )}
-                  {!error && currentSessionTransactions && (
-                    <div
-                      className={cx(
-                        "flex space-x-2 mt-2",
-                        currentSessionTransactions?.length === 1 &&
-                          "justify-center"
-                      )}
-                    >
-                      {currentSessionTransactions.map((txn, i) => (
+                  {!error && props.writeQueue.length > 1 && (
+                    <div className="flex space-x-2 mt-2">
+                      {props.writeQueue.map((txn, i) => (
                         <progress
                           key={txn.name}
                           className={cx(
