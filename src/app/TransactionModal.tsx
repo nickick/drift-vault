@@ -18,7 +18,6 @@ type Props = {
 };
 
 function TransactionModal(props: Props) {
-  const [hadHash, setHadHash] = useState(false);
   const [hash, setHash] = useState<`0x${string}`>();
   const [error, setError] = useState<string>();
   const publicClient = usePublicClient();
@@ -36,10 +35,6 @@ function TransactionModal(props: Props) {
       resetTransactionStatus();
   }
 
-  function openModal() {
-    props.setIsOpen(true);
-  }
-
   function resetTransactionStatus() {
     props.setWriteQueue([]);
     props.setCurrentTxn(undefined);
@@ -47,14 +42,6 @@ function TransactionModal(props: Props) {
     setProcessingIndexNumber(0);
     setHash(undefined);
   }
-
-  useEffect(() => {
-    if (!props.isOpen && !hadHash && hash) {
-      setHadHash(true);
-      // openModal();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hash, hadHash, props.isOpen]);
 
   const etherscanUrl =
     process.env.NEXT_PUBLIC_CHAIN_NAME === "goerli"
