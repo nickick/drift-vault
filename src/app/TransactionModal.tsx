@@ -4,7 +4,7 @@ import { Fragment, useEffect, useState } from "react";
 import { usePublicClient, useWaitForTransaction } from "wagmi";
 import { Spinner } from "./Spinner";
 import { NamedTransaction } from "./TransactionContext";
-import cx from "classnames";
+import { twJoin } from "tailwind-merge";
 
 type Props = {
   isOpen: boolean;
@@ -22,7 +22,6 @@ function TransactionModal(props: Props) {
   const [error, setError] = useState<string>();
   const publicClient = usePublicClient();
   const [processingIndexNumber, setProcessingIndexNumber] = useState<number>(0);
-  useState<boolean>(false);
 
   function closeModal() {
     props.setIsOpen(false);
@@ -189,7 +188,7 @@ function TransactionModal(props: Props) {
                       {props.writeQueue.map((txn) => (
                         <progress
                           key={txn.name}
-                          className={cx(
+                          className={twJoin(
                             "progress w-full",
                             txn.status === "succeeded" && "progress-success",
                             txn.status === "in progress" && "progress-info",
