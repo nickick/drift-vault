@@ -92,7 +92,7 @@ const NftCard = ({
         </div>
       </label>
       <VaultedDetails details={nft.vaultedData} />
-      <div>Points: {nft.points?.toString()}</div>
+      {nft.points ? <div>Points: {nft.points?.toString()}</div> : null}
     </div>
   );
 };
