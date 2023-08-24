@@ -2,7 +2,15 @@ import Image from "next/image";
 import { NftWithVaultedData } from "./LoadSelectTransact";
 import { twMerge } from "tailwind-merge";
 import { format } from "date-fns";
+import cx from "classnames";
 
+const selectedBorderClasses = (selected: boolean) => {
+  return {
+    "group-hover:border-gray-100 transition-colors": true,
+    "border-gray-300": selected,
+    "border-gray-500": !selected,
+  };
+};
 interface Props {
   nft: NftWithVaultedData;
   selected: boolean;
@@ -19,12 +27,12 @@ const NftCard = ({
 }: Props) => {
   return (
     <div key={nft.tokenId + nft.title}>
-      <label className="flex flex-col space-y-2 cursor-pointer group">
+      <label className="flex flex-col cursor-pointer group">
         <div
-          className={twMerge(
-            "flex flex-col border w-56 space-y-3 hover:border-gray-100 transition-colors",
-            `${selected ? "border-gray-300" : "border-gray-500"}`
-          )}
+          className={cx({
+            "flex flex-col border w-56 space-y-3": true,
+            ...selectedBorderClasses(selected),
+          })}
         >
           <div className="h-[22rem] relative overflow-hidden flex justify-center items-center">
             {nft.rawMetadata?.animation ? (
@@ -54,19 +62,37 @@ const NftCard = ({
             </div>
           </div>
         </div>
-        <div className="w-full flex items-center justify-start space-x-2">
-          <input
-            type="checkbox"
-            value={nft.tokenId}
-            checked={selected}
-            onChange={() => toggleCheckedTokenId(nft.tokenId)}
-          />
-          <div>
+        <div
+          className={cx({
+            "w-full flex items-center justify-start border-b border-l border-r":
+              true,
+            ...selectedBorderClasses(selected),
+          })}
+        >
+          <div
+            className={cx({
+              "border-r m-0 p-0 w-8 h-8 border-gray-500 transition-colors":
+                true,
+              "group-hover:border-gray-300": true,
+            })}
+          >
+            <input
+              type="checkbox"
+              value={nft.tokenId}
+              checked={selected}
+              className={cx({
+                "checkbox rounded-none w-8 h-8 border-none": true,
+              })}
+              onChange={() => toggleCheckedTokenId(nft.tokenId)}
+            />
+          </div>
+          <div className="pl-3">
             {actionPrefix} {nftNamePrefix} #{nft.tokenId}
           </div>
         </div>
       </label>
       <VaultedDetails details={nft.vaultedData} />
+      <div>Points: {nft.points?.toString()}</div>
     </div>
   );
 };
@@ -77,7 +103,7 @@ const VaultedDetails = ({ details }: { details?: (string | bigint)[] }) => {
   const columns = ["Vaulted", "", "Unlocks", "", "", ""];
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col py-2">
       {columns.map((column, i) => {
         if (column.length === 0) {
           return null;

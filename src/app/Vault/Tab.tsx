@@ -2,6 +2,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import React, { useEffect } from "react";
 import { useAccount, useDisconnect } from "wagmi";
 import { NetworkSwitch } from "../NetworkSwitch";
+import cx from "classnames";
 
 type TabProps = {
   children: React.ReactNode;
@@ -27,9 +28,11 @@ export const Tab = (props: TabProps) => {
 
   return (
     <div
-      className={`flex w-full min-h-[20rem] border-t border-gray-500 ${
-        props.active ? "" : "hidden"
-      } relative`}
+      className={cx({
+        "flex w-full min-h-[20rem] border-t border-gray-500 relative": true,
+        hidden: !props.active,
+        border: !address,
+      })}
     >
       {address && loaded ? (
         props.children
