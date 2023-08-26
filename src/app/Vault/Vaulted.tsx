@@ -5,6 +5,7 @@ import {
   useContractWrite,
   usePrepareContractWrite,
   useContractRead,
+  useSignMessage,
 } from "wagmi";
 import { Tab } from "./Tab";
 
@@ -25,6 +26,7 @@ export const Vaulted = (props: VaultedProps) => {
   const [checkedTokenIds, setCheckedTokenIds] = useState<string[]>([]);
 
   const vaultTimeOptions = [
+    "0 Years",
     "1 Year",
     "2 Years",
     "3 Years",
@@ -66,41 +68,60 @@ export const Vaulted = (props: VaultedProps) => {
     writeAsync: approvalWriteAsync,
   } = useRequestApproval(true);
 
+  const { signMessage } = useSignMessage({ message: "test" });
+  const { signMessageAsync: sign2 } = useSignMessage({ message: "test2" });
   const vaultForTime = async () => {
     setIsTransactionWindowOpen(true);
 
     let refetchedApprovalCheck;
 
-    if (currentTxn) {
-      refetchedApprovalCheck = await refetchIsAlreadyLoaded();
-    }
-
-    if (approvalWriteAsync && !isRefetchingAlreadyLoaded) {
-      const approveContractNamedTransaction: NamedTransaction = {
-        name: "Approve Vault Contract",
+    setWriteQueue([
+      {
+        name: "Sign 1",
         fn: approvalWriteAsync,
-        description: `Allows vaulting contract access to selected ${tokenName} NFT(s)`,
+        description: "this is a test",
         status: "pending",
-        processingText: "Approving",
-      };
-
-      let vaultContractNamedTransaction: NamedTransaction = {
-        name: "Vault NFTs",
-        fn: writeAsync,
-        description: `Vaults selected ${tokenName} NFT(s)`,
+        processingText: "signing",
+      },
+      {
+        name: "Sign 1",
+        fn: approvalWriteAsync,
+        description: "this is a test",
         status: "pending",
-        processingText: "Vaulting",
-      };
+        processingText: "signing",
+      },
+    ]);
 
-      if (isAlreadyApproved || refetchedApprovalCheck?.data) {
-        setWriteQueue([vaultContractNamedTransaction]);
-      } else {
-        setWriteQueue([
-          approveContractNamedTransaction,
-          vaultContractNamedTransaction,
-        ]);
-      }
-    }
+    // if (currentTxn) {
+    //   refetchedApprovalCheck = await refetchIsAlreadyLoaded();
+    // }
+
+    // if (approvalWriteAsync && !isRefetchingAlreadyLoaded) {
+    //   const approveContractNamedTransaction: NamedTransaction = {
+    //     name: "Approve Vault Contract",
+    //     fn: approvalWriteAsync,
+    //     description: `Allows vaulting contract access to selected ${tokenName} NFT(s)`,
+    //     status: "pending",
+    //     processingText: "Approving",
+    //   };
+
+    //   let vaultContractNamedTransaction: NamedTransaction = {
+    //     name: "Vault NFTs",
+    //     fn: writeAsync,
+    //     description: `Vaults selected ${tokenName} NFT(s)`,
+    //     status: "pending",
+    //     processingText: "Vaulting",
+    //   };
+
+    //   if (isAlreadyApproved || refetchedApprovalCheck?.data) {
+    //     setWriteQueue([vaultContractNamedTransaction]);
+    //   } else {
+    //     setWriteQueue([
+    //       approveContractNamedTransaction,
+    //       vaultContractNamedTransaction,
+    //     ]);
+    //   }
+    // }
   };
 
   const selectedAction = (
