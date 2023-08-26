@@ -120,7 +120,7 @@ function TransactionModal(props: Props) {
     <Modal
       onClose={closeModal}
       isOpen={props.isOpen}
-      title={"Transaction Status"}
+      title="Transaction Viewer"
     >
       <div className="mt-2">
         {error && <p className="text-sm text-red-700">Error: {error}</p>}
@@ -163,7 +163,7 @@ function TransactionModal(props: Props) {
           </div>
         )}
         {props.currentTxn && (
-          <div className="flex flex-col my-2">
+          <div className="flex flex-col">
             <p className="mt-2 text-sm">
               {isLoading
                 ? "Please stand by, this could take a few seconds..."
@@ -187,8 +187,8 @@ function TransactionModal(props: Props) {
                   })}
               </p>
             ) : (
-              <p className="text-sm text-gray-300">
-                Waiting for transaction...
+              <p className="text-sm text-gray-300 mt-2">
+                Status: Waiting for transaction...
               </p>
             )}
           </div>

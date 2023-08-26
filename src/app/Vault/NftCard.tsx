@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 import { format } from "date-fns";
 import cx from "classnames";
 
-const selectedBorderClasses = (selected: boolean) => {
+export const selectedBorderClasses = (selected: boolean) => {
   return {
     "group-hover:border-gray-100 transition-colors": true,
     "border-gray-300": selected,
@@ -65,8 +65,7 @@ const NftCard = ({
         </div>
         <div
           className={cx({
-            "w-full flex items-center justify-start border-b border-l border-r":
-              true,
+            "w-full flex items-center justify-start border mt-4": true,
             ...selectedBorderClasses(selected),
           })}
         >

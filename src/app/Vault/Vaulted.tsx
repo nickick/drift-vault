@@ -14,6 +14,7 @@ import { NamedTransaction, TransactionContext } from "../TransactionContext";
 import { LoadSelectTransact } from "./LoadSelectTransact";
 import vaultedABI from "../vaultedAbi.json";
 import manifoldAbi from "../manifoldAbi.json";
+import { VaultTimeSelect } from "../VaultTimeSelect";
 
 type VaultedProps = {
   active: boolean;
@@ -52,7 +53,7 @@ export const Vaulted = (props: VaultedProps) => {
     address: process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
     functionName: "vaultBatch",
     args: [
-      Array(checkedTokenIds.length).fill(vaultTime + 1),
+      Array(checkedTokenIds.length).fill(vaultTime),
       [...checkedTokenIds],
       Array(checkedTokenIds.length).fill(
         process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`
@@ -68,83 +69,58 @@ export const Vaulted = (props: VaultedProps) => {
     writeAsync: approvalWriteAsync,
   } = useRequestApproval(true);
 
-  const { signMessage } = useSignMessage({ message: "test" });
-  const { signMessageAsync: sign2 } = useSignMessage({ message: "test2" });
+  const [vaultTimeSelectOpen, setVaultTimeSelectOpen] = useState(false);
+  const openVaultTimeSelect = () => {
+    setVaultTimeSelectOpen(true);
+  };
+  const closeVaultTimeSelect = () => {
+    setVaultTimeSelectOpen(false);
+  };
+
   const vaultForTime = async () => {
     setIsTransactionWindowOpen(true);
 
     let refetchedApprovalCheck;
 
-    setWriteQueue([
-      {
-        name: "Sign 1",
+    if (currentTxn) {
+      refetchedApprovalCheck = await refetchIsAlreadyLoaded();
+    }
+
+    if (approvalWriteAsync && !isRefetchingAlreadyLoaded) {
+      const approveContractNamedTransaction: NamedTransaction = {
+        name: "Approve Vault Contract",
         fn: approvalWriteAsync,
-        description: "this is a test",
+        description: `Allows vaulting contract access to selected ${tokenName} NFT(s)`,
         status: "pending",
-        processingText: "signing",
-      },
-      {
-        name: "Sign 1",
-        fn: approvalWriteAsync,
-        description: "this is a test",
+        processingText: "Approving",
+      };
+
+      let vaultContractNamedTransaction: NamedTransaction = {
+        name: "Vault NFTs",
+        fn: writeAsync,
+        description: `Vaulting selected ${tokenName} NFT(s)`,
         status: "pending",
-        processingText: "signing",
-      },
-    ]);
+        processingText: "Vaulting",
+      };
 
-    // if (currentTxn) {
-    //   refetchedApprovalCheck = await refetchIsAlreadyLoaded();
-    // }
-
-    // if (approvalWriteAsync && !isRefetchingAlreadyLoaded) {
-    //   const approveContractNamedTransaction: NamedTransaction = {
-    //     name: "Approve Vault Contract",
-    //     fn: approvalWriteAsync,
-    //     description: `Allows vaulting contract access to selected ${tokenName} NFT(s)`,
-    //     status: "pending",
-    //     processingText: "Approving",
-    //   };
-
-    //   let vaultContractNamedTransaction: NamedTransaction = {
-    //     name: "Vault NFTs",
-    //     fn: writeAsync,
-    //     description: `Vaults selected ${tokenName} NFT(s)`,
-    //     status: "pending",
-    //     processingText: "Vaulting",
-    //   };
-
-    //   if (isAlreadyApproved || refetchedApprovalCheck?.data) {
-    //     setWriteQueue([vaultContractNamedTransaction]);
-    //   } else {
-    //     setWriteQueue([
-    //       approveContractNamedTransaction,
-    //       vaultContractNamedTransaction,
-    //     ]);
-    //   }
-    // }
+      if (isAlreadyApproved || refetchedApprovalCheck?.data) {
+        setWriteQueue([vaultContractNamedTransaction]);
+      } else {
+        setWriteQueue([
+          approveContractNamedTransaction,
+          vaultContractNamedTransaction,
+        ]);
+      }
+    }
   };
 
   const selectedAction = (
     <div className="flex space-x-4 absolute right-0 bottom-0">
-      <select
-        value={vaultTimeOptions[vaultTime]}
-        onChange={(e) => {
-          const index = vaultTimeOptions.findIndex(
-            (option) => option === e.target.value
-          );
-          setVaultTime(index);
-        }}
-        className="p-2 border border-gray-200 h-12 w-48"
-      >
-        {vaultTimeOptions.map((option, index) => {
-          return <option key={index}>{option}</option>;
-        })}
-      </select>
       <div>
         <button
           className="p-2 border border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
           disabled={checkedTokenIds.length === 0 || currentTxn !== undefined}
-          onClick={vaultForTime}
+          onClick={openVaultTimeSelect}
         >
           Vault
         </button>
@@ -165,6 +141,13 @@ export const Vaulted = (props: VaultedProps) => {
         transactNode={selectedAction}
         nftNamePrefix="FDO"
         actionPrefix="Vault"
+      />
+      <VaultTimeSelect
+        isOpen={vaultTimeSelectOpen}
+        onClose={closeVaultTimeSelect}
+        setVaultTime={setVaultTime}
+        selectedCount={checkedTokenIds.length}
+        vault={vaultForTime}
       />
     </Tab>
   );
