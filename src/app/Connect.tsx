@@ -5,10 +5,12 @@ function NetworkSwitch() {
   const { chain } = useNetwork();
   const { chains, isLoading, pendingChainId, switchNetwork } =
     useSwitchNetwork();
-  const pendingChainName = chains.find(
-    (chain) => chain.id === pendingChainId
-  )?.name;
   const { disconnect } = useDisconnect();
+  const environtmentChainName =
+    process.env.NEXT_PUBLIC_CHAIN_NAME!.toLowerCase();
+  const environmentChain = chains.find(
+    (c) => c.name.toLowerCase() === environtmentChainName!
+  );
 
   return (
     <div className="flex space-x-2 items-center justify-center">
@@ -34,8 +36,8 @@ function NetworkSwitch() {
           </ul>
         </details>
       )}
-      {chain && chain.name !== "Goerli" && (
-        <button onClick={() => switchNetwork?.(goerli.id)}>
+      {chain && chain.name.toLowerCase() !== environtmentChainName && (
+        <button onClick={() => switchNetwork?.(environmentChain!.id)}>
           <div className="flex items-center border border-gray-200 p-2">
             Switch network
             <Dot okay={false} />
