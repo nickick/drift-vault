@@ -30,17 +30,17 @@ const NftCard = ({
       <label className="flex flex-col cursor-pointer group">
         <div
           className={cx({
-            "flex flex-col border w-56 space-y-3": true,
+            "flex flex-col border md:w-52 lg:w-72 space-y-3": true,
             ...selectedBorderClasses(selected),
           })}
         >
-          <div className="h-[22rem] relative overflow-hidden flex justify-center items-center">
+          <div className="md:h-52 lg:h-72 relative overflow-hidden flex justify-center items-center">
             {nft.rawMetadata?.animation ? (
               <video
                 autoPlay
                 loop
                 muted
-                className="object-cover h-[26rem] group-hover:scale-105 transition-transform"
+                className="object-cover h-[32rem] group-hover:scale-105 transition-transform"
                 width="100%"
                 height="100%"
               >
@@ -49,9 +49,10 @@ const NftCard = ({
             ) : (
               <Image
                 src={nft.media[0]?.raw}
-                fill
+                width={500}
+                height={500}
                 alt={nft.title}
-                className="w-full h-36 mx-auto group-hover:scale-105 transition-transform"
+                className="w-full mx-auto group-hover:scale-105 transition-transform"
               />
             )}
           </div>

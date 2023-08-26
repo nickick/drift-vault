@@ -17,18 +17,18 @@ export const Vault = () => {
 
   const tabExplanations: { [key in TabNames]: React.ReactNode } = {
     [TabNames.VAULTED]:
-      "[vaulted] Store your First Day Out pieces in the Vaulted smart contract and build up vaulted points to access special experiences with Drift. Vault points are based on how many pieces you vault and how long they’ve been vaulting, with additional multiples for locking up your pieces for longer time periods.",
-    [TabNames.LEADERBOARD]: `[leaderboard] Store your First Day Out pieces in the Vaulted smart contract and build up vaulted points to access special experiences with Drift. Vault points are based on how many pieces you vault and how long they’ve been vaulting, with additional multiples for locking up your pieces for longer time periods.`,
+      "Store your First Day Out pieces in the Vaulted smart contract and build up vaulted points to access special experiences with Drift. Vault points are based on how many pieces you vault and how long they’ve been vaulting, with additional multiples for locking up your pieces for longer time periods.",
+    [TabNames.LEADERBOARD]: `Store your First Day Out pieces in the Vaulted smart contract and build up vaulted points to access special experiences with Drift. Vault points are based on how many pieces you vault and how long they’ve been vaulting, with additional multiples for locking up your pieces for longer time periods.`,
     [TabNames.YOUR_VAULT]:
-      "[your vault] Store your First Day Out pieces in the Vaulted smart contract and build up vaulted points to access special experiences with Drift. Vault points are based on how many pieces you vault and how long they’ve been vaulting, with additional multiples for locking up your pieces for longer time periods.",
+      "Store your First Day Out pieces in the Vaulted smart contract and build up vaulted points to access special experiences with Drift. Vault points are based on how many pieces you vault and how long they’ve been vaulting, with additional multiples for locking up your pieces for longer time periods.",
   };
 
   return (
     <TransactionContextWrapper>
       <div className="w-full space-y-4">
         <div className="text-3xl font-serif">{currentTab}</div>
-        <div className="h-16">{tabExplanations[currentTab]}</div>
-        <div className="">
+        <div className="">{tabExplanations[currentTab]}</div>
+        <div>
           <div className="tabs">
             {Object.values(TabNames).map((tabName) => {
               return (

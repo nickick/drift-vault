@@ -101,7 +101,7 @@ const LoadSelectTransact = (props: Props) => {
         )}
         <div
           className={`grid grid-cols-${
-            nfts.length > 3 ? 4 : nfts.length
+            nfts.length > 2 ? 3 : nfts.length
           } gap-4 mx-auto my-4`}
         >
           {nfts.map((nft: NftWithVaultedData) => {
