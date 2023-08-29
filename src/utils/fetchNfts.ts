@@ -12,7 +12,7 @@ export const fetchNfts = async (address: string, contract: string) => {
   const nfts = await alchemy.nft.getNftsForOwner(address);
 
   const filteredNfts = nfts.ownedNfts.filter((nft) => {
-    return nft.contract.address === contract?.toLocaleLowerCase();
+    return nft.contract.address === contract?.toLowerCase();
   });
 
   return {

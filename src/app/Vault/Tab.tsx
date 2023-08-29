@@ -1,7 +1,7 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import cx from "classnames";
 import React, { useEffect } from "react";
-import { useAccount, useDisconnect } from "wagmi";
-import { NetworkSwitch } from "../NetworkSwitch";
+import { useAccount } from "wagmi";
 
 type TabProps = {
   children: React.ReactNode;
@@ -10,7 +10,6 @@ type TabProps = {
 
 export const Tab = (props: TabProps) => {
   const { address } = useAccount();
-  const { disconnect } = useDisconnect();
   const [loaded, setLoaded] = React.useState(false);
 
   useEffect(() => {
@@ -27,28 +26,17 @@ export const Tab = (props: TabProps) => {
 
   return (
     <div
-      className={`flex w-full min-h-[20rem] border-t border-gray-500 ${
-        props.active ? "" : "hidden"
-      } relative`}
+      className={cx({
+        "flex w-full min-h-[20rem] border-t border-gray-500 relative": true,
+        hidden: !props.active,
+        border: !address,
+      })}
     >
       {address && loaded ? (
         props.children
       ) : (
         <div className="flex w-full h-full min-h-[20rem] items-center justify-center">
           <ConnectButton accountStatus={"address"} />
-        </div>
-      )}
-      {address && loaded && (
-        <div className="absolute top-4 right-4 flex space-x-4">
-          <NetworkSwitch />
-          <button
-            className=" p-2 border border-gray-200 h-10"
-            onClick={() => {
-              disconnect();
-            }}
-          >
-            Disconnect
-          </button>
         </div>
       )}
     </div>

@@ -1,9 +1,14 @@
-import React from "react";
-import { DriftLogo } from "../icons/DriftLogo";
-import { Discord } from "../icons/Discord";
-import Twitter from "../icons/Twitter";
-import { Instagram } from "../icons/Instagram";
+"use client";
+
+import "./header.css";
 import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import { useAccount, useDisconnect } from "wagmi";
+import { NetworkSwitch } from "../Connect";
+import { Discord } from "../icons/Discord";
+import { DriftLogo } from "../icons/DriftLogo";
+import { Instagram } from "../icons/Instagram";
+import Twitter from "../icons/Twitter";
 
 type NavItem = {
   name?: string;
@@ -69,6 +74,13 @@ export const rightNavItems: NavItem[] = [
 ];
 
 export const Header = () => {
+  const [loaded, setLoaded] = useState(false);
+  const { address } = useAccount();
+
+  useEffect(() => {
+    setLoaded(true);
+  }, [address]);
+
   return (
     <div className="flex items-center justify-center pt-[3.62rem] pb-16 max-w-screen-8xl mx-auto relative">
       <div className="flex space-x-6 justify-between items-center absolute left-[0.7rem]">
@@ -83,6 +95,11 @@ export const Header = () => {
         {rightNavItems.map((item) => {
           return <NavbarItem key={item.name} item={item} />;
         })}
+        {address && loaded && (
+          <div className="flex space-x-2">
+            <NetworkSwitch />
+          </div>
+        )}
       </div>
     </div>
   );

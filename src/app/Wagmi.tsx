@@ -1,6 +1,10 @@
 "use client";
 
-import { RainbowKitProvider, getDefaultWallets } from "@rainbow-me/rainbowkit";
+import {
+  RainbowKitProvider,
+  getDefaultWallets,
+  darkTheme,
+} from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { WagmiConfig, configureChains, createConfig } from "wagmi";
 import { mainnet, goerli } from "wagmi/chains";
@@ -29,6 +33,13 @@ const wagmiConfig = createConfig({
 
 export const WagmiWrapper = ({ children }: { children: React.ReactNode }) => (
   <WagmiConfig config={wagmiConfig}>
-    <RainbowKitProvider chains={chains}>{children}</RainbowKitProvider>
+    <RainbowKitProvider
+      theme={darkTheme({
+        borderRadius: "none",
+      })}
+      chains={chains}
+    >
+      {children}
+    </RainbowKitProvider>
   </WagmiConfig>
 );

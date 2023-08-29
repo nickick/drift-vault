@@ -18,6 +18,7 @@ export const YourVault = (props: YourVaultProps) => {
   const publicClient = usePublicClient();
 
   const nftsLoadTransform = async (nfts: Nft[]) => {
+    // get vaulted tokens count to iterate through for vaulted token data
     const data = (await publicClient.readContract({
       address: process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
       abi: vaultedAbi,
@@ -26,11 +27,11 @@ export const YourVault = (props: YourVaultProps) => {
     })) as BigInt;
 
     const tokensIndexArray = [];
-
     for (let i = 0; i < Number(data); i++) {
       tokensIndexArray.push(i);
     }
 
+    // Iterate through the count to get the vaulted token data
     const nftsData = (await Promise.all(
       tokensIndexArray.map((nft) => {
         return publicClient.readContract({
@@ -40,10 +41,12 @@ export const YourVault = (props: YourVaultProps) => {
           args: [address as `0x${string}`, nft],
         });
       })
-    )) as string[][];
+    )) as string[][]; // [contractAddress (FDO / Vaulting contract), tokenId as bigint][]
 
+    // convert tokenIds from bigint into strings
     const tokenIds = nftsData.map((nftData) => nftData[1].toString());
 
+    // get NFTs from the Vaulting FDO contract owned by the Vault contract
     const nftsTransformedRes = await fetch(
       `/api/nfts/${process.env.NEXT_PUBLIC_VAULT_ADDRESS}/${process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS}`,
       {
@@ -76,6 +79,28 @@ export const YourVault = (props: YourVaultProps) => {
 
     vaultedData.forEach((data, i) => {
       filteredNfts[i].vaultedData = data;
+    });
+
+    const pointsData = (await Promise.all(
+      filteredNfts.map(async (nft: Nft) => {
+        const points = await publicClient.readContract({
+          address: process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
+          abi: vaultedAbi,
+          functionName: "calculatePoints",
+          args: [nft.tokenId, nft.contract.address],
+        });
+        return {
+          tokenId: nft.tokenId,
+          points,
+        };
+      })
+    )) as { tokenId: string; points: bigint }[];
+
+    pointsData.forEach((data, i) => {
+      const nft = filteredNfts.find((nft) => nft.tokenId === data.tokenId);
+      if (nft) {
+        nft.points = data.points;
+      }
     });
 
     return filteredNfts;

@@ -23,6 +23,7 @@ interface Props {
 
 export type NftWithVaultedData = Nft & {
   vaultedData?: (string | bigint)[];
+  points?: bigint;
 };
 
 const LoadSelectTransact = (props: Props) => {
@@ -80,7 +81,7 @@ const LoadSelectTransact = (props: Props) => {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex flex-col space-y-8 relative w-full border-r border-l border-b border-gray-500 p-4">
+      <div className="flex flex-col relative w-full border-r border-l border-b border-gray-500 p-4">
         <div className="flex flex-col">
           <h2 className="text-xl">{props.title}</h2>
           {props.instructions}
@@ -100,8 +101,8 @@ const LoadSelectTransact = (props: Props) => {
         )}
         <div
           className={`grid grid-cols-${
-            nfts.length > 3 ? 4 : nfts.length
-          } gap-4 mx-auto`}
+            nfts.length > 2 ? 3 : nfts.length
+          } gap-4 mx-auto my-4`}
         >
           {nfts.map((nft: NftWithVaultedData) => {
             const selected = props.checkedTokenIds.includes(nft.tokenId);
