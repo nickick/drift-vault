@@ -5,7 +5,6 @@ import {
   useContractWrite,
   usePrepareContractWrite,
   useContractRead,
-  useSignMessage,
 } from "wagmi";
 import { Tab } from "./Tab";
 
@@ -61,7 +60,12 @@ export const Vaulted = (props: VaultedProps) => {
     ],
   });
 
-  const { writeAsync } = useContractWrite(config);
+  const { writeAsync } = useContractWrite({
+    ...config,
+    onSuccess(_) {
+      setCheckedTokenIds([]);
+    },
+  });
   const {
     isAlreadyApproved,
     isRefetchingAlreadyLoaded,
