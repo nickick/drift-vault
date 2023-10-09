@@ -22,7 +22,6 @@ function TransactionModal(props: Props) {
   const [error, setError] = useState<string>();
   const publicClient = usePublicClient();
   const [processingIndexNumber, setProcessingIndexNumber] = useState<number>(0);
-  useState<boolean>(false);
 
   function closeModal() {
     props.setIsOpen(false);
