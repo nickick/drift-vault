@@ -152,7 +152,7 @@ function TransactionModal(props: Props) {
                 className={cx(
                   "progress w-full",
                   txn.status === "succeeded" && "progress-success",
-                  txn.status === "in progress" && "progress-info",
+                  txn.status === "in progress" && "progress-info animate-pulse",
                   txn.status === "in progress" && isLoading && "animate-pulse"
                 )}
                 value="100"

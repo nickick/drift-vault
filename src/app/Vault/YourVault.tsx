@@ -4,6 +4,8 @@ import { useAccount, usePublicClient } from "wagmi";
 import { LoadSelectTransact, NftWithVaultedData } from "./LoadSelectTransact";
 import { Nft } from "alchemy-sdk";
 import vaultedAbi from "../vaultedAbi.json";
+import { NftCard } from "./NftCard";
+import { PointsTable } from "./PointsTable";
 
 type YourVaultProps = {
   active: boolean;
@@ -118,7 +120,11 @@ export const YourVault = (props: YourVaultProps) => {
         hash={vaultHash}
         noNftsMessage="You have no NFTs in your vault."
         actionPrefix="Unvault"
-      />
+      >
+        {(props) => {
+          return <PointsTable {...props} />;
+        }}
+      </LoadSelectTransact>
     </Tab>
   );
 };

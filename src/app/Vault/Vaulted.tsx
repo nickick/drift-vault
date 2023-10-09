@@ -10,10 +10,11 @@ import { Tab } from "./Tab";
 
 import { useRequestApproval } from "@/utils/useRequestApproval";
 import { NamedTransaction, TransactionContext } from "../TransactionContext";
-import { LoadSelectTransact } from "./LoadSelectTransact";
+import { LoadSelectTransact, NftWithVaultedData } from "./LoadSelectTransact";
 import vaultedABI from "../vaultedAbi.json";
 import manifoldAbi from "../manifoldAbi.json";
-import { VaultTimeSelect } from "../VaultTimeSelect";
+import { VaultTimeSelect } from "../modals/VaultTimeSelect";
+import { NftCard } from "./NftCard";
 
 type VaultedProps = {
   active: boolean;
@@ -145,7 +146,41 @@ export const Vaulted = (props: VaultedProps) => {
         transactNode={selectedAction}
         nftNamePrefix="FDO"
         actionPrefix="Vault"
-      />
+      >
+        {({
+          nfts,
+          checkedTokenIds,
+          toggleCheckedTokenId,
+          nftNamePrefix,
+          actionPrefix,
+        }) => {
+          return (
+            <>
+              {nfts.length > 0 ? (
+                <div
+                  className={`grid grid-cols-${
+                    nfts.length > 2 ? 3 : nfts.length
+                  } gap-4 mx-auto my-4 mb-12`}
+                >
+                  {nfts.map((nft: NftWithVaultedData) => {
+                    const selected = checkedTokenIds.includes(nft.tokenId);
+                    return (
+                      <NftCard
+                        selected={selected}
+                        nft={nft}
+                        toggleCheckedTokenId={toggleCheckedTokenId}
+                        key={nft.tokenId + nft.title}
+                        nftNamePrefix={nftNamePrefix}
+                        actionPrefix={actionPrefix}
+                      />
+                    );
+                  })}
+                </div>
+              ) : null}
+            </>
+          );
+        }}
+      </LoadSelectTransact>
       <VaultTimeSelect
         isOpen={vaultTimeSelectOpen}
         onClose={closeVaultTimeSelect}

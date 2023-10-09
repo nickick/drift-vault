@@ -2,6 +2,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import cx from "classnames";
 import React, { useEffect } from "react";
 import { useAccount } from "wagmi";
+import { Spinner } from "../Spinner";
 
 type TabProps = {
   children: React.ReactNode;
@@ -18,8 +19,11 @@ export const Tab = (props: TabProps) => {
 
   if (!loaded) {
     return (
-      <div className="flex w-full h-96 relative justify-center items-center">
-        <div>Loading...</div>
+      <div className="flex w-full h-96 relative justify-center items-center border-gray-500 border">
+        <div>
+          Loading...
+          <Spinner className="ml-2" />
+        </div>
       </div>
     );
   }

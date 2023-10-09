@@ -92,8 +92,8 @@ export const Header = () => {
         <DriftLogo />
       </Link>
       <div className="flex space-x-6 justify-between items-center absolute right-4">
-        {rightNavItems.map((item) => {
-          return <NavbarItem key={item.name} item={item} />;
+        {rightNavItems.map((item, index) => {
+          return <NavbarItem key={item.name || "" + index} item={item} />;
         })}
         {address && loaded && (
           <div className="flex space-x-2">

@@ -1,16 +1,9 @@
+import cx from "classnames";
+import { format } from "date-fns";
 import Image from "next/image";
 import { NftWithVaultedData } from "./LoadSelectTransact";
-import { twMerge } from "tailwind-merge";
-import { format } from "date-fns";
-import cx from "classnames";
+import { selectedBorderClasses } from "@/utils/styling";
 
-export const selectedBorderClasses = (selected: boolean) => {
-  return {
-    "group-hover:border-gray-100 transition-colors": true,
-    "border-gray-300": selected,
-    "border-gray-500": !selected,
-  };
-};
 interface Props {
   nft: NftWithVaultedData;
   selected: boolean;
@@ -18,6 +11,7 @@ interface Props {
   nftNamePrefix?: string;
   actionPrefix?: string;
 }
+
 const NftCard = ({
   nft,
   selected,
@@ -32,6 +26,7 @@ const NftCard = ({
           className={cx({
             "flex flex-col border md:w-52 lg:w-72 space-y-3": true,
             ...selectedBorderClasses(selected),
+            "bg-white text-black": selected,
           })}
         >
           <div className="md:h-52 lg:h-72 relative overflow-hidden flex justify-center items-center">
@@ -67,6 +62,7 @@ const NftCard = ({
           className={cx({
             "w-full flex items-center justify-start border mt-4": true,
             ...selectedBorderClasses(selected),
+            "bg-white text-black": selected,
           })}
         >
           <div

@@ -1,8 +1,8 @@
 import cx from "classnames";
 import dayjs from "dayjs";
 import React from "react";
-import { Modal } from "./Modal";
-import { selectedBorderClasses } from "./Vault/NftCard";
+import { Modal } from "../Modal";
+import { selectedBorderClasses } from "@/utils/styling";
 
 const year = dayjs().get("year");
 const vaultOptions = [
@@ -65,11 +65,7 @@ const VaultTimeSelect = ({
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      title={"Pick a vaulting option"}
-      onClose={closeModal}
-    >
+    <Modal isOpen={isOpen} title={"Vaulting options"} onClose={closeModal}>
       <div className="flex flex-col space-y-4">
         <div className="mt-2">
           Select how long you would like to vault your FirstDayOut NFTs. If you

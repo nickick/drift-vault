@@ -7,6 +7,13 @@ import { Spinner } from "../Spinner";
 import { TransactionContext } from "../TransactionContext";
 import { NftCard } from "./NftCard";
 
+export interface NftItemsProps {
+  nfts: NftWithVaultedData[];
+  checkedTokenIds: string[];
+  toggleCheckedTokenId: (tokenId: string) => void;
+  nftNamePrefix?: string;
+  actionPrefix?: string;
+}
 interface Props {
   contractAddress: string; // Address of the contract to load NFTs from
   title: string; // Title of the component
@@ -19,6 +26,7 @@ interface Props {
   noNftsMessage?: string; // Used when there are no NFTs to display after loading
   nftNamePrefix?: string; // Used in front of the NFT tokenId: FDO => "FDO #13"
   actionPrefix?: string; // used in front of the check: "Vault FDO #13" or "Unvault FDO #13"
+  children: (props: NftItemsProps) => React.ReactNode; // Children of the component, used to render the NFTs
 }
 
 export type NftWithVaultedData = Nft & {
@@ -81,11 +89,17 @@ const LoadSelectTransact = (props: Props) => {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex flex-col relative w-full border-r border-l border-b border-gray-500 p-4">
-        <div className="flex flex-col">
-          <h2 className="text-xl">{props.title}</h2>
-          {props.instructions}
-        </div>
+      <div className="flex flex-col relative w-full border-r border-l border-b border-gray-500">
+        {props.instructions && !loading ? (
+          <div className="flex flex-col p-4">{props.instructions}</div>
+        ) : null}
+        {props.children({
+          nfts,
+          toggleCheckedTokenId,
+          checkedTokenIds: props.checkedTokenIds,
+          nftNamePrefix: props.nftNamePrefix,
+          actionPrefix: props.actionPrefix,
+        })}
         {loading && (
           <div className="flex w-full h-96 relative justify-center items-center">
             <div>
@@ -95,34 +109,30 @@ const LoadSelectTransact = (props: Props) => {
           </div>
         )}
         {!loading && !nfts.length && (
-          <div className="h-full w-full flex items-center justify-center">
-            {noNftsMessage}
+          <div className="h-96 mb-16 w-full flex items-center justify-center">
+            <div className="text-center">
+              <div>{noNftsMessage}</div>
+              <div>
+                You can get some at
+                <a
+                  href="https://opensea.io/collection/firstdayout"
+                  rel="nofollow noreferrer"
+                  target="_blank"
+                  className="underline ml-1"
+                >
+                  Opensea
+                </a>
+                .
+              </div>
+            </div>
           </div>
         )}
-        <div
-          className={`grid grid-cols-${
-            nfts.length > 2 ? 3 : nfts.length
-          } gap-4 mx-auto my-4`}
-        >
-          {nfts.map((nft: NftWithVaultedData) => {
-            const selected = props.checkedTokenIds.includes(nft.tokenId);
-            return (
-              <NftCard
-                selected={selected}
-                nft={nft}
-                toggleCheckedTokenId={toggleCheckedTokenId}
-                key={nft.tokenId + nft.title}
-                nftNamePrefix={props.nftNamePrefix}
-                actionPrefix={props.actionPrefix}
-              />
-            );
-          })}
-        </div>
       </div>
       {/* Adding empty divs with the correct grid col classes to make tailwind compile them */}
-      <div className="grid-cols-2" />
-      <div className="grid-cols-3" />
-      <div className="grid-cols-4" />
+      <div className="grid-cols-2 hidden" />
+      <div className="grid-cols-3 hidden" />
+      <div className="grid-cols-4 hidden" />
+      {/* end empty divs */}
       <div className="w-full h-16 relative">
         {currentTxn ? toggleButton : null}
         <div className="flex space-x-4 absolute right-0 bottom-0">
