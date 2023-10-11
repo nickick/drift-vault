@@ -9,7 +9,7 @@ type UnvaultConfirmationProps = {
   unvault: () => void;
 };
 
-const UvnaultConfirmation = ({
+const UnvaultConvirmation = ({
   isOpen,
   onClose,
   selectedCount,
@@ -35,11 +35,11 @@ const UvnaultConfirmation = ({
             closeModal();
           }}
         >
-          <>Select a vaulting option</>
+          <>Unvault</>
         </button>
       </div>
     </Modal>
   );
 };
 
-export { UvnaultConfirmation };
+export { UnvaultConvirmation };

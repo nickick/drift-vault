@@ -20,14 +20,14 @@ const PointsTable = ({
   actionPrefix,
 }: NftItemsProps) => {
   return (
-    <div className={`flex flex-col`}>
+    <div className={`flex flex-col border-t border-gray-500`}>
       <div className="col-span-7 grid grid-cols-7 gap-8 border-b border-gray-500 py-2">
         <div></div>
         <div className="col-span-2">Name</div>
         <div>Vaulted on</div>
         <div>Vault unlocks on</div>
         <div>Points accumulated</div>
-        <div className="flex justify-center pr-8">Select</div>
+        <div className="flex justify-end pr-8">Select</div>
       </div>
       {nfts.map((nft: NftWithVaultedData) => {
         const selected = checkedTokenIds.includes(nft.tokenId);
@@ -90,8 +90,8 @@ const TableRow = ({
       </div>
       <VaultedDetails details={nft.vaultedData} />
       {nft.points ? <div>{nft.points?.toLocaleString()}</div> : null}
-      <div className="w-full flex items-center justify-center">
-        <div className="mr-3">
+      <div className="w-full flex items-center justify-end">
+        <div className="mr-8">
           {actionPrefix} {nftNamePrefix} #{nft.tokenId}
         </div>
         <div className="relative">

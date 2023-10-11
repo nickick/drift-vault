@@ -6,6 +6,7 @@ import {
   darkTheme,
 } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
+import { useEffect, useState } from "react";
 import { WagmiConfig, configureChains, createConfig } from "wagmi";
 import { mainnet, goerli } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
@@ -31,15 +32,25 @@ const wagmiConfig = createConfig({
   publicClient,
 });
 
-export const WagmiWrapper = ({ children }: { children: React.ReactNode }) => (
-  <WagmiConfig config={wagmiConfig}>
-    <RainbowKitProvider
-      theme={darkTheme({
-        borderRadius: "none",
-      })}
-      chains={chains}
-    >
-      {children}
-    </RainbowKitProvider>
-  </WagmiConfig>
-);
+export const WagmiWrapper = ({ children }: { children: React.ReactNode }) => {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    setReady(true);
+  }, []);
+  return (
+    <>
+      {ready ? (
+        <WagmiConfig config={wagmiConfig}>
+          <RainbowKitProvider
+            theme={darkTheme({
+              borderRadius: "none",
+            })}
+            chains={chains}
+          >
+            {children}
+          </RainbowKitProvider>
+        </WagmiConfig>
+      ) : null}
+    </>
+  );
+};

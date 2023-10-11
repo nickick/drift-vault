@@ -7,8 +7,8 @@ import { Leaderboard } from "./Leaderboard";
 import { TransactionContextWrapper } from "../TransactionContext";
 
 enum TabNames {
-  VAULTED = "Vaulted",
-  YOUR_VAULT = "Your Vault",
+  VAULTED = "Wallet",
+  YOUR_VAULT = "Vault",
   LEADERBOARD = "Leaderboard",
 }
 
@@ -27,9 +27,6 @@ const tabExplanations: { [key in TabNames]: React.ReactNode } = {
           accumulated. This panel also lets you take NFTs out of the vault.
         </li>
       </ul>
-      are based on how many pieces you vault and how long they&apos;ve been
-      vaulting, with additional multiples for locking up your pieces for longer
-      time periods.
     </div>
   ),
   [TabNames.LEADERBOARD]: `Store your First Day Out pieces in the Vaulted smart contract and build up vaulted points to access special experiences with Drift. Vault points are based on how many pieces you vault and how long they’ve been vaulting, with additional multiples for locking up your pieces for longer time periods.`,
@@ -39,17 +36,13 @@ const tabExplanations: { [key in TabNames]: React.ReactNode } = {
       accumulated. This panel also lets you take NFTs out of the vault.
       <ul className="list-disc ml-4">
         <li>
-          Use the Vaulted panel to choose which NFTs. Select longer lockup
-          periods for higher point multipliers.
+          To unvault a piece, select it by clicking/tapping on it and then using
+          the &quot;Unvault&quot; button below.
         </li>
         <li>
-          See which NFTs you have vaulted and how many points you&apos;ve
-          accumulated. This panel also lets you take NFTs out of the vault.
+          You can only unvault pieces that have passed their lockup period.
         </li>
       </ul>
-      are based on how many pieces you vault and how long they&apos;ve been
-      vaulting, with additional multiples for locking up your pieces for longer
-      time periods.
     </div>
   ),
 };
@@ -60,22 +53,20 @@ export const Vault = () => {
   return (
     <TransactionContextWrapper>
       <div className="w-full">
-        <div className="px-4">
+        <div className="px-4 h-28">
           <div className="text-3xl font-serif">{currentTab}</div>
           <div className="mt-2">{tabExplanations[currentTab]}</div>
         </div>
         <div className="mt-8">
-          <div className="tabs">
+          <div className="text-gray-500">
             {Object.values(TabNames).map((tabName) => {
               return (
                 <a
                   key={tabName}
-                  className={`tab tab-bordered ${
-                    currentTab === tabName ? "tab-active" : ""
-                  }`}
+                  className={` ${currentTab === tabName ? "text-white" : ""}`}
                   onClick={() => setCurrentTab(tabName)}
                 >
-                  <span className="text-3xl pb-4 relative bottom-2">
+                  <span className="text-xl px-4 pt-1 pb-1 border-t border-l border-r rounded-ss-md rounded-se-md relative bottom-[3px] cursor-pointer border-gray-500">
                     {tabName}
                   </span>
                 </a>

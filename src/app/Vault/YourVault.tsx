@@ -1,11 +1,20 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Tab } from "./Tab";
-import { useAccount, usePublicClient } from "wagmi";
-import { LoadSelectTransact, NftWithVaultedData } from "./LoadSelectTransact";
+import { useRequestApproval } from "@/utils/useRequestApproval";
 import { Nft } from "alchemy-sdk";
+import { useCallback, useContext, useState } from "react";
+import {
+  useAccount,
+  useContractRead,
+  useContractWrite,
+  usePrepareContractWrite,
+  usePublicClient,
+} from "wagmi";
+import { NamedTransaction, TransactionContext } from "../TransactionContext";
+import manifoldAbi from "../manifoldAbi.json";
+import { UnvaultConvirmation } from "../modals/UnvaultConfirmation";
 import vaultedAbi from "../vaultedAbi.json";
-import { NftCard } from "./NftCard";
+import { LoadSelectTransact, NftWithVaultedData } from "./LoadSelectTransact";
 import { PointsTable } from "./PointsTable";
+import { Tab } from "./Tab";
 
 type YourVaultProps = {
   active: boolean;
@@ -19,7 +28,7 @@ export const YourVault = (props: YourVaultProps) => {
 
   const publicClient = usePublicClient();
 
-  const nftsLoadTransform = async (nfts: Nft[]) => {
+  const nftsLoadTransform = async () => {
     // get vaulted tokens count to iterate through for vaulted token data
     const data = (await publicClient.readContract({
       address: process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
@@ -108,23 +117,94 @@ export const YourVault = (props: YourVaultProps) => {
     return filteredNfts;
   };
 
+  const [unvaultConfirmationOpen, setUnvaultConfirmationOpen] = useState(false);
+
+  const toggleUnvaultOpen = () => {
+    setUnvaultConfirmationOpen(!unvaultConfirmationOpen);
+  };
+
+  const { data: tokenName } = useContractRead({
+    address: process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`,
+    abi: manifoldAbi,
+    functionName: "name",
+  });
+
+  const { config } = usePrepareContractWrite({
+    abi: vaultedAbi,
+    address: process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
+    functionName: "unvault",
+    args: [
+      checkedTokenIds[0],
+      process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`,
+    ],
+  });
+
+  const { writeAsync } = useContractWrite({
+    ...config,
+    onSuccess: () => {
+      setCheckedTokenIds([]);
+    },
+  });
+
+  const { setIsTransactionWindowOpen, setWriteQueue, currentTxn } =
+    useContext(TransactionContext);
+
+  const unvault = useCallback(async () => {
+    setIsTransactionWindowOpen(true);
+
+    let vaultContractNamedTransaction: NamedTransaction = {
+      name: "Vault NFTs",
+      fn: writeAsync,
+      description: `Vaulting selected ${tokenName} NFT(s)`,
+      status: "pending",
+      processingText: "Vaulting",
+    };
+
+    setWriteQueue([vaultContractNamedTransaction]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [writeAsync]);
+
+  const transactNode = (
+    <div className="flex space-x-4 absolute right-0 bottom-0">
+      <div>
+        <button
+          className="p-2 border border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
+          disabled={checkedTokenIds.length === 0 || currentTxn !== undefined}
+          onClick={toggleUnvaultOpen}
+        >
+          Unvault
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <Tab active={props.active}>
-      <LoadSelectTransact
-        contractAddress={process.env.NEXT_PUBLIC_SBT_ADDRESS as `0x${string}`}
-        title="Your Vault"
-        checkedTokenIds={checkedTokenIds}
-        setCheckedTokenIds={setCheckedTokenIds}
-        transactNode={<div />}
-        nftsLoadTransform={nftsLoadTransform}
-        hash={vaultHash}
-        noNftsMessage="You have no NFTs in your vault."
-        actionPrefix="Unvault"
-      >
-        {(props) => {
-          return <PointsTable {...props} />;
-        }}
-      </LoadSelectTransact>
+      <div className="border-r border-b border-l border-gray-500 p-8 w-full max-h-[calc(100vh-30rem)] overflow-y-auto overflow-x-hidden">
+        <LoadSelectTransact
+          contractAddress={process.env.NEXT_PUBLIC_SBT_ADDRESS as `0x${string}`}
+          title="Your Vault"
+          checkedTokenIds={checkedTokenIds}
+          setCheckedTokenIds={setCheckedTokenIds}
+          transactNode={null}
+          nftsLoadTransform={nftsLoadTransform}
+          hash={vaultHash}
+          noNftsMessage="You have no NFTs in your vault."
+          actionPrefix="Unvault"
+        >
+          {(props) => {
+            return <PointsTable {...props} />;
+          }}
+        </LoadSelectTransact>
+      </div>
+
+      <UnvaultConvirmation
+        isOpen={unvaultConfirmationOpen}
+        onClose={toggleUnvaultOpen}
+        selectedCount={checkedTokenIds.length}
+        unvault={unvault}
+      />
+      <div className="relative -bottom-16">{transactNode}</div>
     </Tab>
   );
 };
