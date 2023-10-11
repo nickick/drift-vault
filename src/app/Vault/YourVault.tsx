@@ -15,6 +15,7 @@ import vaultedAbi from "../vaultedAbi.json";
 import { LoadSelectTransact, NftWithVaultedData } from "./LoadSelectTransact";
 import { PointsTable } from "./PointsTable";
 import { Tab } from "./Tab";
+import cx from "classnames";
 
 type YourVaultProps = {
   active: boolean;
@@ -164,9 +165,22 @@ export const YourVault = (props: YourVaultProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [writeAsync]);
 
+  const [checkAllNfts, setCheckAllNfts] = useState(false);
+
   const transactNode = (
     <div className="flex space-x-4 absolute right-0 bottom-0">
-      <div>
+      <div className="flex items-center">
+        <label className="w-40 cursor-pointer flex items-center">
+          <input
+            type="checkbox"
+            checked={checkAllNfts}
+            className={cx({
+              "checkbox rounded-none w-8 h-8 mr-4": true,
+            })}
+            onChange={() => setCheckAllNfts(!checkAllNfts)}
+          />
+          Select all
+        </label>
         <button
           className="p-2 border border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
           disabled={checkedTokenIds.length === 0 || currentTxn !== undefined}
@@ -180,7 +194,7 @@ export const YourVault = (props: YourVaultProps) => {
 
   return (
     <Tab active={props.active}>
-      <div className="border-r border-b border-l border-gray-500 p-8 w-full max-h-[calc(100vh-30rem)] overflow-y-auto overflow-x-hidden">
+      <div className="border-r border-b border-l border-gray-500 p-8 w-full max-h-[calc(100vh-30rem)] overflow-y-auto overflow-x-hidden mb-12">
         <LoadSelectTransact
           contractAddress={process.env.NEXT_PUBLIC_SBT_ADDRESS as `0x${string}`}
           title="Your Vault"
@@ -204,7 +218,7 @@ export const YourVault = (props: YourVaultProps) => {
         selectedCount={checkedTokenIds.length}
         unvault={unvault}
       />
-      <div className="relative -bottom-16">{transactNode}</div>
+      <div className="relative -bottom-8">{transactNode}</div>
     </Tab>
   );
 };

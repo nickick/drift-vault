@@ -21,13 +21,13 @@ const PointsTable = ({
 }: NftItemsProps) => {
   return (
     <div className={`flex flex-col border-t border-gray-500`}>
-      <div className="col-span-7 grid grid-cols-7 gap-8 border-b border-gray-500 py-2">
-        <div></div>
-        <div className="col-span-2">Name</div>
+      <div className="col-span-7 grid grid-cols-7 border-b border-gray-500 py-2">
+        <div />
+        <div />
+        <div className="col-span-2 ml-8">Token ID</div>
         <div>Vaulted on</div>
         <div>Vault unlocks on</div>
         <div>Points accumulated</div>
-        <div className="flex justify-end pr-8">Select</div>
       </div>
       {nfts.map((nft: NftWithVaultedData) => {
         const selected = checkedTokenIds.includes(nft.tokenId);
@@ -46,24 +46,33 @@ const PointsTable = ({
   );
 };
 
-const TableRow = ({
-  nft,
-  selected,
-  toggleCheckedTokenId,
-  nftNamePrefix,
-  actionPrefix,
-}: Props) => {
+const TableRow = ({ nft, selected, toggleCheckedTokenId }: Props) => {
   return (
     <label
       key={nft.tokenId + nft.title}
       className={cx({
-        "grid grid-cols-7 items-center border-b border-gray-500 gap-8 cursor-pointer":
+        "grid grid-cols-7 items-center border-b border-gray-500 cursor-pointer":
           true,
         ...selectedBorderClasses(selected),
         "bg-white text-black": selected,
       })}
     >
-      <div className="col-span-1 relative overflow-hidden flex justify-center items-center h-56">
+      <div className="w-full flex items-center justify-center">
+        <div className="relative">
+          <div className="relative m-0 p-0 w-8 h-8">
+            <input
+              type="checkbox"
+              value={nft.tokenId}
+              checked={selected}
+              className={cx({
+                "checkbox rounded-none w-8 h-8": true,
+              })}
+              onChange={() => toggleCheckedTokenId(nft.tokenId)}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="col-span-1 relative overflow-hidden flex justify-center items-center h-36">
         {nft.rawMetadata?.animation ? (
           <video
             autoPlay
@@ -86,28 +95,12 @@ const TableRow = ({
         )}
       </div>
       <div className="col-span-2 flex items-center cursor-pointer group w-full">
-        <div className="leading-snug text-lg font-bold">{nft.title}</div>
+        <div className="leading-snug text-lg font-bold ml-8">
+          #{nft.tokenId}
+        </div>
       </div>
       <VaultedDetails details={nft.vaultedData} />
       {nft.points ? <div>{nft.points?.toLocaleString()}</div> : null}
-      <div className="w-full flex items-center justify-end">
-        <div className="mr-8">
-          {actionPrefix} {nftNamePrefix} #{nft.tokenId}
-        </div>
-        <div className="relative">
-          <div className="absolute m-0 p-0 w-8 h-8 top-1/2 transform -translate-y-1/2 left-6">
-            <input
-              type="checkbox"
-              value={nft.tokenId}
-              checked={selected}
-              className={cx({
-                "checkbox rounded-none w-8 h-8": true,
-              })}
-              onChange={() => toggleCheckedTokenId(nft.tokenId)}
-            />
-          </div>
-        </div>
-      </div>
     </label>
   );
 };
