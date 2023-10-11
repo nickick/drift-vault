@@ -26,8 +26,8 @@ const PointsTable = ({
         <div />
         <div className="col-span-2 ml-8">Token ID</div>
         <div>Vaulted on</div>
-        <div>Vault unlocks on</div>
-        <div>Points accumulated</div>
+        <div>Unlocks on</div>
+        <div>Vaulted points</div>
       </div>
       {nfts.map((nft: NftWithVaultedData) => {
         const selected = checkedTokenIds.includes(nft.tokenId);
