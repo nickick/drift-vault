@@ -81,7 +81,7 @@ export const Vault = () => {
                   } transition-colors`}
                   onClick={() => setCurrentTab(tabName)}
                 >
-                  <span className="text-xl px-6 pt-2 pb-1 border-t border-l border-r rounded-ss-md rounded-se-md relative bottom-[3px] cursor-pointer border-gray-500">
+                  <span className="text-xl px-6 pt-2 pb-2 border-t border-l border-r rounded-ss-md rounded-se-md relative bottom-[5px] cursor-pointer border-gray-500">
                     {tabName}
                   </span>
                 </a>
