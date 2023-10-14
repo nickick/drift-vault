@@ -26,6 +26,8 @@ interface Props {
   noNftsMessage?: string; // Used when there are no NFTs to display after loading
   nftNamePrefix?: string; // Used in front of the NFT tokenId: FDO => "FDO #13"
   actionPrefix?: string; // used in front of the check: "Vault FDO #13" or "Unvault FDO #13"
+  setLoading?: (loading: boolean) => void; // Used to set loading state in a parent component
+  setAssets?: (assets: Nft[]) => void; // Used to share the loaded NFTs with a parent component
   children: (props: NftItemsProps) => React.ReactNode; // Children of the component, used to render the NFTs
 }
 
@@ -38,11 +40,23 @@ const LoadSelectTransact = (props: Props) => {
   const { toggleButton, currentTxn } = useContext(TransactionContext);
   const { address } = useAccount();
   const [nfts, setNfts] = useState<Nft[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [nftsLoading, setNftsLoading] = useState(false);
   const noNftsMessage = props.noNftsMessage ?? "You have no NFTs to vault.";
 
+  const setLoadingState = (loading: boolean) => {
+    if (props.setLoading) {
+      props.setLoading(loading);
+    }
+    setNftsLoading(loading);
+  };
+
+  const setNftAssets = (assets: Nft[]) => {
+    setNfts(assets);
+    props.setAssets?.(assets);
+  };
+
   const fetchNfts = async () => {
-    setLoading(true);
+    setLoadingState(true);
     const nfts = await fetch(`/api/nfts/${address}/${props.contractAddress}`, {
       method: "GET",
       headers: {
@@ -53,11 +67,11 @@ const LoadSelectTransact = (props: Props) => {
 
     if (props.nftsLoadTransform) {
       const transformed = await props.nftsLoadTransform(result);
-      setNfts(transformed);
+      setNftAssets(transformed);
     } else {
-      setNfts(result);
+      setNftAssets(result);
     }
-    setLoading(false);
+    setLoadingState(false);
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -72,9 +86,10 @@ const LoadSelectTransact = (props: Props) => {
       currentTxn?.name === "Vault NFTs" &&
       currentTxn?.status === "succeeded"
     ) {
-      setNfts([]);
+      setNftAssets([]);
       fetchNftsCb();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTxn, fetchNftsCb]);
 
   const toggleCheckedTokenId = (tokenId: string) => {
@@ -90,7 +105,7 @@ const LoadSelectTransact = (props: Props) => {
   return (
     <div className="flex flex-col w-full">
       <div className="flex flex-col relative w-full border-r border-l border-b border-gray-500">
-        {props.instructions && !loading ? (
+        {props.instructions && !nftsLoading ? (
           <div className="flex flex-col p-4">{props.instructions}</div>
         ) : null}
         {props.children({
@@ -100,7 +115,7 @@ const LoadSelectTransact = (props: Props) => {
           nftNamePrefix: props.nftNamePrefix,
           actionPrefix: props.actionPrefix,
         })}
-        {loading && (
+        {nftsLoading && (
           <div className="flex w-full h-96 relative justify-center items-center">
             <div>
               Loading...
@@ -108,7 +123,7 @@ const LoadSelectTransact = (props: Props) => {
             </div>
           </div>
         )}
-        {!loading && !nfts.length && (
+        {!nftsLoading && !nfts.length && (
           <div className="h-96 mb-16 w-full flex items-center justify-center">
             <div className="text-center">
               <div>{noNftsMessage}</div>

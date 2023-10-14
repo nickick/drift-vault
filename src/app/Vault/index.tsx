@@ -1,10 +1,13 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useContext, useState } from "react";
 import { TransactionContextWrapper } from "../TransactionContext";
 import { Leaderboard } from "./Leaderboard";
 import { Vaulted } from "./Vaulted";
 import { YourVault } from "./YourVault";
+import { StateContext } from "../AppState";
+import { Spinner } from "../Spinner";
+import { numberFormatter } from "@/utils/format";
 
 enum TabNames {
   VAULTED = "Wallet",
@@ -16,20 +19,6 @@ const tabTitles: { [key in TabNames]: string } = {
   [TabNames.VAULTED]: "Vaulted",
   [TabNames.LEADERBOARD]: "Leaderboard",
   [TabNames.YOUR_VAULT]: "Your Vault",
-};
-
-const tabData: { [key in TabNames]: ReactNode } = {
-  [TabNames.VAULTED]: null,
-  [TabNames.LEADERBOARD]: (
-    <div className="px-8 py-2 rounded-full border w-48 text-center mt-2">
-      No ranking
-    </div>
-  ),
-  [TabNames.YOUR_VAULT]: (
-    <div className="px-8 py-2 rounded-full border w-48 text-center mt-2">
-      0 points
-    </div>
-  ),
 };
 
 const tabExplanations: { [key in TabNames]: ReactNode } = {
@@ -61,6 +50,38 @@ const tabExplanations: { [key in TabNames]: ReactNode } = {
 
 export const Vault = () => {
   const [currentTab, setCurrentTab] = useState<TabNames>(TabNames.VAULTED);
+  const { state } = useContext(StateContext);
+
+  const tabData: { [key in TabNames]: ReactNode } = {
+    [TabNames.VAULTED]: null,
+    [TabNames.LEADERBOARD]: (
+      <div className="px-8 py-2 rounded-full border w-48 text-center mt-2">
+        {state.leaderboard?.loading ? (
+          <Spinner />
+        ) : (
+          <>
+            {state.leaderboard?.position ? (
+              <>
+                Position #{state.leaderboard.position} /{" "}
+                {state.leaderboard.totalPositions}
+              </>
+            ) : (
+              "No position"
+            )}
+          </>
+        )}
+      </div>
+    ),
+    [TabNames.YOUR_VAULT]: (
+      <div className="px-8 py-2 rounded-full border w-48 text-center mt-2">
+        {state.vault?.loading ? (
+          <Spinner />
+        ) : (
+          <>{numberFormatter.format(Number(state.vault?.points)) ?? 0} points</>
+        )}
+      </div>
+    ),
+  };
 
   return (
     <TransactionContextWrapper>

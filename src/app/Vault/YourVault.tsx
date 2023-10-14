@@ -1,6 +1,6 @@
 import { useRequestApproval } from "@/utils/useRequestApproval";
 import { Nft } from "alchemy-sdk";
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import {
   useAccount,
   useContractRead,
@@ -16,6 +16,7 @@ import { LoadSelectTransact, NftWithVaultedData } from "./LoadSelectTransact";
 import { PointsTable } from "./PointsTable";
 import { Tab } from "./Tab";
 import cx from "classnames";
+import { StateContext } from "../AppState";
 
 type YourVaultProps = {
   active: boolean;
@@ -31,12 +32,12 @@ export const YourVault = (props: YourVaultProps) => {
 
   const nftsLoadTransform = async () => {
     // get vaulted tokens count to iterate through for vaulted token data
-    const data = (await publicClient.readContract({
+    const data = ((await publicClient.readContract({
       address: process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
       abi: vaultedAbi,
       functionName: "getVaultedTokensCount",
       args: [address as `0x${string}`],
-    })) as BigInt;
+    })) || BigInt(0)) as BigInt;
 
     const tokensIndexArray = [];
     for (let i = 0; i < Number(data); i++) {
@@ -133,10 +134,12 @@ export const YourVault = (props: YourVaultProps) => {
   const { config } = usePrepareContractWrite({
     abi: vaultedAbi,
     address: process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
-    functionName: "unvault",
+    functionName: "unvaultBatch",
     args: [
-      checkedTokenIds[0],
-      process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`,
+      [...checkedTokenIds],
+      Array(checkedTokenIds.length).fill(
+        process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`
+      ),
     ],
   });
 
@@ -192,6 +195,34 @@ export const YourVault = (props: YourVaultProps) => {
     </div>
   );
 
+  const [vaulted, setVaulted] = useState<NftWithVaultedData[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const { state, setState } = useContext(StateContext);
+
+  useEffect(() => {
+    if (loading) {
+      setState({
+        vault: {
+          points: 0,
+          loading: true,
+        },
+      });
+    } else {
+      const points = vaulted.reduce(
+        (acc, nft) => (nft.points ?? BigInt(0)) + acc,
+        BigInt(0)
+      );
+      setState({
+        vault: {
+          points: Number(points),
+          loading: false,
+        },
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
+
   return (
     <Tab active={props.active}>
       <div className="border-r border-b border-l border-gray-500 p-8 w-full max-h-[calc(100vh-30rem)] overflow-y-auto overflow-x-hidden mb-12">
@@ -205,6 +236,8 @@ export const YourVault = (props: YourVaultProps) => {
           hash={vaultHash}
           noNftsMessage="You have no NFTs in your vault."
           actionPrefix="Unvault"
+          setLoading={setLoading}
+          setAssets={setVaulted}
         >
           {(props) => {
             return <PointsTable {...props} />;

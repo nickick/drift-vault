@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import Image from "next/image";
 import { NftItemsProps, NftWithVaultedData } from "./LoadSelectTransact";
 import { selectedBorderClasses } from "@/utils/styling";
+import { numberFormatter } from "@/utils/format";
 
 interface Props {
   nft: NftWithVaultedData;
@@ -18,33 +19,31 @@ const PointsTable = ({
   toggleCheckedTokenId,
   nftNamePrefix,
   actionPrefix,
-}: NftItemsProps) => {
-  return (
-    <div className={`flex flex-col border-t border-gray-500`}>
-      <div className="col-span-7 grid grid-cols-7 border-b border-gray-500 py-2">
-        <div />
-        <div />
-        <div className="col-span-2 ml-8">Token ID</div>
-        <div>Vaulted on</div>
-        <div>Unlocks on</div>
-        <div>Vaulted points</div>
-      </div>
-      {nfts.map((nft: NftWithVaultedData) => {
-        const selected = checkedTokenIds.includes(nft.tokenId);
-        return (
-          <TableRow
-            selected={selected}
-            nft={nft}
-            toggleCheckedTokenId={toggleCheckedTokenId}
-            key={nft.tokenId + nft.title}
-            nftNamePrefix={nftNamePrefix}
-            actionPrefix={actionPrefix}
-          />
-        );
-      })}
+}: NftItemsProps) => (
+  <div className={`flex flex-col border-t border-gray-500`}>
+    <div className="col-span-7 grid grid-cols-7 border-b border-gray-500 py-2">
+      <div />
+      <div />
+      <div className="col-span-2 ml-8">Token ID</div>
+      <div>Vaulted on</div>
+      <div>Unlocks on</div>
+      <div>Vaulted points</div>
     </div>
-  );
-};
+    {nfts.map((nft: NftWithVaultedData) => {
+      const selected = checkedTokenIds.includes(nft.tokenId);
+      return (
+        <TableRow
+          selected={selected}
+          nft={nft}
+          toggleCheckedTokenId={toggleCheckedTokenId}
+          key={nft.tokenId + nft.title}
+          nftNamePrefix={nftNamePrefix}
+          actionPrefix={actionPrefix}
+        />
+      );
+    })}
+  </div>
+);
 
 const TableRow = ({ nft, selected, toggleCheckedTokenId }: Props) => {
   return (
@@ -100,7 +99,9 @@ const TableRow = ({ nft, selected, toggleCheckedTokenId }: Props) => {
         </div>
       </div>
       <VaultedDetails details={nft.vaultedData} />
-      {nft.points ? <div>{nft.points?.toLocaleString()}</div> : null}
+      <div className="text-center">
+        {nft.points ? <div>{numberFormatter.format(nft.points)}</div> : null}
+      </div>
     </label>
   );
 };

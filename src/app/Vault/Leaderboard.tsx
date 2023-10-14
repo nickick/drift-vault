@@ -3,11 +3,9 @@ import { Tab } from "./Tab";
 import { formatAddress } from "@/utils/format";
 import cx from "classnames";
 import { InView, useInView } from "react-intersection-observer";
-import { ReactNode, useEffect, useState } from "react";
-
-type LeaderboardProps = {
-  active: boolean;
-};
+import { ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { Spinner } from "../Spinner";
+import { StateContext } from "../AppState";
 
 const famousWallets: `0x${string}`[] = [
   "0xce90a7949bb78892f159f428d0dc23a8e3584d75",
@@ -31,16 +29,6 @@ const randomRowCreator = (wallet: `0x${string}`) => {
   return [wallet, numPieces, numPointsDaily, pointsTotal];
 };
 
-type LeaderboardRowProps = {
-  rank: number;
-  wallet: `0x${string}`;
-  pieces: number;
-  pointsDaily: number;
-  pointsTotal: number;
-  highlightCurrentWallet?: boolean;
-  onChangeInView?: ({ id, inView }: { id: number; inView: boolean }) => void;
-};
-
 const InViewWrapper = (props: {
   inView: boolean;
   onChangeInView: ({ id, inView }: { id: number; inView: boolean }) => void;
@@ -54,9 +42,22 @@ const InViewWrapper = (props: {
   }, [inView]);
   return <>{children}</>;
 };
+
+type LeaderboardRowProps = {
+  rank: number;
+  wallet: `0x${string}`;
+  address?: `0x${string}`;
+  pieces: number;
+  pointsDaily: number;
+  pointsTotal: number;
+  highlightCurrentWallet?: boolean;
+  onChangeInView?: ({ id, inView }: { id: number; inView: boolean }) => void;
+};
+
 const LeaderboardRow = (props: LeaderboardRowProps) => {
   const {
     wallet,
+    address,
     pieces,
     pointsDaily,
     pointsTotal,
@@ -64,7 +65,6 @@ const LeaderboardRow = (props: LeaderboardRowProps) => {
     highlightCurrentWallet,
     onChangeInView,
   } = props;
-  const { address } = useAccount();
   const { data, isLoading } = useEnsName({ address: wallet, chainId: 1 });
   const { ref, inView, entry } = useInView({
     threshold: 0,
@@ -110,36 +110,95 @@ const randomRows = Array(2)
   .map(randomRowCreator)
   .sort((a, b) => (b[3] as number) - (a[3] as number));
 
+const fakeLoader = async (address: string) => {
+  return new Promise((resolve) => {
+    const yourRowToReplace = randomRows.find(
+      (row: (string | number)[]) => row[0] === "yourWallet"
+    );
+    if (yourRowToReplace) {
+      yourRowToReplace[0] = address as `0x${string}`;
+    }
+
+    setTimeout(() => {
+      resolve(randomRows);
+    }, 2000);
+  });
+};
+
+type LeaderboardProps = {
+  active: boolean;
+};
+
 export const Leaderboard = (props: LeaderboardProps) => {
   const { address } = useAccount();
+  const [loading, setLoading] = useState(true);
+  const [rows, setRows] = useState<(string | number)[][]>([]);
+  const { setState } = useContext(StateContext);
 
-  const yourRowToReplace = randomRows.find(
-    (row: (string | number)[]) => row[0] === "yourWallet"
-  );
-  if (yourRowToReplace) {
-    yourRowToReplace[0] = address as `0x${string}`;
-  }
+  const setIsLoading = (isLoading: boolean) => {
+    setLoading(isLoading);
+    if (isLoading) {
+      setState({
+        leaderboard: {
+          position: 0,
+          totalPositions: 0,
+          loading: true,
+        },
+      });
+    } else {
+      setState({
+        leaderboard: {
+          position: 0,
+          totalPositions: 0,
+          loading: false,
+        },
+      });
+    }
+  };
 
-  const yourRow = randomRows.find(
-    (row: (string | number)[]) => row[0] === address
-  );
-  const yourRank = randomRows.indexOf(yourRow!) + 1;
+  const yourRow = rows.find((row: (string | number)[]) => row[0] === address);
+  const yourRank = rows.indexOf(yourRow!) + 1;
+
+  useEffect(() => {
+    if (yourRow) {
+      setState({
+        leaderboard: {
+          position: yourRank,
+          totalPositions: rows.length,
+          loading: false,
+        },
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [yourRow, yourRank]);
+
   const [currentRankInView, setCurrentRankInView] = useState<
     Record<number, boolean>
   >({});
 
-  if (currentRankInView[yourRank]) {
-  }
+  const getRows = useCallback(async () => {
+    setIsLoading(true);
+    const rows = (await fakeLoader(address!)) as (string | number)[][];
+    setIsLoading(false);
+    setRows(rows);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address]);
+
+  useEffect(() => {
+    if (address) {
+      getRows();
+    }
+  }, [address, getRows]);
 
   return (
     <Tab active={props.active}>
       <div className="w-full relative">
-        {yourRow ? (
+        {yourRow && !loading ? (
           <div
             className={cx(
               "absolute left-0 right-0 bottom-0 px-8 bg-gray-900 border-r border-b border-l border-gray-500 transition-opacity",
               {
-                "opacity-20": currentRankInView[yourRank],
+                "opacity-50": currentRankInView[yourRank],
               }
             )}
           >
@@ -149,6 +208,7 @@ export const Leaderboard = (props: LeaderboardProps) => {
               pieces={yourRow[1] as number}
               pointsDaily={yourRow[2] as number}
               pointsTotal={yourRow[3] as number}
+              address={address}
               highlightCurrentWallet
             />
           </div>
@@ -163,32 +223,41 @@ export const Leaderboard = (props: LeaderboardProps) => {
               <div className="text-center">Points total</div>
             </div>
             <div className="border border-gray-500">
-              {randomRows.map((row, index) => {
-                const [wallet, pieces, pointsDaily, pointsTotal] = row;
-                return (
-                  <LeaderboardRow
-                    key={index}
-                    {...{
-                      rank: index + 1,
-                      wallet: wallet as `0x${string}`,
-                      pieces: pieces as number,
-                      pointsDaily: pointsDaily as number,
-                      pointsTotal: pointsTotal as number,
-                      onChangeInView: ({
-                        id,
-                        inView,
-                      }: {
-                        id: number;
-                        inView: boolean;
-                      }) => {
-                        const newRankInView = { ...currentRankInView };
-                        newRankInView[id] = inView;
-                        setCurrentRankInView(newRankInView);
-                      },
-                    }}
-                  />
-                );
-              })}
+              {loading ? (
+                <div className="flex p-16 items-center justify-center">
+                  <Spinner />
+                </div>
+              ) : (
+                <>
+                  {rows.map((row, index) => {
+                    const [wallet, pieces, pointsDaily, pointsTotal] = row;
+                    return (
+                      <LeaderboardRow
+                        key={index}
+                        {...{
+                          rank: index + 1,
+                          wallet: wallet as `0x${string}`,
+                          pieces: pieces as number,
+                          pointsDaily: pointsDaily as number,
+                          pointsTotal: pointsTotal as number,
+                          address,
+                          onChangeInView: ({
+                            id,
+                            inView,
+                          }: {
+                            id: number;
+                            inView: boolean;
+                          }) => {
+                            const newRankInView = { ...currentRankInView };
+                            newRankInView[id] = inView;
+                            setCurrentRankInView(newRankInView);
+                          },
+                        }}
+                      />
+                    );
+                  })}
+                </>
+              )}
             </div>
           </div>
         </div>

@@ -2,14 +2,15 @@
 
 import {
   RainbowKitProvider,
-  getDefaultWallets,
   darkTheme,
+  getDefaultWallets,
 } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { useEffect, useState } from "react";
 import { WagmiConfig, configureChains, createConfig } from "wagmi";
-import { mainnet, goerli } from "wagmi/chains";
+import { goerli, mainnet } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
+import { StateProvider } from "./AppState";
 
 const { chains, publicClient } = configureChains(
   [goerli, mainnet],
@@ -47,7 +48,7 @@ export const WagmiWrapper = ({ children }: { children: React.ReactNode }) => {
             })}
             chains={chains}
           >
-            {children}
+            <StateProvider>{children}</StateProvider>
           </RainbowKitProvider>
         </WagmiConfig>
       ) : null}

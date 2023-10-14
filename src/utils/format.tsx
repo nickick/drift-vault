@@ -37,6 +37,11 @@ export const addressLinkUrl = (address: string) => {
   }
 };
 
+export const numberFormatter = Intl.NumberFormat("en-US", {
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+
 export const formatOpenseaLink = (contractAddress: string, tokenId: string) => {
   if (["staging", "dev"].includes(process.env.NEXT_PUBLIC_ENV ?? "")) {
     return `https://testnets.opensea.io/assets/goerli/${contractAddress}/${tokenId}`;
