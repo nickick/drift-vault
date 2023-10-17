@@ -1,5 +1,5 @@
-import { useRequestApproval } from "@/utils/useRequestApproval";
 import { Nft } from "alchemy-sdk";
+import cx from "classnames";
 import { useCallback, useContext, useEffect, useState } from "react";
 import {
   useAccount,
@@ -8,6 +8,7 @@ import {
   usePrepareContractWrite,
   usePublicClient,
 } from "wagmi";
+import { StateContext } from "../AppState";
 import { NamedTransaction, TransactionContext } from "../TransactionContext";
 import manifoldAbi from "../manifoldAbi.json";
 import { UnvaultConvirmation } from "../modals/UnvaultConfirmation";
@@ -15,8 +16,6 @@ import vaultedAbi from "../vaultedAbi.json";
 import { LoadSelectTransact, NftWithVaultedData } from "./LoadSelectTransact";
 import { PointsTable } from "./PointsTable";
 import { Tab } from "./Tab";
-import cx from "classnames";
-import { StateContext } from "../AppState";
 
 type YourVaultProps = {
   active: boolean;
@@ -157,9 +156,9 @@ export const YourVault = (props: YourVaultProps) => {
     setIsTransactionWindowOpen(true);
 
     let vaultContractNamedTransaction: NamedTransaction = {
-      name: "Vault NFTs",
+      name: "Unvault NFTs",
       fn: writeAsync,
-      description: `Vaulting selected ${tokenName} NFT(s)`,
+      description: `Unvault selected ${tokenName} NFT(s)`,
       status: "pending",
       processingText: "Vaulting",
     };
