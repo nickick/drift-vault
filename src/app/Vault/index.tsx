@@ -56,15 +56,17 @@ export const Vaulted = () => {
   const tabData: { [key in TabNames]: ReactNode } = {
     [TabNames.VAULTED]: null,
     [TabNames.LEADERBOARD]: (
-      <div className="px-8 py-2 rounded-full border w-48 text-center mt-2">
+      <div className="px-8 py-2 border border-[#6dc871] text-[#6dc871] w-48 text-center mt-2">
         {state.leaderboard?.loading ? (
           <Spinner />
         ) : (
           <>
             {state.leaderboard?.position ? (
               <>
-                Position #{state.leaderboard.position} /{" "}
-                {state.leaderboard.totalPositions}
+                Position #{state.leaderboard.position}{" "}
+                <span className="opacity-50">
+                  / {state.leaderboard.totalPositions}
+                </span>
               </>
             ) : (
               "No position"
@@ -74,7 +76,7 @@ export const Vaulted = () => {
       </div>
     ),
     [TabNames.YOUR_VAULT]: (
-      <div className="px-8 py-2 rounded-full border w-48 text-center mt-2">
+      <div className="px-8 py-2 border w-48 text-center border-[#7976ff] text-[#7976ff] mt-2">
         {state.vault?.loading ? (
           <Spinner />
         ) : (
@@ -91,7 +93,7 @@ export const Vaulted = () => {
           <div className="text-6xl text-[64px] font-serif">
             {tabTitles[currentTab]}
           </div>
-          <div className="">{tabData[currentTab]}</div>
+          <div className="my-6">{tabData[currentTab]}</div>
           <div className="mt-2">{tabExplanations[currentTab]}</div>
         </div>
         <div className="mt-8">

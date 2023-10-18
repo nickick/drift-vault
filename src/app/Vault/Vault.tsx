@@ -217,36 +217,38 @@ export const Vault = (props: YourVaultProps) => {
             return (
               <div className="p-8">
                 <PointsTable {...props} />
-                <div className="mt-4">
-                  <div className="flex space-x-4">
-                    <div className="flex items-center justify-between w-full">
-                      <label className="flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          className="checkbox rounded-none border border-white"
-                          value={""}
-                          checked={selectAllChecked}
-                          onChange={(e) => {
-                            setSelectAllChecked(e.target.checked);
-                          }}
-                        />
-                        <span className="ml-2">
-                          {selectAllChecked ? "Deselect all" : "Select all"}
-                        </span>
-                      </label>
-                      <button
-                        className="p-2 border border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
-                        disabled={
-                          checkedTokenIds.length === 0 ||
-                          currentTxn !== undefined
-                        }
-                        onClick={toggleUnvaultOpen}
-                      >
-                        Unvault
-                      </button>
+                {props.nfts.length > 0 ? (
+                  <div className="mt-4">
+                    <div className="flex space-x-4">
+                      <div className="flex items-center justify-between w-full">
+                        <label className="flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            className="checkbox rounded-none border border-white"
+                            value={""}
+                            checked={selectAllChecked}
+                            onChange={(e) => {
+                              setSelectAllChecked(e.target.checked);
+                            }}
+                          />
+                          <span className="ml-2">
+                            {selectAllChecked ? "Deselect all" : "Select all"}
+                          </span>
+                        </label>
+                        <button
+                          className="p-2 border bg-white text-black border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-200 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900 disabled:hover:text-white"
+                          disabled={
+                            checkedTokenIds.length === 0 ||
+                            currentTxn !== undefined
+                          }
+                          onClick={toggleUnvaultOpen}
+                        >
+                          Unvault
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : null}
               </div>
             );
           }}

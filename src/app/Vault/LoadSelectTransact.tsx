@@ -52,12 +52,11 @@ const LoadSelectTransact = (props: Props) => {
     actionPrefix,
     children,
   } = props;
-  const { toggleButton, currentTxn } = useContext(TransactionContext);
+  const { currentTxn } = useContext(TransactionContext);
   const { address } = useAccount();
   const [nfts, setNfts] = useState<Nft[]>([]);
   const [nftsLoading, setNftsLoading] = useState(false);
   const noNftsMessage = props.noNftsMessage ?? "You have no NFTs to vault.";
-  const [selectAllTrigger, setSelectAllTrigger] = useState(true);
 
   const setLoadingState = (loading: boolean) => {
     if (setLoading) {

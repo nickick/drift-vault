@@ -170,7 +170,7 @@ export const Wallet = (props: VaultedProps) => {
                         </span>
                       </label>
                       <button
-                        className="p-2 border border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
+                        className="p-2 border bg-white text-black border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-200 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900 disabled:hover:text-white"
                         disabled={
                           checkedTokenIds.length === 0 ||
                           currentTxn !== undefined
