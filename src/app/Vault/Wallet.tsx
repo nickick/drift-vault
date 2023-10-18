@@ -136,7 +136,9 @@ export const Wallet = (props: VaultedProps) => {
                 {nfts.length > 0 ? (
                   <>
                     <div
-                      className={`grid grid-cols-${
+                      className={`grid sm:grid-cols-${
+                        nfts.length > 2 ? 3 : nfts.length
+                      } lg:grid-cols-${
                         nfts.length > 3 ? 4 : nfts.length
                       } gap-4`}
                     >

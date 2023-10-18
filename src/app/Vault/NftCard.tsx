@@ -24,7 +24,7 @@ const NftCard = ({ nft, selected, toggleCheckedTokenId }: Props) => {
             "bg-white text-black": true,
           })}
         >
-          <div className="md:h-52 lg:h-72 relative overflow-hidden flex justify-center items-center">
+          <div className="h-44 md:h-52 lg:h-72 relative overflow-hidden flex justify-center items-center">
             {nft.rawMetadata?.animation ? (
               <video
                 autoPlay

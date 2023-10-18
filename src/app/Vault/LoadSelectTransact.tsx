@@ -173,9 +173,9 @@ const LoadSelectTransact = (props: Props) => {
         )}
       </div>
       {/* Adding empty divs with the correct grid col classes to make tailwind compile them */}
-      <div className="grid-cols-2 hidden" />
-      <div className="grid-cols-3 hidden" />
-      <div className="grid-cols-4 hidden" />
+      <div className="sm:grid-cols-1 lg:grid-cols-2 hidden" />
+      <div className="sm:grid-cols-2 lg:grid-cols-3 hidden" />
+      <div className="sm:grid-cols-3 lg:grid-cols-4 hidden" />
       {/* end empty divs */}
     </div>
   );
