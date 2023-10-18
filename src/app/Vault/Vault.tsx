@@ -168,33 +168,6 @@ export const Vault = (props: YourVaultProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [writeAsync]);
 
-  const [checkAllNfts, setCheckAllNfts] = useState(false);
-
-  const transactNode = (
-    <div className="flex space-x-4 absolute right-0 bottom-0">
-      <div className="flex items-center">
-        <label className="w-40 cursor-pointer flex items-center">
-          <input
-            type="checkbox"
-            checked={checkAllNfts}
-            className={cx({
-              "checkbox rounded-none w-8 h-8 mr-4": true,
-            })}
-            onChange={() => setCheckAllNfts(!checkAllNfts)}
-          />
-          Select all
-        </label>
-        <button
-          className="p-2 border border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
-          disabled={checkedTokenIds.length === 0 || currentTxn !== undefined}
-          onClick={toggleUnvaultOpen}
-        >
-          Unvault
-        </button>
-      </div>
-    </div>
-  );
-
   const [vaulted, setVaulted] = useState<NftWithVaultedData[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -231,7 +204,6 @@ export const Vault = (props: YourVaultProps) => {
           title="Your Vault"
           checkedTokenIds={checkedTokenIds}
           setCheckedTokenIds={setCheckedTokenIds}
-          transactNode={null}
           nftsLoadTransform={nftsLoadTransform}
           hash={vaultHash}
           noNftsMessage="You have no NFTs in your vault."
@@ -239,9 +211,44 @@ export const Vault = (props: YourVaultProps) => {
           setLoading={setLoading}
           setAssets={setVaulted}
           selectAllChecked={selectAllChecked}
+          setSelectAllChecked={setSelectAllChecked}
         >
           {(props) => {
-            return <PointsTable {...props} />;
+            return (
+              <div className="p-8">
+                <PointsTable {...props} />
+                <div className="mt-4">
+                  <div className="flex space-x-4">
+                    <div className="flex items-center justify-between w-full">
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="checkbox rounded-none border border-white"
+                          value={""}
+                          checked={selectAllChecked}
+                          onChange={(e) => {
+                            setSelectAllChecked(e.target.checked);
+                          }}
+                        />
+                        <span className="ml-2">
+                          {selectAllChecked ? "Deselect all" : "Select all"}
+                        </span>
+                      </label>
+                      <button
+                        className="p-2 border border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
+                        disabled={
+                          checkedTokenIds.length === 0 ||
+                          currentTxn !== undefined
+                        }
+                        onClick={toggleUnvaultOpen}
+                      >
+                        Unvault
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
           }}
         </LoadSelectTransact>
       </div>
@@ -252,7 +259,6 @@ export const Vault = (props: YourVaultProps) => {
         selectedCount={checkedTokenIds.length}
         unvault={unvault}
       />
-      <div className="relative -bottom-8">{transactNode}</div>
     </Tab>
   );
 };

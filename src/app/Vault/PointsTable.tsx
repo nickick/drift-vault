@@ -21,7 +21,7 @@ const PointsTable = ({
   nftNamePrefix,
   actionPrefix,
 }: NftItemsProps) => (
-  <div className="flex flex-col p-4">
+  <div className="flex flex-col">
     <div className="col-span-7 grid grid-cols-7 py-2">
       <div />
       <div />

@@ -119,6 +119,7 @@ export const Wallet = (props: VaultedProps) => {
         checkedTokenIds={checkedTokenIds}
         setCheckedTokenIds={setCheckedTokenIds}
         selectAllChecked={selectAllChecked}
+        setSelectAllChecked={setSelectAllChecked}
         nftNamePrefix="FDO"
         actionPrefix="Vault"
       >
@@ -159,6 +160,7 @@ export const Wallet = (props: VaultedProps) => {
                           type="checkbox"
                           className="checkbox rounded-none border border-white"
                           value={""}
+                          checked={selectAllChecked}
                           onChange={(e) => {
                             setSelectAllChecked(e.target.checked);
                           }}

@@ -20,6 +20,7 @@ interface Props {
   checkedTokenIds: string[]; // List of tokenIds that are checked
   setCheckedTokenIds: (ids: string[]) => void; // Callback to set the checkedTokenIds
   selectAllChecked: boolean; // Whether or not all NFTs should be selected
+  setSelectAllChecked: (checked: boolean) => void; // Callback to set the selectAllChecked state
   hash?: `0x${string}`; // Txn hash of the transform action
   nftsLoadTransform?: (nfts: Nft[]) => Promise<NftWithVaultedData[]>; // Transform the NFTs after loading them
   instructions?: React.ReactNode; // Instructions for how to use this NFT load/select/transform
@@ -40,10 +41,10 @@ const LoadSelectTransact = (props: Props) => {
   const {
     setLoading,
     setAssets,
-    hash,
     nftsLoadTransform,
     contractAddress,
     selectAllChecked,
+    setSelectAllChecked,
     checkedTokenIds,
     setCheckedTokenIds,
     instructions,
@@ -56,6 +57,7 @@ const LoadSelectTransact = (props: Props) => {
   const [nfts, setNfts] = useState<Nft[]>([]);
   const [nftsLoading, setNftsLoading] = useState(false);
   const noNftsMessage = props.noNftsMessage ?? "You have no NFTs to vault.";
+  const [selectAllTrigger, setSelectAllTrigger] = useState(true);
 
   const setLoadingState = (loading: boolean) => {
     if (setLoading) {
@@ -116,9 +118,17 @@ const LoadSelectTransact = (props: Props) => {
 
   const toggleCheckedTokenId = (tokenId: string) => {
     if (checkedTokenIds.includes(tokenId)) {
-      setCheckedTokenIds(checkedTokenIds.filter((id) => id !== tokenId));
+      if (checkedTokenIds.length === 1) {
+        setSelectAllChecked(false);
+      } else {
+        setCheckedTokenIds(checkedTokenIds.filter((id) => id !== tokenId));
+      }
     } else {
-      setCheckedTokenIds([...checkedTokenIds, tokenId]);
+      if (checkedTokenIds.length === nfts.length - 1) {
+        setSelectAllChecked(true);
+      } else {
+        setCheckedTokenIds([...checkedTokenIds, tokenId]);
+      }
     }
   };
 
