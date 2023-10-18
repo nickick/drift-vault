@@ -2,25 +2,25 @@
 
 import { useContext, useState } from "react";
 import {
+  useContractRead,
   useContractWrite,
   usePrepareContractWrite,
-  useContractRead,
 } from "wagmi";
 import { Tab } from "./Tab";
 
 import { useRequestApproval } from "@/utils/useRequestApproval";
 import { NamedTransaction, TransactionContext } from "../TransactionContext";
-import { LoadSelectTransact, NftWithVaultedData } from "./LoadSelectTransact";
-import vaultedABI from "../vaultedAbi.json";
 import manifoldAbi from "../manifoldAbi.json";
 import { VaultTimeSelect } from "../modals/VaultTimeSelect";
+import vaultedABI from "../vaultedAbi.json";
+import { LoadSelectTransact, NftWithVaultedData } from "./LoadSelectTransact";
 import { NftCard } from "./NftCard";
 
 type VaultedProps = {
   active: boolean;
 };
 
-export const Vaulted = (props: VaultedProps) => {
+export const Wallet = (props: VaultedProps) => {
   const { setIsTransactionWindowOpen, setWriteQueue, currentTxn } =
     useContext(TransactionContext);
 

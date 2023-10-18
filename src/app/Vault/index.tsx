@@ -3,8 +3,8 @@
 import { ReactNode, useContext, useState } from "react";
 import { TransactionContextWrapper } from "../TransactionContext";
 import { Leaderboard } from "./Leaderboard";
-import { Vaulted } from "./Vaulted";
-import { YourVault } from "./YourVault";
+import { Wallet } from "./Wallet";
+import { Vault } from "./Vault";
 import { StateContext } from "../AppState";
 import { Spinner } from "../Spinner";
 import { numberFormatter } from "@/utils/format";
@@ -49,7 +49,7 @@ const tabExplanations: { [key in TabNames]: ReactNode } = {
   ),
 };
 
-export const Vault = () => {
+export const Vaulted = () => {
   const [currentTab, setCurrentTab] = useState<TabNames>(TabNames.VAULTED);
   const { state } = useContext(StateContext);
 
@@ -120,8 +120,8 @@ export const Vault = () => {
             })}
           </div>
           <div className="mb-4">
-            {currentTab === TabNames.VAULTED && <Vaulted active />}
-            {currentTab === TabNames.YOUR_VAULT && <YourVault active />}
+            {currentTab === TabNames.VAULTED && <Wallet active />}
+            {currentTab === TabNames.YOUR_VAULT && <Vault active />}
             {currentTab === TabNames.LEADERBOARD && <Leaderboard active />}
           </div>
         </div>

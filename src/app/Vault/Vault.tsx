@@ -21,7 +21,7 @@ type YourVaultProps = {
   active: boolean;
 };
 
-export const YourVault = (props: YourVaultProps) => {
+export const Vault = (props: YourVaultProps) => {
   const [vaultHash, setVaultHash] = useState<`0x${string}`>();
   const { address } = useAccount();
 
