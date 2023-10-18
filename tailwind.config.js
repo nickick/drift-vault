@@ -20,8 +20,8 @@ module.exports = {
         sans: ["Karla", "sans-serif"],
         serif: ["Rawgly", "serif"],
       },
-      screens: {
-        "8xl": "90rem",
+      maxWidth: {
+        "between-lg-xl": "1050px",
       },
     },
   },
