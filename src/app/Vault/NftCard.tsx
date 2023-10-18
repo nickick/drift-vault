@@ -12,21 +12,16 @@ interface Props {
   actionPrefix?: string;
 }
 
-const NftCard = ({
-  nft,
-  selected,
-  toggleCheckedTokenId,
-  nftNamePrefix,
-  actionPrefix,
-}: Props) => {
+const NftCard = ({ nft, selected, toggleCheckedTokenId }: Props) => {
   return (
     <div key={nft.tokenId + nft.title}>
       <label className="flex flex-col cursor-pointer group">
         <div
           className={cx({
-            "flex flex-col border md:w-52 lg:w-72 space-y-3": true,
+            "flex flex-col border w-32 md:w-52 lg:w-54 space-y-3 p-2 bg-white":
+              true,
             ...selectedBorderClasses(selected),
-            "bg-white text-black": selected,
+            "bg-white text-black": true,
           })}
         >
           <div className="md:h-52 lg:h-72 relative overflow-hidden flex justify-center items-center">
@@ -35,7 +30,7 @@ const NftCard = ({
                 autoPlay
                 loop
                 muted
-                className="object-cover h-[32rem] group-hover:scale-105 transition-transform"
+                className="object-cover h-[11rem] sm:h-[14rem] md:h-[22rem] group-hover:scale-105 transition-transform"
                 width="100%"
                 height="100%"
               >
@@ -51,75 +46,34 @@ const NftCard = ({
               />
             )}
           </div>
-          <div className="px-4 pb-4 space-y-4">
-            <div className="leading-snug text-lg font-bold">{nft.title}</div>
-            <div className="leading-snug text-xs whitespace-pre-wrap">
-              {nft.description}
-            </div>
-          </div>
-        </div>
-        <div
-          className={cx({
-            "w-full flex items-center justify-start border mt-4": true,
-            ...selectedBorderClasses(selected),
-            "bg-white text-black": selected,
-          })}
-        >
-          <div
-            className={cx({
-              "border-r m-0 p-0 w-8 h-8 border-gray-500 transition-colors":
-                true,
-              "group-hover:border-gray-300": true,
-            })}
-          >
-            <input
-              type="checkbox"
-              value={nft.tokenId}
-              checked={selected}
+          <div className="space-y-4 pb-1">
+            <div
               className={cx({
-                "checkbox rounded-none w-8 h-8 border-none": true,
+                "w-full flex items-center justify-start p-2 px-4": true,
+                "bg-white text-black": true,
               })}
-              onChange={() => toggleCheckedTokenId(nft.tokenId)}
-            />
-          </div>
-          <div className="pl-3">
-            {actionPrefix} {nftNamePrefix} #{nft.tokenId}
+            >
+              <div
+                className={cx({
+                  "border-r m-0 p-0 w-8 h-8 transition-colors": true,
+                  "group-hover:border-gray-300": true,
+                })}
+              >
+                <input
+                  type="checkbox"
+                  value={nft.tokenId}
+                  checked={selected}
+                  className="checkbox rounded-none w-8 h-8 border border-black"
+                  onChange={() => toggleCheckedTokenId(nft.tokenId)}
+                />
+              </div>
+              <div className="pl-3 font-bold">
+                #{Number(nft.tokenId).toLocaleString()}
+              </div>
+            </div>
           </div>
         </div>
       </label>
-      <VaultedDetails details={nft.vaultedData} />
-      {nft.points ? <div>Points: {nft.points?.toString()}</div> : null}
-    </div>
-  );
-};
-
-const VaultedDetails = ({ details }: { details?: (string | bigint)[] }) => {
-  if (!details) return null;
-
-  const columns = ["Vaulted", "", "Unlocks", "", "", ""];
-
-  return (
-    <div className="flex flex-col py-2">
-      {columns.map((column, i) => {
-        if (column.length === 0) {
-          return null;
-        }
-        const detail = details[i];
-        if (typeof detail === "bigint" && Number(detail) > 10000000) {
-          const date = new Date(Number(detail) * 1000);
-          return (
-            <div key={column}>
-              {column}: {format(Number(detail) * 1000, "P")}
-            </div>
-          );
-        }
-
-        return (
-          <div key={column}>
-            {column}: {detail.toString()}
-          </div>
-        );
-      })}
     </div>
   );
 };

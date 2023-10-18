@@ -224,7 +224,7 @@ export const YourVault = (props: YourVaultProps) => {
 
   return (
     <Tab active={props.active}>
-      <div className="border-r border-b border-l border-gray-500 p-8 w-full max-h-[calc(100vh-30rem)] overflow-y-auto overflow-x-hidden mb-12">
+      <div className="border-[#5c5c5c] bg-[#161616] w-full max-h-[calc(100vh-30rem)] overflow-y-auto overflow-x-hidden mb-12">
         <LoadSelectTransact
           contractAddress={process.env.NEXT_PUBLIC_SBT_ADDRESS as `0x${string}`}
           title="Your Vault"

@@ -137,7 +137,7 @@ export const Vaulted = (props: VaultedProps) => {
     <Tab active={props.active}>
       <LoadSelectTransact
         title="Vaulted"
-        instructions={<div>Select which pieces you want to vault.</div>}
+        instructions={<div></div>}
         contractAddress={
           process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`
         }
@@ -159,7 +159,7 @@ export const Vaulted = (props: VaultedProps) => {
               {nfts.length > 0 ? (
                 <div
                   className={`grid grid-cols-${
-                    nfts.length > 2 ? 3 : nfts.length
+                    nfts.length > 3 ? 4 : nfts.length
                   } gap-4 mx-auto my-4 mb-12`}
                 >
                   {nfts.map((nft: NftWithVaultedData) => {

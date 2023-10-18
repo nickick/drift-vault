@@ -31,7 +31,7 @@ export const Tab = (props: TabProps) => {
   return (
     <div
       className={cx({
-        "flex w-full min-h-[20rem] border-t border-gray-500 relative": true,
+        "flex w-full min-h-[20rem] border-gray-500 relative": true,
         hidden: !props.active,
         border: !address,
       })}
@@ -39,7 +39,7 @@ export const Tab = (props: TabProps) => {
       {address && loaded ? (
         props.children
       ) : (
-        <div className="flex w-full h-full min-h-[20rem] items-center justify-center">
+        <div className="flex w-full h-full min-h-[20rem] items-center justify-center bg-gray-700">
           <ConnectButton accountStatus={"address"} />
         </div>
       )}

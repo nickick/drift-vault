@@ -8,6 +8,7 @@ import { YourVault } from "./YourVault";
 import { StateContext } from "../AppState";
 import { Spinner } from "../Spinner";
 import { numberFormatter } from "@/utils/format";
+import cx from "classnames";
 
 enum TabNames {
   VAULTED = "Wallet",
@@ -24,12 +25,12 @@ const tabTitles: { [key in TabNames]: string } = {
 const tabExplanations: { [key in TabNames]: ReactNode } = {
   [TabNames.VAULTED]: (
     <div className="space-y-4">
-      <div className="font-bold">
+      <div className="">
         Art is created as a complete expression, not as means to another end.
         Art is created to exist, not burned for value. Art is the journey we are
         all on together, and we hope to pass it on to our children.
       </div>
-      <div>
+      <div className="text-gray-400">
         Vault your ‘First Day Out’ in the Vaulted contract. The number of pieces
         vaulted and how long they’ve been vaulted for are recorded in an
         on-chain leaderboard, which gives the most fervent collectors
@@ -86,23 +87,32 @@ export const Vault = () => {
   return (
     <TransactionContextWrapper>
       <div className="w-full">
-        <div className="px-4 h-48">
-          <div className="text-3xl font-serif">{tabTitles[currentTab]}</div>
-          <div>{tabData[currentTab]}</div>
+        <div className="px-4 h-56">
+          <div className="text-6xl text-[64px] font-serif">
+            {tabTitles[currentTab]}
+          </div>
+          <div className="">{tabData[currentTab]}</div>
           <div className="mt-2">{tabExplanations[currentTab]}</div>
         </div>
         <div className="mt-8">
-          <div className="text-gray-500">
+          <div className="text-gray-500 pt-6 border-t border-l border-r border-[#5c5c5c]">
             {Object.values(TabNames).map((tabName) => {
               return (
                 <a
                   key={tabName}
-                  className={`${
-                    currentTab === tabName ? "text-white" : ""
-                  } transition-colors`}
+                  className={cx({
+                    "text-white": currentTab === tabName,
+                    "transition-colors": true,
+                  })}
                   onClick={() => setCurrentTab(tabName)}
                 >
-                  <span className="text-xl px-6 pt-2 pb-2 border-t border-l border-r rounded-ss-md rounded-se-md relative bottom-[5px] cursor-pointer border-gray-500">
+                  <span
+                    className={cx({
+                      "text-xl px-6 pt-3 pb-4 relative bottom-[12px] cursor-pointer":
+                        true,
+                      "bg-[#161616]": currentTab === tabName,
+                    })}
+                  >
                     {tabName}
                   </span>
                 </a>

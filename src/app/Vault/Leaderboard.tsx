@@ -79,8 +79,8 @@ const LeaderboardRow = (props: LeaderboardRowProps) => {
       >
         <div
           className={cx({
-            "p-4 grid grid-cols-6 transition-opacity": true,
-            "bg-gray-900": rank % 2 === 0,
+            "p-4 grid grid-cols-5 transition-opacity": true,
+            "bg-[#303030]": rank % 2 === 0,
             "text-2xl": highlightCurrentWallet,
             "border border-white":
               wallet === address && !highlightCurrentWallet,
@@ -88,7 +88,7 @@ const LeaderboardRow = (props: LeaderboardRowProps) => {
           ref={ref}
         >
           <div>#{rank}</div>
-          <div className="col-span-2 text-center">
+          <div className="text-center">
             {isLoading
               ? wallet
               : data ?? formatAddress(wallet, wallet === address ? 3 : 10)}{" "}
@@ -103,7 +103,7 @@ const LeaderboardRow = (props: LeaderboardRowProps) => {
   );
 };
 
-const randomRows = Array(2)
+const randomRows = Array(3)
   .fill(famousWallets)
   .flat()
   .concat(otherTestWallets)
@@ -196,7 +196,7 @@ export const Leaderboard = (props: LeaderboardProps) => {
         {yourRow && !loading ? (
           <div
             className={cx(
-              "absolute left-0 right-0 bottom-0 px-8 bg-gray-900 border-r border-b border-l border-gray-500 transition-opacity",
+              "absolute left-0 right-0 bottom-0 px-8 bg-[#303030] border-r border-b border-l border-[#5c5c5c] transition-opacity",
               {
                 "opacity-50": currentRankInView[yourRank],
               }
@@ -213,16 +213,16 @@ export const Leaderboard = (props: LeaderboardProps) => {
             />
           </div>
         ) : null}
-        <div className="flex flex-col w-full p-4 border-l border-b border-r border-gray-500 max-h-[calc(100vh-30rem)] overflow-auto">
+        <div className="flex flex-col w-full p-4 border-l border-b border-r border-[#5c5c5c] max-h-[calc(100vh-30rem)] overflow-auto bg-[#161616]">
           <div className="p-8">
-            <div className="grid grid-cols-6 pb-4 px-4">
+            <div className="grid grid-cols-5 pb-4 px-4">
               <div></div>
-              <div className="col-span-2 text-center">Wallet</div>
+              <div className="text-center">Wallet</div>
               <div className="text-center">Pieces vaulted</div>
               <div className="text-center">Daily Accumulation</div>
               <div className="text-center">Points total</div>
             </div>
-            <div className="border border-gray-500">
+            <div className="">
               {loading ? (
                 <div className="flex p-16 items-center justify-center">
                   <Spinner />

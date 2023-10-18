@@ -104,7 +104,7 @@ const LoadSelectTransact = (props: Props) => {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex flex-col relative w-full border-r border-l border-b border-gray-500">
+      <div className="flex flex-col relative w-full border-r border-l border-b border-[#5c5c5c] bg-[#161616]">
         {props.instructions && !nftsLoading ? (
           <div className="flex flex-col p-4">{props.instructions}</div>
         ) : null}
@@ -148,7 +148,7 @@ const LoadSelectTransact = (props: Props) => {
       <div className="grid-cols-3 hidden" />
       <div className="grid-cols-4 hidden" />
       {/* end empty divs */}
-      <div className="w-full h-16 relative">
+      <div className="w-full h-16 relative bg-black">
         {currentTxn ? toggleButton : null}
         <div className="flex space-x-4 absolute right-0 bottom-0">
           {props.transactNode}

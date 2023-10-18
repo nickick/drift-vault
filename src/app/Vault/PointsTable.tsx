@@ -11,6 +11,7 @@ interface Props {
   toggleCheckedTokenId: (tokenId: string) => void;
   nftNamePrefix?: string;
   actionPrefix?: string;
+  index: number;
 }
 
 const PointsTable = ({
@@ -20,16 +21,16 @@ const PointsTable = ({
   nftNamePrefix,
   actionPrefix,
 }: NftItemsProps) => (
-  <div className={`flex flex-col border-t border-gray-500`}>
-    <div className="col-span-7 grid grid-cols-7 border-b border-gray-500 py-2">
+  <div className="flex flex-col p-4">
+    <div className="col-span-7 grid grid-cols-7 py-2">
       <div />
       <div />
-      <div className="col-span-2 ml-8">Token ID</div>
-      <div>Vaulted on</div>
-      <div>Unlocks on</div>
-      <div>Vaulted points</div>
+      <div className="col-span-2 ml-8"></div>
+      <div className="text-center">Vaulted on</div>
+      <div className="text-center">Unlocks on</div>
+      <div className="text-center">Vaulted points</div>
     </div>
-    {nfts.map((nft: NftWithVaultedData) => {
+    {nfts.map((nft: NftWithVaultedData, index) => {
       const selected = checkedTokenIds.includes(nft.tokenId);
       return (
         <TableRow
@@ -39,24 +40,29 @@ const PointsTable = ({
           key={nft.tokenId + nft.title}
           nftNamePrefix={nftNamePrefix}
           actionPrefix={actionPrefix}
+          index={index}
         />
       );
     })}
   </div>
 );
 
-const TableRow = ({ nft, selected, toggleCheckedTokenId }: Props) => {
+const TableRow = ({ nft, selected, toggleCheckedTokenId, index }: Props) => {
   return (
     <label
       key={nft.tokenId + nft.title}
       className={cx({
-        "grid grid-cols-7 items-center border-b border-gray-500 cursor-pointer":
-          true,
+        "grid grid-cols-7 items-center cursor-pointer my-1": true,
+        "bg-[#303030]": index % 2 === 0,
+        "bg-[#1F1F1F]": index % 2 === 1,
         ...selectedBorderClasses(selected),
-        "bg-white text-black": selected,
       })}
     >
-      <div className="w-full flex items-center justify-center">
+      <div
+        className={cx({
+          "w-full flex items-center justify-center": true,
+        })}
+      >
         <div className="relative">
           <div className="relative m-0 p-0 w-8 h-8">
             <input
@@ -64,7 +70,7 @@ const TableRow = ({ nft, selected, toggleCheckedTokenId }: Props) => {
               value={nft.tokenId}
               checked={selected}
               className={cx({
-                "checkbox rounded-none w-8 h-8": true,
+                "checkbox rounded-none w-8 h-8 border border-gray-400": true,
               })}
               onChange={() => toggleCheckedTokenId(nft.tokenId)}
             />
@@ -119,7 +125,11 @@ const VaultedDetails = ({ details }: { details?: (string | bigint)[] }) => {
         }
         const detail = details[i];
         if (typeof detail === "bigint" && Number(detail) > 10000000) {
-          return <div key={column}>{format(Number(detail) * 1000, "P")}</div>;
+          return (
+            <div key={column} className="text-center">
+              {format(Number(detail) * 1000, "P")}
+            </div>
+          );
         }
 
         return (
