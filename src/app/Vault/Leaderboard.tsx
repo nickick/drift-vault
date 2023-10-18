@@ -1,6 +1,6 @@
 import { useAccount, useEnsName } from "wagmi";
 import { Tab } from "./Tab";
-import { formatAddress } from "@/utils/format";
+import { formatAddress, numberFormatter } from "@/utils/format";
 import cx from "classnames";
 import { InView, useInView } from "react-intersection-observer";
 import { ReactNode, useCallback, useContext, useEffect, useState } from "react";
@@ -77,26 +77,40 @@ const LeaderboardRow = (props: LeaderboardRowProps) => {
         onChangeInView={onChangeInView || (() => {})}
         id={rank}
       >
-        <div
-          className={cx({
-            "p-4 grid grid-cols-5 transition-opacity": true,
-            "bg-[#303030]": rank % 2 === 0,
-            "text-2xl": highlightCurrentWallet,
-            "border border-white":
-              wallet === address && !highlightCurrentWallet,
-          })}
-          ref={ref}
-        >
-          <div>#{rank}</div>
-          <div className="text-center">
-            {isLoading
-              ? wallet
-              : data ?? formatAddress(wallet, wallet === address ? 3 : 10)}{" "}
-            {wallet === address ? "- You!" : ""}
+        <div className="flex">
+          <div
+            className={cx({
+              "p-4 grid grid-cols-4 w-12": true,
+              "bg-[#303030]": rank % 2 === 0 && !highlightCurrentWallet,
+            })}
+          >
+            #{rank}
           </div>
-          <div className="text-center">{pieces}</div>
-          <div className="text-center">{pointsDaily}</div>
-          <div className="text-center">{pointsTotal}</div>
+          <div
+            className={cx({
+              "w-full p-4 grid grid-cols-5 transition-opacity": true,
+              "bg-[#303030]": rank % 2 === 0 && !highlightCurrentWallet,
+              "text-2xl": highlightCurrentWallet,
+              "border border-white":
+                wallet === address && !highlightCurrentWallet,
+            })}
+            ref={ref}
+          >
+            <div className="text-center col-span-2">
+              {isLoading
+                ? wallet
+                : data ??
+                  formatAddress(wallet, wallet === address ? 3 : 6)}{" "}
+              {wallet === address ? "- You!" : ""}
+            </div>
+            <div className="text-center">{pieces}</div>
+            <div className="text-center">
+              {numberFormatter.format(pointsDaily)}
+            </div>
+            <div className="text-center">
+              {numberFormatter.format(pointsTotal)}
+            </div>
+          </div>
         </div>
       </InViewWrapper>
     </div>
@@ -196,7 +210,7 @@ export const Leaderboard = (props: LeaderboardProps) => {
         {yourRow && !loading ? (
           <div
             className={cx(
-              "absolute left-0 right-0 bottom-0 px-8 bg-[#303030] border-r border-b border-l border-[#5c5c5c] transition-opacity",
+              "absolute left-0 right-0 bottom-0 px-8 bg-blue-purple border-r border-b border-l border-[#5c5c5c] transition-opacity",
               {
                 "opacity-50": currentRankInView[yourRank],
               }
@@ -215,12 +229,14 @@ export const Leaderboard = (props: LeaderboardProps) => {
         ) : null}
         <div className="flex flex-col w-full p-4 border-l border-b border-r border-[#5c5c5c] max-h-[calc(100vh-30rem)] overflow-auto bg-[#161616]">
           <div className="p-8">
-            <div className="grid grid-cols-5 pb-4 px-4">
-              <div></div>
-              <div className="text-center">Wallet</div>
-              <div className="text-center">Pieces vaulted</div>
-              <div className="text-center">Daily Accumulation</div>
-              <div className="text-center">Points total</div>
+            <div className="flex">
+              <div className="w-12" />
+              <div className="w-full grid grid-cols-5 pb-4 px-4">
+                <div className="text-center col-span-2">Wallet</div>
+                <div className="text-center">Pieces vaulted</div>
+                <div className="text-center">Daily Accumulation</div>
+                <div className="text-center">Points total</div>
+              </div>
             </div>
             <div className="">
               {loading ? (

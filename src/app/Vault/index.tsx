@@ -56,7 +56,7 @@ export const Vaulted = () => {
   const tabData: { [key in TabNames]: ReactNode } = {
     [TabNames.VAULTED]: null,
     [TabNames.LEADERBOARD]: (
-      <div className="px-8 py-2 border border-[#6dc871] text-[#6dc871] w-48 text-center mt-2">
+      <div className="px-8 py-2 border border-sprite-green text-sprite-green w-48 text-center mt-2">
         {state.leaderboard?.loading ? (
           <Spinner />
         ) : (
@@ -76,7 +76,7 @@ export const Vaulted = () => {
       </div>
     ),
     [TabNames.YOUR_VAULT]: (
-      <div className="px-8 py-2 border w-48 text-center border-[#7976ff] text-[#7976ff] mt-2">
+      <div className="px-8 py-2 border w-48 text-center border-blue-purple text-blue-purple mt-2">
         {state.vault?.loading ? (
           <Spinner />
         ) : (
