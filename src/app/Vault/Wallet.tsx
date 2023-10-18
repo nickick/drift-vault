@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   useContractRead,
   useContractWrite,
@@ -25,20 +25,9 @@ export const Wallet = (props: VaultedProps) => {
     useContext(TransactionContext);
 
   const [checkedTokenIds, setCheckedTokenIds] = useState<string[]>([]);
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
 
-  const vaultTimeOptions = [
-    "0 Years",
-    "1 Year",
-    "2 Years",
-    "3 Years",
-    "4 Years",
-    "5 Years",
-    "6 Years",
-    "7 Years",
-    "8 Years",
-    "9 Years",
-    "10 Years",
-  ];
+  useEffect(() => {}, [selectAllChecked]);
 
   const { data: tokenName } = useContractRead({
     address: process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`,
@@ -119,20 +108,6 @@ export const Wallet = (props: VaultedProps) => {
     }
   };
 
-  const selectedAction = (
-    <div className="flex space-x-4 absolute right-0 bottom-0">
-      <div>
-        <button
-          className="p-2 border border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
-          disabled={checkedTokenIds.length === 0 || currentTxn !== undefined}
-          onClick={openVaultTimeSelect}
-        >
-          Vault
-        </button>
-      </div>
-    </div>
-  );
-
   return (
     <Tab active={props.active}>
       <LoadSelectTransact
@@ -143,7 +118,7 @@ export const Wallet = (props: VaultedProps) => {
         }
         checkedTokenIds={checkedTokenIds}
         setCheckedTokenIds={setCheckedTokenIds}
-        transactNode={selectedAction}
+        selectAllChecked={selectAllChecked}
         nftNamePrefix="FDO"
         actionPrefix="Vault"
       >
@@ -155,29 +130,58 @@ export const Wallet = (props: VaultedProps) => {
           actionPrefix,
         }) => {
           return (
-            <>
-              {nfts.length > 0 ? (
-                <div
-                  className={`grid grid-cols-${
-                    nfts.length > 3 ? 4 : nfts.length
-                  } gap-4 mx-auto my-4 mb-12`}
-                >
-                  {nfts.map((nft: NftWithVaultedData) => {
-                    const selected = checkedTokenIds.includes(nft.tokenId);
-                    return (
-                      <NftCard
-                        selected={selected}
-                        nft={nft}
-                        toggleCheckedTokenId={toggleCheckedTokenId}
-                        key={nft.tokenId + nft.title}
-                        nftNamePrefix={nftNamePrefix}
-                        actionPrefix={actionPrefix}
-                      />
-                    );
-                  })}
-                </div>
-              ) : null}
-            </>
+            <div className="flex flex-col">
+              <div className="mx-auto my-4">
+                {nfts.length > 0 ? (
+                  <>
+                    <div
+                      className={`grid grid-cols-${
+                        nfts.length > 3 ? 4 : nfts.length
+                      } gap-4`}
+                    >
+                      {nfts.map((nft: NftWithVaultedData) => {
+                        const selected = checkedTokenIds.includes(nft.tokenId);
+                        return (
+                          <NftCard
+                            selected={selected}
+                            nft={nft}
+                            toggleCheckedTokenId={toggleCheckedTokenId}
+                            key={nft.tokenId + nft.title}
+                            nftNamePrefix={nftNamePrefix}
+                            actionPrefix={actionPrefix}
+                          />
+                        );
+                      })}
+                    </div>
+                    <div className="flex space-x-4 w-full mt-8 mb-4 items-center justify-between">
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="checkbox rounded-none border border-white"
+                          value={""}
+                          onChange={(e) => {
+                            setSelectAllChecked(e.target.checked);
+                          }}
+                        />
+                        <span className="ml-2">
+                          {selectAllChecked ? "Deselect all" : "Select all"}
+                        </span>
+                      </label>
+                      <button
+                        className="p-2 border border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900"
+                        disabled={
+                          checkedTokenIds.length === 0 ||
+                          currentTxn !== undefined
+                        }
+                        onClick={openVaultTimeSelect}
+                      >
+                        Vault
+                      </button>
+                    </div>
+                  </>
+                ) : null}
+              </div>
+            </div>
           );
         }}
       </LoadSelectTransact>

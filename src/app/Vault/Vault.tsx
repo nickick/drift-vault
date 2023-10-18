@@ -26,6 +26,7 @@ export const Vault = (props: YourVaultProps) => {
   const { address } = useAccount();
 
   const [checkedTokenIds, setCheckedTokenIds] = useState<string[]>([]);
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
 
   const publicClient = usePublicClient();
 
@@ -224,7 +225,7 @@ export const Vault = (props: YourVaultProps) => {
 
   return (
     <Tab active={props.active}>
-      <div className="border-[#5c5c5c] bg-[#161616] w-full max-h-[calc(100vh-30rem)] overflow-y-auto overflow-x-hidden mb-12">
+      <div className="w-full max-h-[calc(100vh-30rem)] overflow-y-auto overflow-x-hidden mb-12">
         <LoadSelectTransact
           contractAddress={process.env.NEXT_PUBLIC_SBT_ADDRESS as `0x${string}`}
           title="Your Vault"
@@ -237,6 +238,7 @@ export const Vault = (props: YourVaultProps) => {
           actionPrefix="Unvault"
           setLoading={setLoading}
           setAssets={setVaulted}
+          selectAllChecked={selectAllChecked}
         >
           {(props) => {
             return <PointsTable {...props} />;
