@@ -56,9 +56,11 @@ export const Vaulted = () => {
   const tabData: { [key in TabNames]: ReactNode } = {
     [TabNames.VAULTED]: null,
     [TabNames.LEADERBOARD]: (
-      <div className="px-12 py-2 border border-sprite-green text-sprite-green max-w-fit text-center mt-2 font-medium">
+      <div className="px-12 py-2 border max-w-fit text-center border-sprite-green text-sprite-green mt-2 font-medium">
         {state.leaderboard?.loading ? (
-          <Spinner />
+          <div className="px-8">
+            <Spinner />
+          </div>
         ) : (
           <>
             {state.leaderboard?.position ? (
@@ -78,7 +80,9 @@ export const Vaulted = () => {
     [TabNames.YOUR_VAULT]: (
       <div className="px-12 py-2 border max-w-fit text-center border-blue-purple text-blue-purple mt-2 font-medium">
         {state.vault?.loading ? (
-          <Spinner />
+          <div className="px-8">
+            <Spinner />
+          </div>
         ) : (
           <>{numberFormatter.format(Number(state.vault?.points)) ?? 0} points</>
         )}
