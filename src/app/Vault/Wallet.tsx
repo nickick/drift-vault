@@ -135,13 +135,7 @@ export const Wallet = (props: VaultedProps) => {
               <div className="mx-auto my-4">
                 {nfts.length > 0 ? (
                   <>
-                    <div
-                      className={`grid sm:grid-cols-${
-                        nfts.length > 2 ? 3 : nfts.length
-                      } lg:grid-cols-${
-                        nfts.length > 3 ? 4 : nfts.length
-                      } gap-4`}
-                    >
+                    <div className={`grid sm:grid-cols-3 lg:grid-cols-4 gap-4`}>
                       {nfts.map((nft: NftWithVaultedData) => {
                         const selected = checkedTokenIds.includes(nft.tokenId);
                         return (
@@ -172,7 +166,7 @@ export const Wallet = (props: VaultedProps) => {
                         </span>
                       </label>
                       <button
-                        className="p-2 border bg-white text-black border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-200 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900 disabled:hover:text-white"
+                        className="p-2 border font-medium bg-white text-black border-gray-200 h-12 w-36 cursor-pointer hover:bg-slate-200 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900 disabled:hover:text-white"
                         disabled={
                           checkedTokenIds.length === 0 ||
                           currentTxn !== undefined

@@ -208,14 +208,7 @@ export const Leaderboard = (props: LeaderboardProps) => {
     <Tab active={props.active}>
       <div className="w-full relative">
         {yourRow && !loading ? (
-          <div
-            className={cx(
-              "absolute left-0 right-0 bottom-0 px-8 bg-blue-purple border-r border-b border-l border-[#5c5c5c] transition-opacity",
-              {
-                "opacity-50": currentRankInView[yourRank],
-              }
-            )}
-          >
+          <div className="absolute left-0 right-0 bottom-0 px-8 bg-blue-purple border-r border-b border-l border-[#5c5c5c] transition-opacity">
             <LeaderboardRow
               rank={yourRank}
               wallet={address!}
@@ -227,7 +220,7 @@ export const Leaderboard = (props: LeaderboardProps) => {
             />
           </div>
         ) : null}
-        <div className="flex flex-col w-full p-4 border-l border-b border-r border-[#5c5c5c] max-h-[calc(100vh-30rem)] overflow-auto bg-[#161616]">
+        <div className="flex flex-col w-full p-4 border-l border-b border-r border-[#5c5c5c] max-h-screen overflow-auto bg-[#161616]">
           <div className="p-8">
             <div className="flex">
               <div className="w-12" />

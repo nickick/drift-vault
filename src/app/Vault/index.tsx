@@ -97,24 +97,19 @@ export const Vaulted = () => {
           <div className="mt-2">{tabExplanations[currentTab]}</div>
         </div>
         <div className="mt-8">
-          <div className="text-gray-500 pt-6 border-t border-l border-r border-[#5c5c5c]">
+          <div className="text-gray-500 border-t border-l border-r border-[#5c5c5c] flex">
             {Object.values(TabNames).map((tabName) => {
               return (
                 <a
                   key={tabName}
                   className={cx({
-                    "text-white": currentTab === tabName,
-                    "transition-colors": true,
+                    "text-white bg-[#161616]": currentTab === tabName,
+                    "transition-colors h-full flex py-3 w-[12rem] justify-center":
+                      true,
                   })}
                   onClick={() => setCurrentTab(tabName)}
                 >
-                  <span
-                    className={cx({
-                      "text-xl px-6 pt-3 pb-4 relative bottom-[12px] cursor-pointer":
-                        true,
-                      "bg-[#161616]": currentTab === tabName,
-                    })}
-                  >
+                  <span className="text-2xl px-6 relative cursor-pointer">
                     {tabName}
                   </span>
                 </a>

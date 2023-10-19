@@ -197,7 +197,7 @@ export const Vault = (props: YourVaultProps) => {
 
   return (
     <Tab active={props.active}>
-      <div className="w-full max-h-[calc(100vh-30rem)] overflow-y-auto overflow-x-hidden mb-12">
+      <div className="w-full max-h-screen overflow-y-auto overflow-x-hidden mb-12 border-[#5c5c5c] border-b">
         <LoadSelectTransact
           contractAddress={process.env.NEXT_PUBLIC_SBT_ADDRESS as `0x${string}`}
           title="Your Vault"
@@ -235,7 +235,7 @@ export const Vault = (props: YourVaultProps) => {
                           </span>
                         </label>
                         <button
-                          className="p-2 border bg-white text-black border-gray-200 h-12 w-48 cursor-pointer hover:bg-slate-200 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900 disabled:hover:text-white"
+                          className="p-2 border font-medium bg-white text-black border-gray-200 h-12 w-36 cursor-pointer hover:bg-slate-200 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900 disabled:hover:text-white"
                           disabled={
                             checkedTokenIds.length === 0 ||
                             currentTxn !== undefined
