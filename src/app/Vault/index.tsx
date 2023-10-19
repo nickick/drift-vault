@@ -67,8 +67,10 @@ export const Vaulted = () => {
   }, []);
 
   useEffect(() => {
-    if (windowWidth <= 640) setCurrentTab(TabNames.YOUR_VAULT);
-  }, [windowWidth]);
+    if (windowWidth <= 640 && currentTab === TabNames.VAULTED) {
+      setCurrentTab(TabNames.YOUR_VAULT);
+    }
+  }, [windowWidth, currentTab]);
 
   const tabData: { [key in TabNames]: ReactNode } = {
     [TabNames.VAULTED]: null,
@@ -119,30 +121,24 @@ export const Vaulted = () => {
         </div>
         <div className="mt-8">
           <div className="text-slate-gray border-t border-l border-r border-[#5c5c5c] flex">
-            {Object.values(TabNames)
-              .filter((tabName) => {
-                if (windowWidth < 640) {
-                  return tabName !== "Wallet";
-                }
-                return true; // Allow all tabs if windowWidth is >= 640px
-              })
-              .map((tabName) => {
-                return (
-                  <a
-                    key={tabName}
-                    className={cx({
-                      "text-white bg-[#161616]": currentTab === tabName,
-                      "transition-colors h-full flex py-3 w-[12rem] justify-center":
-                        true,
-                    })}
-                    onClick={() => setCurrentTab(tabName)}
-                  >
-                    <span className="text-2xl px-6 relative cursor-pointer">
-                      {tabName}
-                    </span>
-                  </a>
-                );
-              })}
+            {Object.values(TabNames).map((tabName) => {
+              return (
+                <a
+                  key={tabName}
+                  className={cx({
+                    "text-white bg-[#161616]": currentTab === tabName,
+                    "transition-colors h-full flex py-3 w-[12rem] justify-center":
+                      true,
+                    "hidden sm:flex": tabName === TabNames.VAULTED,
+                  })}
+                  onClick={() => setCurrentTab(tabName)}
+                >
+                  <span className="text-2xl px-6 relative cursor-pointer">
+                    {tabName}
+                  </span>
+                </a>
+              );
+            })}
           </div>
           <div className="mb-4">
             <div className="hidden sm:flex">
