@@ -18,21 +18,18 @@ const NftCard = ({ nft, selected, toggleCheckedTokenId }: Props) => {
       <label className="flex flex-col cursor-pointer group">
         <div
           className={cx({
-            "flex flex-col border w-32 md:w-52 lg:w-54 space-y-3 p-2 bg-white":
+            "flex flex-col border w-32 md:w-52 lg:w-54 space p-1.5 bg-white bg-opacity-90 text-black":
               true,
             ...selectedBorderClasses(selected),
-            "bg-white text-black": true,
           })}
         >
-          <div className="h-44 md:h-52 lg:h-72 relative overflow-hidden flex justify-center items-center">
+          <div className="relative overflow-hidden flex justify-center items-center w-full pb-[125%]">
             {nft.rawMetadata?.animation ? (
               <video
                 autoPlay
                 loop
                 muted
-                className="object-cover h-[11rem] sm:h-[14rem] md:h-[22rem] group-hover:scale-105 transition-transform"
-                width="100%"
-                height="100%"
+                className="group-hover:scale-[1.7] scale-[1.5] transition-transform absolute left-0 top-0 min-w-full min-h-full w-auto h-auto overflow-hidden bg-cover object-cover"
               >
                 <source src={nft.rawMetadata.animation} />
               </video>
@@ -42,20 +39,20 @@ const NftCard = ({ nft, selected, toggleCheckedTokenId }: Props) => {
                 width={500}
                 height={500}
                 alt={nft.title}
-                className="w-full mx-auto group-hover:scale-105 transition-transform"
+                className="absolute inset-0 object-cover group-hover:scale-105 transition-transform"
               />
             )}
           </div>
-          <div className="space-y-4 pb-1">
+          <div className="">
             <div
               className={cx({
-                "w-full flex items-center justify-start p-2 px-4": true,
-                "bg-white text-black": true,
+                "w-full flex items-center justify-start px-[0.875rem] pt-[1rem] pb-[0.875rem] text-black bg-opacity-90":
+                  true,
               })}
             >
               <div
                 className={cx({
-                  "border-r m-0 p-0 w-8 h-8 transition-colors": true,
+                  "border-r m-0 p-0 w-5 h-5 transition-colors": true,
                   "group-hover:border-gray-300": true,
                 })}
               >
@@ -63,7 +60,7 @@ const NftCard = ({ nft, selected, toggleCheckedTokenId }: Props) => {
                   type="checkbox"
                   value={nft.tokenId}
                   checked={selected}
-                  className="checkbox rounded-none w-8 h-8 border border-black"
+                  className="checkbox rounded-none w-5 h-5 border border-black"
                   onChange={() => toggleCheckedTokenId(nft.tokenId)}
                 />
               </div>

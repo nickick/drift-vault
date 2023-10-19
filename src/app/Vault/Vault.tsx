@@ -1,5 +1,4 @@
 import { Nft } from "alchemy-sdk";
-import cx from "classnames";
 import { useCallback, useContext, useEffect, useState } from "react";
 import {
   useAccount,
@@ -171,7 +170,7 @@ export const Vault = (props: YourVaultProps) => {
   const [vaulted, setVaulted] = useState<NftWithVaultedData[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const { state, setState } = useContext(StateContext);
+  const { setState } = useContext(StateContext);
 
   useEffect(() => {
     if (loading) {
@@ -231,7 +230,7 @@ export const Vault = (props: YourVaultProps) => {
                               setSelectAllChecked(e.target.checked);
                             }}
                           />
-                          <span className="ml-2">
+                          <span className="ml-2 uppercase">
                             {selectAllChecked ? "Deselect all" : "Select all"}
                           </span>
                         </label>

@@ -56,7 +56,9 @@ const LoadSelectTransact = (props: Props) => {
   const { address } = useAccount();
   const [nfts, setNfts] = useState<Nft[]>([]);
   const [nftsLoading, setNftsLoading] = useState(false);
-  const noNftsMessage = props.noNftsMessage ?? "You have no NFTs to vault.";
+  const noNftsMessage =
+    props.noNftsMessage ??
+    "Unable to find any 'First Day Out' pieces in this wallet.";
 
   const setLoadingState = (loading: boolean) => {
     if (setLoading) {
@@ -157,7 +159,7 @@ const LoadSelectTransact = (props: Props) => {
             <div className="text-center">
               <div>{noNftsMessage}</div>
               <div>
-                You can get some at
+                Buy them on secondary at
                 <a
                   href="https://opensea.io/collection/firstdayout"
                   rel="nofollow noreferrer"
