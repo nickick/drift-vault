@@ -5,7 +5,6 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { Spinner } from "../Spinner";
 import { TransactionContext } from "../TransactionContext";
-import { NftCard } from "./NftCard";
 
 export interface NftItemsProps {
   nfts: NftWithVaultedData[];
