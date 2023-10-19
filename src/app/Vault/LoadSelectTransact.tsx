@@ -118,13 +118,13 @@ const LoadSelectTransact = (props: Props) => {
 
   const toggleCheckedTokenId = (tokenId: string) => {
     if (checkedTokenIds.includes(tokenId)) {
-      if (checkedTokenIds.length === 1) {
+      if (checkedTokenIds.length === 1 && selectAllChecked) {
         setSelectAllChecked(false);
       } else {
         setCheckedTokenIds(checkedTokenIds.filter((id) => id !== tokenId));
       }
     } else {
-      if (checkedTokenIds.length === nfts.length - 1) {
+      if (checkedTokenIds.length === nfts.length - 1 && !selectAllChecked) {
         setSelectAllChecked(true);
       } else {
         setCheckedTokenIds([...checkedTokenIds, tokenId]);
