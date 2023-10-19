@@ -18,8 +18,10 @@ const NftCard = ({ nft, selected, toggleCheckedTokenId }: Props) => {
       <label className="flex flex-col cursor-pointer group">
         <div
           className={cx({
-            "flex flex-col border w-32 md:w-52 lg:w-54 space p-1.5 pb-0 bg-white bg-opacity-90 text-black":
+            "flex flex-col border w-32 md:w-52 lg:w-54 space p-1.5 pb-0 bg-white text-black group-hover:bg-opacity-100 transition-all":
               true,
+            "bg-opacity-100": selected,
+            "bg-opacity-90": !selected,
             ...selectedBorderClasses(selected),
           })}
         >

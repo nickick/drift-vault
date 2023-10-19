@@ -88,7 +88,7 @@ export const Vaulted = () => {
 
   return (
     <TransactionContextWrapper>
-      <div className="w-full">
+      <div className="w-full mt-16">
         <div className="sm:h-64 md:h-56">
           <div className="text-6xl text-[64px] font-serif">
             {tabTitles[currentTab]}
