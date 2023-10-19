@@ -167,7 +167,7 @@ export const Wallet = (props: VaultedProps) => {
                             setSelectAllChecked(e.target.checked);
                           }}
                         />
-                        <span className="ml-2 uppercase">
+                        <span className="ml-2 capitalize">
                           {selectAllChecked ? "Deselect all" : "Select all"}
                         </span>
                       </label>
