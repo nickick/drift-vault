@@ -77,7 +77,13 @@ const LeaderboardRow = (props: LeaderboardRowProps) => {
         onChangeInView={onChangeInView || (() => {})}
         id={rank}
       >
-        <div className="flex">
+        <div
+          className={cx({
+            flex: true,
+            "border border-white":
+              wallet === address && !highlightCurrentWallet,
+          })}
+        >
           <div
             className={cx({
               "p-4 grid grid-cols-4 w-12": true,
@@ -91,8 +97,6 @@ const LeaderboardRow = (props: LeaderboardRowProps) => {
               "w-full p-4 grid grid-cols-5 transition-opacity": true,
               "bg-[#303030]": rank % 2 === 1 && !highlightCurrentWallet,
               "text-2xl": highlightCurrentWallet,
-              "border border-white":
-                wallet === address && !highlightCurrentWallet,
             })}
             ref={ref}
           >
