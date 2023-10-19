@@ -22,7 +22,7 @@ const PointsTable = ({
   actionPrefix,
 }: NftItemsProps) => (
   <div className="flex flex-col">
-    <div className="col-span-7 grid grid-cols-7 py-2">
+    <div className="col-span-7 grid grid-cols-7 py-2 text-sm text-slate-gray">
       <div />
       <div />
       <div className="col-span-2 ml-8"></div>
@@ -64,26 +64,26 @@ const TableRow = ({ nft, selected, toggleCheckedTokenId, index }: Props) => {
         })}
       >
         <div className="relative">
-          <div className="relative m-0 p-0 w-8 h-8">
+          <div className="relative m-0 p-0 w-6 h-6">
             <input
               type="checkbox"
               value={nft.tokenId}
               checked={selected}
               className={cx({
-                "checkbox rounded-none w-8 h-8 border border-gray-400": true,
+                "checkbox rounded-none w-5 h-5 border border-white": true,
               })}
               onChange={() => toggleCheckedTokenId(nft.tokenId)}
             />
           </div>
         </div>
       </div>
-      <div className="col-span-1 relative overflow-hidden flex justify-center items-center h-36">
+      <div className="col-span-1 relative overflow-hidden flex justify-center items-center border-2 my-1.5 border-white w-[5.875rem] pb-[100%]">
         {nft.rawMetadata?.animation ? (
           <video
             autoPlay
             loop
             muted
-            className="object-cover h-[32rem] group-hover:scale-105 transition-transform"
+            className="object-cover group-hover:scale-[1.7] scale-[1.4] transition-transform absolute left-0 top-0 min-w-full min-h-full w-auto h-auto overflow-hidden bg-cover"
             width="100%"
             height="100%"
           >
@@ -95,7 +95,7 @@ const TableRow = ({ nft, selected, toggleCheckedTokenId, index }: Props) => {
             width={500}
             height={500}
             alt={nft.title}
-            className="w-full mx-auto group-hover:scale-105 transition-transform"
+            className="w-full mx-auto group-hover:scale-105 transition-transform absolute left-0 top-0"
           />
         )}
       </div>
@@ -126,7 +126,7 @@ const VaultedDetails = ({ details }: { details?: (string | bigint)[] }) => {
         const detail = details[i];
         if (typeof detail === "bigint" && Number(detail) > 10000000) {
           return (
-            <div key={column} className="text-center">
+            <div key={column} className="text-center text-lg">
               {format(Number(detail) * 1000, "P")}
             </div>
           );

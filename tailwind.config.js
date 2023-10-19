@@ -15,6 +15,7 @@ module.exports = {
       colors: {
         "blue-purple": "#7976ff",
         "sprite-green": "#6dc871",
+        "slate-gray": "#939393",
       },
       fontFamily: {
         sans: ["Karla", "sans-serif"],

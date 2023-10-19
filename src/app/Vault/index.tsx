@@ -30,7 +30,7 @@ const tabExplanations: { [key in TabNames]: ReactNode } = {
         Art is created to exist, not burned for value. Art is the journey we are
         all on together, and we hope to pass it on to our children.
       </div>
-      <div className="text-gray-400">
+      <div className="text-slate-gray">
         Vault your ‘First Day Out’ in the Vaulted contract. The number of pieces
         vaulted and how long they’ve been vaulted for are recorded in an
         on-chain leaderboard, which gives the most fervent collectors
@@ -56,7 +56,7 @@ export const Vaulted = () => {
   const tabData: { [key in TabNames]: ReactNode } = {
     [TabNames.VAULTED]: null,
     [TabNames.LEADERBOARD]: (
-      <div className="px-8 py-2 border border-sprite-green text-sprite-green w-48 text-center mt-2">
+      <div className="px-12 py-2 border border-sprite-green text-sprite-green max-w-fit text-center mt-2 font-medium">
         {state.leaderboard?.loading ? (
           <Spinner />
         ) : (
@@ -76,7 +76,7 @@ export const Vaulted = () => {
       </div>
     ),
     [TabNames.YOUR_VAULT]: (
-      <div className="px-8 py-2 border w-48 text-center border-blue-purple text-blue-purple mt-2">
+      <div className="px-12 py-2 border max-w-fit text-center border-blue-purple text-blue-purple mt-2 font-medium">
         {state.vault?.loading ? (
           <Spinner />
         ) : (
@@ -97,7 +97,7 @@ export const Vaulted = () => {
           <div className="mt-2">{tabExplanations[currentTab]}</div>
         </div>
         <div className="mt-8">
-          <div className="text-gray-500 border-t border-l border-r border-[#5c5c5c] flex">
+          <div className="text-slate-gray border-t border-l border-r border-[#5c5c5c] flex">
             {Object.values(TabNames).map((tabName) => {
               return (
                 <a
