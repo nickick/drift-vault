@@ -157,9 +157,11 @@ const LoadSelectTransact = (props: Props) => {
           <div className="h-96 mb-16 w-full flex items-center justify-center">
             <div className="text-center">
               <div className="hidden sm:flex">{noNftsMessage}</div>
-              <div className="sm:hidden">
-                Vaulted is designed for desktop browser use only. Please visit
-                in a desktop Chrome Browser.
+              <div className="sm:hidden flex-col">
+                <p className="mb-4">
+                  Vaulted is designed for desktop browser use only.
+                </p>
+                <p>Please visit in a desktop Chrome Browser.</p>
               </div>
               <div className="hidden sm:flex">
                 Buy them on secondary at
