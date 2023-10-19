@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useContext, useState } from "react";
+import { ReactNode, useContext, useState, useEffect } from "react";
 import { TransactionContextWrapper } from "../TransactionContext";
 import { Leaderboard } from "./Leaderboard";
 import { Wallet } from "./Wallet";
@@ -52,6 +52,23 @@ const tabExplanations: { [key in TabNames]: ReactNode } = {
 export const Vaulted = () => {
   const [currentTab, setCurrentTab] = useState<TabNames>(TabNames.VAULTED);
   const { state } = useContext(StateContext);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (windowWidth <= 640) setCurrentTab(TabNames.YOUR_VAULT);
+  }, [windowWidth]);
 
   const tabData: { [key in TabNames]: ReactNode } = {
     [TabNames.VAULTED]: null,
@@ -102,26 +119,35 @@ export const Vaulted = () => {
         </div>
         <div className="mt-8">
           <div className="text-slate-gray border-t border-l border-r border-[#5c5c5c] flex">
-            {Object.values(TabNames).map((tabName) => {
-              return (
-                <a
-                  key={tabName}
-                  className={cx({
-                    "text-white bg-[#161616]": currentTab === tabName,
-                    "transition-colors h-full flex py-3 w-[12rem] justify-center":
-                      true,
-                  })}
-                  onClick={() => setCurrentTab(tabName)}
-                >
-                  <span className="text-2xl px-6 relative cursor-pointer">
-                    {tabName}
-                  </span>
-                </a>
-              );
-            })}
+            {Object.values(TabNames)
+              .filter((tabName) => {
+                if (windowWidth < 640) {
+                  return tabName !== "Wallet";
+                }
+                return true; // Allow all tabs if windowWidth is >= 640px
+              })
+              .map((tabName) => {
+                return (
+                  <a
+                    key={tabName}
+                    className={cx({
+                      "text-white bg-[#161616]": currentTab === tabName,
+                      "transition-colors h-full flex py-3 w-[12rem] justify-center":
+                        true,
+                    })}
+                    onClick={() => setCurrentTab(tabName)}
+                  >
+                    <span className="text-2xl px-6 relative cursor-pointer">
+                      {tabName}
+                    </span>
+                  </a>
+                );
+              })}
           </div>
           <div className="mb-4">
-            {currentTab === TabNames.VAULTED && <Wallet active />}
+            <div className="hidden sm:flex">
+              {currentTab === TabNames.VAULTED && <Wallet active />}
+            </div>
             {currentTab === TabNames.YOUR_VAULT && <Vault active />}
             {currentTab === TabNames.LEADERBOARD && <Leaderboard active />}
           </div>
