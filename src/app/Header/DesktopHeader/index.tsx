@@ -3,11 +3,11 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { NetworkSwitch } from "../Connect";
-import { Discord } from "../icons/Discord";
-import { DriftLogo } from "../icons/DriftLogo";
-import { Instagram } from "../icons/Instagram";
-import Twitter from "../icons/Twitter";
+import { NetworkSwitch } from "../../Connect";
+import { Discord } from "../../icons/Discord";
+import { DriftLogo } from "../../icons/DriftLogo";
+import { Instagram } from "../../icons/Instagram";
+import Twitter from "../../icons/Twitter";
 import "./header.css";
 
 type NavItem = {

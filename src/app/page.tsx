@@ -1,4 +1,4 @@
-import { Header } from "./Header";
+import { Header } from "./Header/DesktopHeader";
 import { MobileHeader } from "./Header/MobileHeader";
 import { Vaulted } from "./Vault";
 
