@@ -8,7 +8,7 @@ import { DriftLogo } from "@/app/icons/DriftLogo";
 import Twitter from "@/app/icons/Twitter";
 import { Sling as Hamburger } from "hamburger-react";
 import "./header.css";
-import { NavItem } from "../DesktopHeader";
+import { NavItem, leftNavItems } from "../DesktopHeader";
 
 const rightNavItems: NavItem[] = [
   {
@@ -19,6 +19,7 @@ const rightNavItems: NavItem[] = [
 
 export const MobileHeader = () => {
   const [loaded, setLoaded] = useState(false);
+  const [isOpen, setOpen] = useState(false);
   const { address } = useAccount();
 
   useEffect(() => {
@@ -28,7 +29,24 @@ export const MobileHeader = () => {
   return (
     <div className="flex items-center justify-center pt-[3.62rem] pb-16 max-w-screen-xl mx-auto relative">
       <div className="flex space-x-6 items-center absolute left-16">
-        <Hamburger />
+        <Hamburger
+          toggled={isOpen}
+          toggle={setOpen}
+        />
+        {isOpen && (
+          <div className="absolute top-12">
+            <div className="flex flex-col p-3 border border-[#5c5c5c] bg-black z-10">
+              {leftNavItems.map((item) => {
+                return (
+                  <NavbarItem
+                    key={item.name}
+                    item={item}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
       <Link
         href="/"
@@ -60,7 +78,7 @@ const NavbarItem = ({ item }: { item: NavItem }) => {
     <a
       key={item.name}
       href={item.link}
-      className="uppercase font-sans text-xs tracking-[0.09em]"
+      className="uppercase font-sans text-lg tracking-[0.09em]"
     >
       {item.name ? item.name : <div className="w-[1.2rem]">{item.icon}</div>}
     </a>

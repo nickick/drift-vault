@@ -39,7 +39,7 @@ export const leftNavItems: NavItem[] = [
         link: "",
       },
       {
-        name: "Fist Day Out",
+        name: "First Day Out",
         link: "",
       },
     ],
