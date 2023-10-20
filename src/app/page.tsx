@@ -1,10 +1,16 @@
-import { Header } from "./Header";
+import { Header } from "./Header/DesktopHeader";
+import { MobileHeader } from "./Header/MobileHeader";
 import { Vaulted } from "./Vault";
 
 export default function Home() {
   return (
     <div className="max-h-screen overflow-auto">
-      <Header />
+      <div className="hidden sm:block">
+        <Header />
+      </div>
+      <div className="sm:hidden relative z-30">
+        <MobileHeader />
+      </div>
       <main className="flex flex-col items-center justify-between px-12 max-w-between-lg-xl mx-auto">
         <Vaulted />
       </main>

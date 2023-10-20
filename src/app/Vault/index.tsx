@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useContext, useState } from "react";
+import { ReactNode, useContext, useState, useEffect } from "react";
 import { TransactionContextWrapper } from "../TransactionContext";
 import { Leaderboard } from "./Leaderboard";
 import { Wallet } from "./Wallet";
@@ -49,9 +49,36 @@ const tabExplanations: { [key in TabNames]: ReactNode } = {
   ),
 };
 
+const MOBILE_WIDTH = 640;
+
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < MOBILE_WIDTH);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < MOBILE_WIDTH);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  return isMobile;
+};
+
 export const Vaulted = () => {
   const [currentTab, setCurrentTab] = useState<TabNames>(TabNames.VAULTED);
   const { state } = useContext(StateContext);
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    if (isMobile && currentTab === TabNames.VAULTED) {
+      setCurrentTab(TabNames.YOUR_VAULT);
+    }
+  }, [isMobile, currentTab]);
 
   const tabData: { [key in TabNames]: ReactNode } = {
     [TabNames.VAULTED]: null,
@@ -110,6 +137,7 @@ export const Vaulted = () => {
                     "text-white bg-[#161616]": currentTab === tabName,
                     "transition-colors h-full flex py-3 w-[12rem] justify-center":
                       true,
+                    "hidden sm:flex": tabName === TabNames.VAULTED,
                   })}
                   onClick={() => setCurrentTab(tabName)}
                 >
@@ -121,7 +149,9 @@ export const Vaulted = () => {
             })}
           </div>
           <div className="mb-4">
-            {currentTab === TabNames.VAULTED && <Wallet active />}
+            <div className="hidden sm:flex">
+              {currentTab === TabNames.VAULTED && <Wallet active />}
+            </div>
             {currentTab === TabNames.YOUR_VAULT && <Vault active />}
             {currentTab === TabNames.LEADERBOARD && <Leaderboard active />}
           </div>
