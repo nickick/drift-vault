@@ -45,7 +45,7 @@ const InViewWrapper = (props: {
 
 type LeaderboardRowProps = {
   rank: number;
-  wallet: `0x${string}`;
+  wallet?: `0x${string}`;
   address?: `0x${string}`;
   pieces: number;
   pointsDaily: number;
@@ -134,7 +134,7 @@ const fakeLoader = async (address: string) => {
     const yourRowToReplace = randomRows.find(
       (row: (string | number)[]) => row[0] === "yourWallet"
     );
-    if (yourRowToReplace) {
+    if (yourRowToReplace && address) {
       yourRowToReplace[0] = address as `0x${string}`;
     }
 
@@ -204,19 +204,17 @@ export const Leaderboard = (props: LeaderboardProps) => {
   }, [address]);
 
   useEffect(() => {
-    if (address) {
-      getRows();
-    }
+    getRows();
   }, [address, getRows]);
 
   return (
-    <Tab active={props.active}>
+    <Tab active={props.active} walletRequired={false}>
       <div className="w-full relative">
         {yourRow && !loading ? (
-          <div className="absolute left-0 right-0 bottom-0 px-8 bg-blue-purple border-r border-b border-l border-[#5c5c5c] transition-opacity">
+          <div className="absolute left-0 right-0 bottom-0 px-8 bg-blue-purple transition-opacity">
             <LeaderboardRow
               rank={yourRank}
-              wallet={address!}
+              wallet={address}
               pieces={yourRow[1] as number}
               pointsDaily={yourRow[2] as number}
               pointsTotal={yourRow[3] as number}
@@ -225,7 +223,7 @@ export const Leaderboard = (props: LeaderboardProps) => {
             />
           </div>
         ) : null}
-        <div className="flex flex-col w-full p-4 border-l border-b border-r border-[#5c5c5c] max-h-screen overflow-auto bg-[#161616]">
+        <div className="flex flex-col w-full p-4 max-h-screen overflow-auto bg-[#161616]">
           <div className="p-8">
             <div className="flex">
               <div className="w-12" />
