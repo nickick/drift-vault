@@ -8,13 +8,7 @@ import { DriftLogo } from "@/app/icons/DriftLogo";
 import Twitter from "@/app/icons/Twitter";
 import { Sling as Hamburger } from "hamburger-react";
 import "./header.css";
-
-type NavItem = {
-  name?: string;
-  icon?: React.ReactNode;
-  link: string;
-  subItems?: NavItem[];
-};
+import { NavItem } from "../DesktopHeader";
 
 const rightNavItems: NavItem[] = [
   {
