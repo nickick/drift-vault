@@ -5,7 +5,7 @@ import { Vaulted } from "./Vault";
 export default function Home() {
   return (
     <div className="max-h-screen overflow-auto">
-      <div className="hidden sm:flex">
+      <div className="hidden sm:block">
         <Header />
       </div>
       <div className="sm:hidden relative z-30">

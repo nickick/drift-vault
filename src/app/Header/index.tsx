@@ -1,14 +1,14 @@
 "use client";
 
-import "./header.css";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { useAccount, useDisconnect } from "wagmi";
+import { useAccount } from "wagmi";
 import { NetworkSwitch } from "../Connect";
 import { Discord } from "../icons/Discord";
 import { DriftLogo } from "../icons/DriftLogo";
 import { Instagram } from "../icons/Instagram";
 import Twitter from "../icons/Twitter";
+import "./header.css";
 
 type NavItem = {
   name?: string;
@@ -83,7 +83,7 @@ export const Header = () => {
 
   return (
     <div className="flex items-center justify-center pt-[3.62rem] pb-16 max-w-screen-xl mx-auto relative">
-      <div className="hidden lg:flex space-x-6 justify-between items-center absolute left-[0.7rem]">
+      <div className="flex space-x-6 justify-between items-center absolute left-[0.7rem]">
         {leftNavItems.map((item) => {
           return (
             <NavbarItem

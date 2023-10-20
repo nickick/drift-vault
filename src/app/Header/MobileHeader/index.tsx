@@ -33,7 +33,7 @@ export const MobileHeader = () => {
 
   return (
     <div className="flex items-center justify-center pt-[3.62rem] pb-16 max-w-screen-xl mx-auto relative">
-      <div className="flex space-x-6 items-center absolute left-4">
+      <div className="flex space-x-6 items-center absolute left-16">
         <Hamburger />
       </div>
       <Link
@@ -42,7 +42,7 @@ export const MobileHeader = () => {
       >
         <DriftLogo />
       </Link>
-      <div className="flex space-x-6 items-center absolute right-4">
+      <div className="flex space-x-6 items-center absolute right-16">
         {rightNavItems.map((item, index) => {
           return (
             <NavbarItem
