@@ -208,7 +208,10 @@ export const Leaderboard = (props: LeaderboardProps) => {
   }, [address, getRows]);
 
   return (
-    <Tab active={props.active} walletRequired={false}>
+    <Tab
+      active={props.active}
+      walletRequired={false}
+    >
       <div className="w-full relative">
         {yourRow && !loading ? (
           <div className="absolute left-0 right-0 bottom-0 px-8 bg-blue-purple transition-opacity">

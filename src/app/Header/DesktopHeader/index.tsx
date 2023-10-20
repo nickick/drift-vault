@@ -10,7 +10,7 @@ import { Instagram } from "../../icons/Instagram";
 import Twitter from "../../icons/Twitter";
 import "./header.css";
 
-type NavItem = {
+export type NavItem = {
   name?: string;
   icon?: React.ReactNode;
   link: string;

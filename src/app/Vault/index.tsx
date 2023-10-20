@@ -49,14 +49,14 @@ const tabExplanations: { [key in TabNames]: ReactNode } = {
   ),
 };
 
-export const Vaulted = () => {
-  const [currentTab, setCurrentTab] = useState<TabNames>(TabNames.VAULTED);
-  const { state } = useContext(StateContext);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+const MOBILE_WIDTH = 640;
+
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < MOBILE_WIDTH);
 
   useEffect(() => {
     const handleResize = () => {
-      setWindowWidth(window.innerWidth);
+      setIsMobile(window.innerWidth < MOBILE_WIDTH);
     };
 
     window.addEventListener("resize", handleResize);
@@ -66,11 +66,19 @@ export const Vaulted = () => {
     };
   }, []);
 
+  return isMobile;
+};
+
+export const Vaulted = () => {
+  const [currentTab, setCurrentTab] = useState<TabNames>(TabNames.VAULTED);
+  const { state } = useContext(StateContext);
+  const isMobile = useIsMobile();
+
   useEffect(() => {
-    if (windowWidth <= 640 && currentTab === TabNames.VAULTED) {
+    if (isMobile && currentTab === TabNames.VAULTED) {
       setCurrentTab(TabNames.YOUR_VAULT);
     }
-  }, [windowWidth, currentTab]);
+  }, [isMobile, currentTab]);
 
   const tabData: { [key in TabNames]: ReactNode } = {
     [TabNames.VAULTED]: null,
