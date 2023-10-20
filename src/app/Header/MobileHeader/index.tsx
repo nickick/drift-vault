@@ -78,7 +78,7 @@ const NavbarItem = ({ item }: { item: NavItem }) => {
     <a
       key={item.name}
       href={item.link}
-      className="uppercase font-sans text-lg tracking-[0.09em]"
+      className="py-3 uppercase font-sans text-lg tracking-[0.09em]"
     >
       {item.name ? item.name : <div className="w-[1.2rem]">{item.icon}</div>}
     </a>
