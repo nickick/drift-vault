@@ -109,7 +109,7 @@ export const Wallet = (props: VaultedProps) => {
   };
 
   return (
-    <Tab active={props.active}>
+    <Tab active={props.active} walletRequired>
       <LoadSelectTransact
         title="Vaulted"
         instructions={<div></div>}

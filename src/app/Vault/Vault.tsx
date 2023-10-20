@@ -196,7 +196,7 @@ export const Vault = (props: YourVaultProps) => {
   }, [loading]);
 
   return (
-    <Tab active={props.active}>
+    <Tab active={props.active} walletRequired>
       <div className="w-full max-h-screen overflow-y-auto overflow-x-hidden">
         <LoadSelectTransact
           contractAddress={process.env.NEXT_PUBLIC_SBT_ADDRESS as `0x${string}`}

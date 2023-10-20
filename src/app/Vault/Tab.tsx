@@ -6,6 +6,7 @@ import { Spinner } from "../Spinner";
 
 type TabProps = {
   children: React.ReactNode;
+  walletRequired: boolean;
   active: boolean;
 };
 
@@ -37,7 +38,7 @@ export const Tab = (props: TabProps) => {
         border: !address,
       })}
     >
-      {address && loaded ? (
+      {(address || !props.walletRequired) && loaded ? (
         props.children
       ) : (
         <div className="flex w-full h-full min-h-[20rem] items-center justify-center">
