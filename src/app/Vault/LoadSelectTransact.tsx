@@ -133,7 +133,7 @@ const LoadSelectTransact = (props: Props) => {
   };
 
   return (
-    <div className="flex flex-col w-full border-l border-r border-b border-[#5c5c5c] bg-[#161616]">
+    <div className="flex flex-col w-full bg-[#161616]">
       <div className="flex flex-col relative w-full">
         {instructions && !nftsLoading ? (
           <div className="flex flex-col p-4">{instructions}</div>
