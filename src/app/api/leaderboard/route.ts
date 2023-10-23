@@ -7,6 +7,8 @@ import PromisePool from "@supercharge/promise-pool";
 
 const isProd = process.env.NEXT_PUBLIC_CHAIN_NAME != goerli.name.toLowerCase();
 
+type Vaulted = [bigint, string, bigint, bigint, bigint, bigint];
+
 function getPoints(
   tokenId: number,
   publicClient: ReturnType<typeof createPublicClient>
@@ -16,7 +18,19 @@ function getPoints(
     abi: vaultedABI,
     functionName: "calculatePoints",
     args: [tokenId, process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS!],
-  });
+  }) as Promise<bigint>;
+}
+
+async function getVaulted(
+  tokenId: number,
+  publicClient: ReturnType<typeof createPublicClient>
+) {
+  return publicClient.readContract({
+    address: process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
+    abi: vaultedABI,
+    functionName: "contractTokenIdToVaulting",
+    args: [process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS!, tokenId],
+  }) as Promise<Vaulted>;
 }
 
 export async function GET(request: Request) {
@@ -39,7 +53,12 @@ export async function GET(request: Request) {
   });
 
   const addressToTokenIds: {
-    [key: `0x${string}`]: { tokenIds: number[]; points: number };
+    [key: `0x${string}`]: {
+      tokenIds: number[];
+      points: number;
+      numPieces: number;
+      cumulativeMultiplier: number;
+    };
   } = {};
 
   for (const transfer of transfersRes.transfers) {
@@ -48,7 +67,12 @@ export async function GET(request: Request) {
       ? parseInt(transfer.tokenId ?? "", 16)
       : -1;
     if (!addressToTokenIds[from]) {
-      addressToTokenIds[from] = { tokenIds: [], points: 0 };
+      addressToTokenIds[from] = {
+        tokenIds: [],
+        points: 0,
+        numPieces: 0,
+        cumulativeMultiplier: 0,
+      };
     }
     if (!addressToTokenIds[from].tokenIds.includes(tokenId)) {
       addressToTokenIds[from].tokenIds.push(tokenId);
@@ -78,9 +102,15 @@ export async function GET(request: Request) {
     .for(addressTokenIds)
     .process(async (data, index, pool) => {
       const tokenId = data[1] as number;
-      const points = (await getPoints(tokenId, publicClient)) as number;
+      const points = await getPoints(tokenId, publicClient);
+      const vaulted = await getVaulted(tokenId, publicClient);
 
       addressToTokenIds[data[0] as `0x${string}`].points += Number(points);
+      addressToTokenIds[data[0] as `0x${string}`].cumulativeMultiplier +=
+        Number(vaulted[3]);
+      if (Number(points) > 0) {
+        addressToTokenIds[data[0] as `0x${string}`].numPieces++;
+      }
     });
 
   try {

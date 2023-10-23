@@ -22,11 +22,20 @@ const otherTestWallets: `0x${string}`[] = [
   "yourWallet" as `0x${string}`,
 ];
 
+const rowCreator = (
+  wallet: `0x${string}`,
+  numPieces: number,
+  numPointsDaily: number,
+  pointsTotal: number
+) => {
+  return [wallet, numPieces, numPointsDaily, pointsTotal];
+};
+
 const randomRowCreator = (wallet: `0x${string}`) => {
   const numPieces = Math.floor(Math.random() * 100);
   const numPointsDaily = Math.floor(numPieces * Math.random() * 10);
   const pointsTotal = Math.floor(numPointsDaily * Math.random() * 100);
-  return [wallet, numPieces, numPointsDaily, pointsTotal];
+  return rowCreator(wallet, numPieces, numPointsDaily, pointsTotal);
 };
 
 const InViewWrapper = (props: {
@@ -128,17 +137,23 @@ const randomRows = Array(3)
   .map(randomRowCreator)
   .sort((a, b) => (b[3] as number) - (a[3] as number));
 
-const fakeLoader = async (address: string) => {
+const fakeLoader = async (address?: string) => {
   return new Promise((resolve) => {
+    let finalRandomRows = randomRows;
     const yourRowToReplace = randomRows.find(
       (row: (string | number)[]) => row[0] === "yourWallet"
     );
-    if (yourRowToReplace && address) {
-      yourRowToReplace[0] = address as `0x${string}`;
+    if (address) {
+      if (yourRowToReplace) {
+        yourRowToReplace[0] = address as `0x${string}`;
+      }
+    } else {
+      const row = randomRows.indexOf(yourRowToReplace!);
+      finalRandomRows = randomRows.filter((_, index) => index !== row);
     }
 
     setTimeout(() => {
-      resolve(randomRows);
+      resolve(finalRandomRows);
     }, 2000);
   });
 };
@@ -151,7 +166,7 @@ export const Leaderboard = (props: LeaderboardProps) => {
   const { address } = useAccount();
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<(string | number)[][]>([]);
-  const { setState } = useContext(StateContext);
+  const { state, setState } = useContext(StateContext);
 
   const setIsLoading = (isLoading: boolean) => {
     setLoading(isLoading);
@@ -196,15 +211,44 @@ export const Leaderboard = (props: LeaderboardProps) => {
 
   const getRows = useCallback(async () => {
     setIsLoading(true);
-    const rows = (await fakeLoader(address!)) as (string | number)[][];
+
+    if (state.demoMode) {
+      const rows = (await fakeLoader(address)) as (string | number)[][];
+      setRows(rows);
+    } else {
+      setRows([]);
+      const leaderboardRes = await fetch("/api/leaderboard");
+      const res = (await leaderboardRes.json()) as {
+        transferMap: {
+          [key: `0x${string}`]: {
+            numPieces: number;
+            cumulativeMultiplier: number;
+            points: number;
+          };
+        };
+      };
+
+      const realRows = Object.keys(res.transferMap).map((wallet) => {
+        const walletString = wallet as `0x${string}`;
+        const row = res.transferMap[walletString];
+        return rowCreator(
+          walletString,
+          row.numPieces,
+          // points are in 100s representing per second accumulation, so 86400 seconds in a day / 100 * point multiplier for cumulative daily score
+          row.cumulativeMultiplier * 864,
+          row.points
+        );
+      });
+
+      setRows(realRows);
+    }
     setIsLoading(false);
-    setRows(rows);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address]);
+  }, [address, state.demoMode]);
 
   useEffect(() => {
     getRows();
-  }, [address, getRows]);
+  }, [address, getRows, state.demoMode]);
 
   return (
     <Tab active={props.active} walletRequired={false}>
@@ -240,33 +284,35 @@ export const Leaderboard = (props: LeaderboardProps) => {
                 </div>
               ) : (
                 <>
-                  {rows.map((row, index) => {
-                    const [wallet, pieces, pointsDaily, pointsTotal] = row;
-                    return (
-                      <LeaderboardRow
-                        key={index}
-                        {...{
-                          rank: index + 1,
-                          wallet: wallet as `0x${string}`,
-                          pieces: pieces as number,
-                          pointsDaily: pointsDaily as number,
-                          pointsTotal: pointsTotal as number,
-                          address,
-                          onChangeInView: ({
-                            id,
-                            inView,
-                          }: {
-                            id: number;
-                            inView: boolean;
-                          }) => {
-                            const newRankInView = { ...currentRankInView };
-                            newRankInView[id] = inView;
-                            setCurrentRankInView(newRankInView);
-                          },
-                        }}
-                      />
-                    );
-                  })}
+                  {rows
+                    .sort((a, b) => (b[3] as number) - (a[3] as number))
+                    .map((row, index) => {
+                      const [wallet, pieces, pointsDaily, pointsTotal] = row;
+                      return (
+                        <LeaderboardRow
+                          key={index}
+                          {...{
+                            rank: index + 1,
+                            wallet: wallet as `0x${string}`,
+                            pieces: pieces as number,
+                            pointsDaily: pointsDaily as number,
+                            pointsTotal: pointsTotal as number,
+                            address,
+                            onChangeInView: ({
+                              id,
+                              inView,
+                            }: {
+                              id: number;
+                              inView: boolean;
+                            }) => {
+                              const newRankInView = { ...currentRankInView };
+                              newRankInView[id] = inView;
+                              setCurrentRankInView(newRankInView);
+                            },
+                          }}
+                        />
+                      );
+                    })}
                 </>
               )}
             </div>

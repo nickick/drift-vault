@@ -51,7 +51,7 @@ const tabExplanations: { [key in TabNames]: ReactNode } = {
 
 export const Vaulted = () => {
   const [currentTab, setCurrentTab] = useState<TabNames>(TabNames.VAULTED);
-  const { state } = useContext(StateContext);
+  const { state, setState } = useContext(StateContext);
 
   const tabData: { [key in TabNames]: ReactNode } = {
     [TabNames.VAULTED]: null,
@@ -101,7 +101,7 @@ export const Vaulted = () => {
           <div className="mt-2">{tabExplanations[currentTab]}</div>
         </div>
         <div className="mt-8">
-          <div className="text-slate-gray border-t border-l border-r border-[#5c5c5c] flex">
+          <div className="text-slate-gray border-t border-l border-r border-[#5c5c5c] flex relative">
             {Object.values(TabNames).map((tabName) => {
               return (
                 <a
@@ -119,6 +119,26 @@ export const Vaulted = () => {
                 </a>
               );
             })}
+            {currentTab === TabNames.LEADERBOARD ? (
+              <div className="form-control absolute top-2 right-2">
+                <label className="label cursor-pointer">
+                  <span
+                    className={cx({
+                      "label-text mr-2 transition-opacity": true,
+                      "opacity-20": !state.demoMode,
+                    })}
+                  >
+                    Demo mode
+                  </span>
+                  <input
+                    type="checkbox"
+                    className="toggle"
+                    checked={state.demoMode}
+                    onChange={(e) => setState({ demoMode: !state.demoMode })}
+                  />
+                </label>
+              </div>
+            ) : null}
           </div>
           <div className="mb-4">
             {currentTab === TabNames.VAULTED && <Wallet active />}

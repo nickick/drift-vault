@@ -20,6 +20,7 @@ export interface IAppState {
     totalPositions?: number;
     loading: boolean;
   };
+  demoMode: boolean;
 }
 
 interface Definitions {
@@ -41,6 +42,7 @@ interface StateContextProps {
 
 export const initialState: IAppState = {
   toasts: [],
+  demoMode: true,
 };
 
 export const StateContext = createContext<StateContextProps>({
