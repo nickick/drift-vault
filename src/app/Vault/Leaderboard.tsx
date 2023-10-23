@@ -103,7 +103,8 @@ const LeaderboardRow = (props: LeaderboardRowProps) => {
           </div>
           <div
             className={cx({
-              "w-full p-4 grid grid-cols-5 transition-opacity": true,
+              "w-full p-4 grid grid-cols-3 sm:grid-cols-5 transition-opacity":
+                true,
               "bg-[#303030]": rank % 2 === 1 && !highlightCurrentWallet,
               "text-2xl": highlightCurrentWallet,
             })}
@@ -116,8 +117,8 @@ const LeaderboardRow = (props: LeaderboardRowProps) => {
                   formatAddress(wallet, wallet === address ? 3 : 6)}{" "}
               {wallet === address ? "- You!" : ""}
             </div>
-            <div className="text-center">{pieces}</div>
-            <div className="text-center">
+            <div className="text-center hidden sm:flex">{pieces}</div>
+            <div className="text-center hidden sm:flex">
               {numberFormatter.format(pointsDaily)}
             </div>
             <div className="text-center">
@@ -251,7 +252,10 @@ export const Leaderboard = (props: LeaderboardProps) => {
   }, [address, getRows, state.demoMode]);
 
   return (
-    <Tab active={props.active} walletRequired={false}>
+    <Tab
+      active={props.active}
+      walletRequired={false}
+    >
       <div className="w-full relative">
         {yourRow && !loading ? (
           <div className="absolute left-0 right-0 bottom-0 px-8 bg-blue-purple transition-opacity">
@@ -270,10 +274,13 @@ export const Leaderboard = (props: LeaderboardProps) => {
           <div className="p-8">
             <div className="flex text-slate-gray">
               <div className="w-12" />
-              <div className="w-full grid grid-cols-5 pb-4 px-4">
+              <div className="w-full grid grid-cols-3 sm:grid-cols-5 pb-4 px-4">
                 <div className="text-center col-span-2">Wallet</div>
-                <div className="text-center">Pieces vaulted</div>
-                <div className="text-center">Daily Accumulation</div>
+                <div className="text-center hidden sm:flex">Pieces vaulted</div>
+                <div className="text-center hidden sm:flex">
+                  Daily Accumulation
+                </div>
+
                 <div className="text-center">Points total</div>
               </div>
             </div>

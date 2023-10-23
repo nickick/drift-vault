@@ -3,14 +3,14 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { NetworkSwitch } from "../Connect";
-import { Discord } from "../icons/Discord";
-import { DriftLogo } from "../icons/DriftLogo";
-import { Instagram } from "../icons/Instagram";
-import Twitter from "../icons/Twitter";
+import { NetworkSwitch } from "../../Connect";
+import { Discord } from "../../icons/Discord";
+import { DriftLogo } from "../../icons/DriftLogo";
+import { Instagram } from "../../icons/Instagram";
+import Twitter from "../../icons/Twitter";
 import "./header.css";
 
-type NavItem = {
+export type NavItem = {
   name?: string;
   icon?: React.ReactNode;
   link: string;
@@ -85,15 +85,28 @@ export const Header = () => {
     <div className="flex items-center justify-center pt-[3.62rem] pb-16 max-w-between-lg-xl mx-auto relative">
       <div className="flex space-x-6 justify-between items-center absolute left-[0.7rem]">
         {leftNavItems.map((item) => {
-          return <NavbarItem key={item.name} item={item} />;
+          return (
+            <NavbarItem
+              key={item.name}
+              item={item}
+            />
+          );
         })}
       </div>
-      <Link href="/" className="py-1">
+      <Link
+        href="/"
+        className="py-1"
+      >
         <DriftLogo />
       </Link>
       <div className="flex space-x-6 justify-between items-center absolute right-4">
         {rightNavItems.map((item, index) => {
-          return <NavbarItem key={item.name || "" + index} item={item} />;
+          return (
+            <NavbarItem
+              key={item.name || "" + index}
+              item={item}
+            />
+          );
         })}
         {address && loaded && (
           <div className="flex space-x-2">

@@ -41,9 +41,17 @@ export const Tab = (props: TabProps) => {
       {(address || !props.walletRequired) && loaded ? (
         props.children
       ) : (
-        <div className="flex w-full h-full min-h-[20rem] items-center justify-center">
-          <ConnectButton accountStatus={"address"} />
-        </div>
+        <>
+          <div className="hidden sm:flex w-full h-full min-h-[20rem] items-center justify-center bg-dark-gray">
+            <ConnectButton accountStatus={"address"} />
+          </div>
+          <div className="sm:hidden flex flex-col h-96 mb-16 w-full items-center justify-center">
+            <p className="mb-4 mx-2">
+              Vaulted is designed for desktop browser use only.
+            </p>
+            <p className="mx-2">Please visit in a desktop Chrome Browser.</p>
+          </div>
+        </>
       )}
     </div>
   );

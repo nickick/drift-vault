@@ -20,7 +20,11 @@ const UnvaultConvirmation = ({
   };
 
   return (
-    <Modal isOpen={isOpen} title={"Vaulting options"} onClose={closeModal}>
+    <Modal
+      isOpen={isOpen}
+      title={"Vaulting options"}
+      onClose={closeModal}
+    >
       <div className="flex flex-col space-y-4">
         <div className="mt-2">
           Remove {selectedCount} NFT{selectedCount > 1 ? "s" : ""} from vault?
