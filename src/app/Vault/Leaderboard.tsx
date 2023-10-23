@@ -190,7 +190,10 @@ export const Leaderboard = (props: LeaderboardProps) => {
     }
   };
 
-  const yourRow = rows.find((row: (string | number)[]) => row[0] === address);
+  const yourRow = rows.find(
+    (row: (string | number)[]) =>
+      row[0].toString().toLowerCase() === address?.toLowerCase()
+  );
   const yourRank = rows.indexOf(yourRow!) + 1;
 
   useEffect(() => {
@@ -252,10 +255,7 @@ export const Leaderboard = (props: LeaderboardProps) => {
   }, [address, getRows, state.demoMode]);
 
   return (
-    <Tab
-      active={props.active}
-      walletRequired={false}
-    >
+    <Tab active={props.active} walletRequired={false}>
       <div className="w-full relative">
         {yourRow && !loading ? (
           <div className="absolute left-0 right-0 bottom-0 px-8 bg-blue-purple transition-opacity">
