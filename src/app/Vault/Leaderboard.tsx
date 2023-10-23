@@ -155,7 +155,7 @@ const fakeLoader = async (address?: string) => {
 
     setTimeout(() => {
       resolve(finalRandomRows);
-    }, 2000);
+    }, 100);
   });
 };
 
