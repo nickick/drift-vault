@@ -32,7 +32,7 @@ export const Tab = (props: TabProps) => {
   return (
     <div
       className={cx({
-        "flex w-full min-h-[20rem] border-border-gray bg-dark-gray border-b border-l border-r border-t-0 relative mb-12":
+        "flex w-full min-h-[20rem] border-black sm:border-border-gray bg-dark-gray border-b border-l border-r border-t-0 relative mb-12":
           true,
         hidden: !props.active,
         border: !address,

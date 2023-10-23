@@ -9,6 +9,7 @@ import { StateContext } from "../AppState";
 import { Spinner } from "../Spinner";
 import { numberFormatter } from "@/utils/format";
 import cx from "classnames";
+import { useIsMobile } from "@/utils/useIsMobile";
 
 enum TabNames {
   VAULTED = "Wallet",
@@ -16,7 +17,7 @@ enum TabNames {
   LEADERBOARD = "Leaderboard",
 }
 
-const tabTitles: { [key in TabNames]: string } = {
+const tabTitles: { [key in TabNames]: ReactNode } = {
   [TabNames.VAULTED]: "Vaulted",
   [TabNames.LEADERBOARD]: "Leaderboard",
   [TabNames.YOUR_VAULT]: "Your Vault",
@@ -25,12 +26,12 @@ const tabTitles: { [key in TabNames]: string } = {
 const tabExplanations: { [key in TabNames]: ReactNode } = {
   [TabNames.VAULTED]: (
     <div className="space-y-4">
-      <div className="">
+      <div className="text-sm leading-6 sm:text-lg sm:leading-1 text-center sm:text-left">
         Art is created as a complete expression, not as means to another end.
         Art is created to exist, not burned for value. Art is the journey we are
         all on together, and we hope to pass it on to our children.
       </div>
-      <div className="text-slate-gray">
+      <div className="text-slate-gray hidden sm:block">
         Vault your ‘First Day Out’ in the Vaulted contract. The number of pieces
         vaulted and how long they’ve been vaulted for are recorded in an
         on-chain leaderboard, which gives the most fervent collectors
@@ -39,7 +40,22 @@ const tabExplanations: { [key in TabNames]: ReactNode } = {
       </div>
     </div>
   ),
-  [TabNames.LEADERBOARD]: `Store your First Day Out pieces in the Vaulted smart contract and build up vaulted points to access special experiences with Drift. Vault points are based on how many pieces you vault and how long they’ve been vaulting, with additional multiples for locking up your pieces for longer time periods.`,
+  [TabNames.LEADERBOARD]: (
+    <div>
+      <div className="hidden sm:block">
+        `Store your First Day Out pieces in the Vaulted smart contract and build
+        up vaulted points to access special experiences with Drift. Vault points
+        are based on how many pieces you vault and how long they’ve been
+        vaulting, with additional multiples for locking up your pieces for
+        longer time periods.`
+      </div>
+      <div className="block sm:hidden text-center text-sm leading-6">
+        See your on-chain Vaulted ranking alongside your fellow collectors.
+        Vaulted points provide you with opportunities to walk alongside Drift on
+        the journey of a lifetime.
+      </div>
+    </div>
+  ),
   [TabNames.YOUR_VAULT]: (
     <div>
       See your vaulted NFTs and the points you’ve accumulated. To unvault an
@@ -49,34 +65,14 @@ const tabExplanations: { [key in TabNames]: ReactNode } = {
   ),
 };
 
-const MOBILE_WIDTH = 640;
-
-const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < MOBILE_WIDTH);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < MOBILE_WIDTH);
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  return isMobile;
-};
-
 export const Vaulted = () => {
   const [currentTab, setCurrentTab] = useState<TabNames>(TabNames.VAULTED);
   const { state, setState } = useContext(StateContext);
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (isMobile && currentTab === TabNames.VAULTED) {
-      setCurrentTab(TabNames.YOUR_VAULT);
+    if (isMobile && currentTab === TabNames.YOUR_VAULT) {
+      setCurrentTab(TabNames.VAULTED);
     }
   }, [isMobile, currentTab]);
 
@@ -119,16 +115,16 @@ export const Vaulted = () => {
 
   return (
     <TransactionContextWrapper>
-      <div className="w-full mt-16">
+      <div className="w-full mt-4 sm:mt-16">
         <div className="sm:h-64 md:h-56">
-          <div className="text-6xl text-[64px] font-serif">
+          <div className="text-5xl sm:text-6xl text-[64px] font-serif text-center sm:text-left">
             {tabTitles[currentTab]}
           </div>
-          <div className="my-6">{tabData[currentTab]}</div>
-          <div className="mt-2">{tabExplanations[currentTab]}</div>
+          <div className="my-6 hidden sm:block">{tabData[currentTab]}</div>
+          <div className="px-4 sm:px-0 mt-2">{tabExplanations[currentTab]}</div>
         </div>
         <div className="mt-8">
-          <div className="text-slate-gray border-t border-l border-r border-[#5c5c5c] flex relative">
+          <div className="text-slate-gray border-t border-l border-r border-black sm:border-border-gray flex">
             {Object.values(TabNames).map((tabName) => {
               return (
                 <a
@@ -137,7 +133,7 @@ export const Vaulted = () => {
                     "text-white bg-[#161616]": currentTab === tabName,
                     "transition-colors h-full flex py-3 w-[12rem] justify-center":
                       true,
-                    "hidden sm:flex": tabName === TabNames.VAULTED,
+                    "hidden sm:flex": tabName === TabNames.YOUR_VAULT,
                   })}
                   onClick={() => setCurrentTab(tabName)}
                 >
@@ -148,7 +144,7 @@ export const Vaulted = () => {
               );
             })}
             {currentTab === TabNames.LEADERBOARD ? (
-              <div className="form-control absolute top-2 right-2">
+              <div className="form-control absolute top-2 right-2 hidden sm:block">
                 <label className="label cursor-pointer">
                   <span
                     className={cx({
@@ -169,10 +165,10 @@ export const Vaulted = () => {
             ) : null}
           </div>
           <div className="mb-4">
+            {currentTab === TabNames.VAULTED && <Wallet active />}
             <div className="hidden sm:flex">
-              {currentTab === TabNames.VAULTED && <Wallet active />}
+              {currentTab === TabNames.YOUR_VAULT && <Vault active />}
             </div>
-            {currentTab === TabNames.YOUR_VAULT && <Vault active />}
             {currentTab === TabNames.LEADERBOARD && <Leaderboard active />}
           </div>
         </div>
