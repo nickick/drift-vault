@@ -82,7 +82,7 @@ export const Header = () => {
   }, [address]);
 
   return (
-    <div className="flex items-center justify-center pt-[3.62rem] pb-16 max-w-screen-xl mx-auto relative">
+    <div className="flex items-center justify-center pt-[3.62rem] pb-16 max-w-between-lg-xl mx-auto relative">
       <div className="flex space-x-6 justify-between items-center absolute left-[0.7rem]">
         {leftNavItems.map((item) => {
           return (
