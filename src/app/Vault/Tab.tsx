@@ -42,7 +42,7 @@ export const Tab = (props: TabProps) => {
         props.children
       ) : (
         <>
-          <div className="hidden sm:flex w-full h-full min-h-[20rem] items-center justify-center bg-gray-700">
+          <div className="hidden sm:flex w-full h-full min-h-[20rem] items-center justify-center bg-dark-gray">
             <ConnectButton accountStatus={"address"} />
           </div>
           <div className="sm:hidden flex flex-col h-96 mb-16 w-full items-center justify-center">
