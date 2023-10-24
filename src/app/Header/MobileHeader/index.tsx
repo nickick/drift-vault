@@ -20,7 +20,7 @@ const rightNavItems: NavItem[] = [
 
 export const MobileHeader = () => {
   const [loaded, setLoaded] = useState(false);
-  const [isOpen, setOpen] = useState(true);
+  const [isOpen, setOpen] = useState(false);
   const { address } = useAccount();
 
   useEffect(() => {
@@ -30,7 +30,10 @@ export const MobileHeader = () => {
   return (
     <div className="flex items-center justify-center pt-6 pb-14 max-w-screen-xl mx-auto relative">
       <div className="flex space-x-6 items-center absolute left-6">
-        <Hamburger toggled={isOpen} toggle={setOpen} />
+        <Hamburger
+          toggled={isOpen}
+          toggle={setOpen}
+        />
       </div>
       <div
         className={cx({
@@ -42,22 +45,43 @@ export const MobileHeader = () => {
       >
         <div className="flex flex-col p-3 bg-black z-10 w-full h-full justify-center items-center relative">
           <div className="left-4 top-4 absolute">
-            <Hamburger toggled={isOpen} toggle={() => setOpen(false)} />
+            <Hamburger
+              toggled={isOpen}
+              toggle={() => setOpen(false)}
+            />
           </div>
           {leftNavItems.map((item) => {
-            return <NavbarItem key={item.name} item={item} />;
+            return (
+              <NavbarItem
+                key={item.name}
+                item={item}
+              />
+            );
           })}
           {rightNavItems.map((item, index) => {
-            return <NavbarItem key={item.name || "" + index} item={item} />;
+            return (
+              <NavbarItem
+                key={item.name || "" + index}
+                item={item}
+              />
+            );
           })}
         </div>
       </div>
-      <Link href="/" className="py-1">
+      <Link
+        href="/"
+        className="py-1"
+      >
         <DriftLogo />
       </Link>
       <div className="flex space-x-6 items-center absolute right-10">
         {rightNavItems.map((item, index) => {
-          return <NavbarItem key={item.name || "" + index} item={item} />;
+          return (
+            <NavbarItem
+              key={item.name || "" + index}
+              item={item}
+            />
+          );
         })}
         {address && loaded && (
           <div className="flex space-x-2">
