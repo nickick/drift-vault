@@ -155,10 +155,14 @@ const LoadSelectTransact = (props: Props) => {
         )}
         {!nftsLoading && !nfts.length && (
           <div className="h-96 mb-16 w-full flex items-center justify-center">
-            <div className="text-center">
-              <div className="hidden sm:flex">{noNftsMessage}</div>
-              <div className="hidden sm:flex">
-                Buy them on secondary at
+            <div className="hidden sm:flex sm:flex-col">
+              <div className="text-center text-white text-opacity-70 font-serif">
+                {noNftsMessage}
+              </div>
+              <div className="text-center font-serif flex justify-center">
+                <p className="text-white text-opacity-70">
+                  Buy them on secondary at
+                </p>
                 <a
                   href="https://opensea.io/collection/firstdayout"
                   rel="nofollow noreferrer"

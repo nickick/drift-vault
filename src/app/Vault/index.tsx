@@ -25,7 +25,7 @@ const tabTitles: { [key in TabNames]: ReactNode } = {
 
 const tabExplanations: { [key in TabNames]: ReactNode } = {
   [TabNames.VAULTED]: (
-    <div className="space-y-4">
+    <div className="space-y-4 font-serif">
       <div className="text-sm leading-6 sm:text-lg sm:leading-1 text-center sm:text-left">
         Art is created as a complete expression, not as means to another end.
         Art is created to exist, not burned for value. Art is the journey we are
@@ -41,13 +41,13 @@ const tabExplanations: { [key in TabNames]: ReactNode } = {
     </div>
   ),
   [TabNames.LEADERBOARD]: (
-    <div>
+    <div className="font-serif">
       <div className="hidden sm:block">
-        `Store your First Day Out pieces in the Vaulted smart contract and build
+        Store your First Day Out pieces in the Vaulted smart contract and build
         up vaulted points to access special experiences with Drift. Vault points
         are based on how many pieces you vault and how long they’ve been
         vaulting, with additional multiples for locking up your pieces for
-        longer time periods.`
+        longer time periods.
       </div>
       <div className="block sm:hidden text-center text-sm leading-6">
         See your on-chain Vaulted ranking alongside your fellow collectors.
@@ -57,7 +57,7 @@ const tabExplanations: { [key in TabNames]: ReactNode } = {
     </div>
   ),
   [TabNames.YOUR_VAULT]: (
-    <div>
+    <div className="font-serif">
       See your vaulted NFTs and the points you’ve accumulated. To unvault an
       eligible piece, select it and press “Unvault”. If a piece is still in
       lockup, you’ll need to wait until that date to unvault.
@@ -79,7 +79,7 @@ export const Vaulted = () => {
   const tabData: { [key in TabNames]: ReactNode } = {
     [TabNames.VAULTED]: null,
     [TabNames.LEADERBOARD]: (
-      <div className="px-12 py-2 border max-w-fit text-center border-sprite-green text-sprite-green mt-2 font-medium">
+      <div className="px-12 py-2 border max-w-fit text-center border-sprite-green text-sprite-green mt-2 font-medium font-serif">
         {state.leaderboard?.loading ? (
           <div className="px-8">
             <Spinner />
@@ -101,7 +101,7 @@ export const Vaulted = () => {
       </div>
     ),
     [TabNames.YOUR_VAULT]: (
-      <div className="px-12 py-2 border max-w-fit text-center border-blue-purple text-blue-purple mt-2 font-medium">
+      <div className="px-12 py-2 border max-w-fit text-center border-blue-purple text-blue-purple mt-2 font-medium font-serif">
         {state.vault?.loading ? (
           <div className="px-8">
             <Spinner />
@@ -131,7 +131,8 @@ export const Vaulted = () => {
                   key={tabName}
                   className={cx({
                     "text-white bg-[#161616]": currentTab === tabName,
-                    "transition-colors h-full flex py-3 w-[12rem] justify-center":
+                    "text-white text-opacity-30": currentTab !== tabName,
+                    "transition-colors h-full flex py-3 w-[12rem] justify-center font-serif":
                       true,
                     "hidden sm:flex": tabName === TabNames.YOUR_VAULT,
                   })}
