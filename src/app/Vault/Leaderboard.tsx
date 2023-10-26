@@ -261,7 +261,7 @@ export const Leaderboard = (props: LeaderboardProps) => {
     >
       <div className="w-full relative">
         {yourRow && !loading ? (
-          <div className="absolute left-0 right-0 bottom-0 px-8 sm:px-14 bg-blue-purple transition-opacity font-bold text-xl text-center">
+          <div className="absolute left-0 right-0 bottom-0 sm:px-14 bg-blue-purple transition-opacity font-bold text-xl text-center">
             <LeaderboardRow
               rank={yourRank}
               wallet={address}
