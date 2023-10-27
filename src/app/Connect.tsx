@@ -38,7 +38,7 @@ function NetworkSwitch() {
       )}
       {chain && chain.name.toLowerCase() !== environtmentChainName && (
         <button onClick={() => switchNetwork?.(environmentChain!.id)}>
-          <div className="flex items-center border border-gray-200 p-2">
+          <div className="flex items-center border border-gray-200 py-2 px-5">
             Switch network
             <Dot okay={false} />
           </div>

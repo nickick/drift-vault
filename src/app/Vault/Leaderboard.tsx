@@ -117,8 +117,8 @@ const LeaderboardRow = (props: LeaderboardRowProps) => {
                   formatAddress(wallet, wallet === address ? 3 : 6)}{" "}
               {wallet === address ? "- You!" : ""}
             </div>
-            <div className="text-center hidden sm:flex">{pieces}</div>
-            <div className="text-center hidden sm:flex">
+            <div className="text-center hidden sm:block">{pieces}</div>
+            <div className="text-center hidden sm:block">
               {numberFormatter.format(pointsDaily)}
             </div>
             <div className="text-center">
@@ -255,10 +255,13 @@ export const Leaderboard = (props: LeaderboardProps) => {
   }, [address, getRows, state.demoMode]);
 
   return (
-    <Tab active={props.active} walletRequired={false}>
+    <Tab
+      active={props.active}
+      walletRequired={false}
+    >
       <div className="w-full relative">
         {yourRow && !loading ? (
-          <div className="absolute left-0 right-0 bottom-0 px-8 bg-blue-purple transition-opacity">
+          <div className="absolute left-0 right-0 bottom-0 sm:px-14 bg-blue-purple transition-opacity font-bold text-xl text-center">
             <LeaderboardRow
               rank={yourRank}
               wallet={address}
@@ -270,17 +273,18 @@ export const Leaderboard = (props: LeaderboardProps) => {
             />
           </div>
         ) : null}
-        <div className="flex flex-col w-full pt-4 sm:p-4 max-h-[calc(100vh-15rem)] overflow-auto bg-[#161616]">
+        <div className="flex flex-col w-full pt-4 sm:py-4 sm:px-6 max-h-[calc(100vh-15rem)] overflow-auto bg-[#161616]">
           <div className="sm:p-8">
-            <div className="flex text-slate-gray">
+            <div className="flex text-gray-500">
               <div className="w-12" />
               <div className="w-full grid grid-cols-3 sm:grid-cols-5 pb-4 px-4">
                 <div className="text-center col-span-2">Wallet</div>
-                <div className="text-center hidden sm:flex">Pieces vaulted</div>
-                <div className="text-center hidden sm:flex">
+                <div className="text-center hidden sm:block">
+                  Pieces vaulted
+                </div>
+                <div className="text-center hidden sm:block">
                   Daily Accumulation
                 </div>
-
                 <div className="text-center">Points total</div>
               </div>
             </div>
