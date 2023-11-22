@@ -1,7 +1,10 @@
 import { selectedBorderClasses } from "@/utils/styling";
 import cx from "classnames";
 import { Modal } from "../Modal";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { useAccount, useSignMessage } from "wagmi";
+import axios from "axios";
+import { Spinner } from "../Spinner";
 
 type MomentClaimProps = {
   isOpen: boolean;
@@ -22,6 +25,51 @@ const MomentClaim = ({
     onClose();
   };
 
+  const { address } = useAccount();
+  const [verifiedAddress, setVerifiedAddress] = useState<string>();
+  const [isVerified, setIsVerified] = useState(false);
+  const [msg, setMsg] = useState<string>();
+  const [signing, setSigning] = useState(false);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    setMsg(
+      `Login to Drift Vault with account ${address}: ${new Date().toISOString()}`
+    );
+    if (verifiedAddress !== address) {
+      setIsVerified(false);
+      setVerifiedAddress(undefined);
+    }
+  }, [address, verifiedAddress]);
+
+  const { signMessage, data } = useSignMessage({
+    message: msg,
+    onMutate: () => {
+      setError("");
+      setSigning(true);
+      setVerifiedAddress(undefined);
+    },
+    onError: (err) => {
+      setSigning(false);
+      setError(`Error: ${err.message}`);
+    },
+    onSuccess: async (sig: string) => {
+      try {
+        const res = await axios.post("/api/sign", { sig, msg });
+
+        if (res.data.verified) {
+          setSigning(false);
+          setIsVerified(true);
+          setVerifiedAddress(res.data.address);
+        } else {
+          setError(res.data.error);
+        }
+      } catch (err: any) {
+        setError(`Error: ${err.message}`);
+        setSigning(false);
+      }
+    },
+  });
+
   return (
     <Modal
       isOpen={isOpen}
@@ -29,23 +77,51 @@ const MomentClaim = ({
       onClose={closeModal}
     >
       <div className="flex flex-col space-y-8 mt-8 text-center items-center">
-        <div>
-          Please do not share the link below with anyone. The link below can
-          only be used once and is associated with your eligible wallet. Anyone
-          found misusing Vaulted links may be removed from eligibility.
-        </div>
-        <button
-          className={cx({
-            "px-3 py-2 border border-gray-300 w-48 mt-4": true,
-            ...selectedBorderClasses(true),
-          })}
-          onClick={() => {
-            claimMoment();
-            closeModal();
-          }}
-        >
-          Your Exclusive Link
-        </button>
+        {isVerified ? (
+          <>
+            <div>
+              Please do not share the link below with anyone. The link below can
+              only be used once and is associated with your eligible wallet.
+              Anyone found misusing Vaulted links may be removed from
+              eligibility.
+            </div>
+            <button
+              className={cx({
+                "px-3 py-2 border border-gray-300 w-48 mt-4": true,
+                ...selectedBorderClasses(true),
+              })}
+              onClick={() => {
+                claimMoment();
+                closeModal();
+              }}
+            >
+              Your Exclusive Link
+            </button>
+          </>
+        ) : (
+          <>
+            <div>Verify your wallet.</div>
+            {error ? <div className="text-red-500">{error}</div> : null}
+            <button
+              className={cx({
+                "px-3 py-2 border border-gray-300 w-48 mt-4": true,
+                ...selectedBorderClasses(true),
+              })}
+              onClick={() => {
+                signMessage();
+              }}
+            >
+              {signing ? (
+                <>
+                  Verifying...
+                  <Spinner className="ml-2" />
+                </>
+              ) : (
+                "Verify"
+              )}
+            </button>
+          </>
+        )}
       </div>
     </Modal>
   );

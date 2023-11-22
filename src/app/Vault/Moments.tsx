@@ -58,7 +58,7 @@ const Moments = ({ active }: MomentsProps) => {
   };
 
   return (
-    <Tab active={active} walletRequired={false}>
+    <Tab active={active} walletRequired>
       <div className="flex flex-col p-4 space-y-4">
         {MOMENT_DATA.map((moment, index) => (
           <MomentsRow
