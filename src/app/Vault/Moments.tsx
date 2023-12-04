@@ -3,9 +3,11 @@ import { Tab } from "./Tab";
 import Image from "next/image";
 import cx from "classnames";
 import { MomentClaim } from "../modals/MomentClaim";
+import axios from "axios";
 
 type MomentData = {
   current: boolean;
+  stripeUrlIdentifier: string;
   eligible: boolean;
   title: ReactNode;
   details: ReactNode[];
@@ -16,6 +18,7 @@ type MomentData = {
 const MOMENT_DATA: MomentData[] = [
   {
     current: true,
+    stripeUrlIdentifier: "test_28o4k88qHaXD5lCeUU",
     eligible: true,
     title: "Drift Zine #1",
     details: ["Edition of 75, Signed and Numbered", "$20 + Shipping"],
@@ -25,6 +28,7 @@ const MOMENT_DATA: MomentData[] = [
   },
   {
     current: false,
+    stripeUrlIdentifier: "test_28o4k88qHaXD5lCeUU",
     eligible: false,
     title: "Past Moment #1",
     details: ["Edition of 75, Signed and Numbered", "$20 + Shipping"],
@@ -34,6 +38,7 @@ const MOMENT_DATA: MomentData[] = [
   },
   {
     current: false,
+    stripeUrlIdentifier: "test_28o4k88qHaXD5lCeUU",
     eligible: true,
     title: "Past Moment #2",
     details: ["Edition of 75, Signed and Numbered", "$20 + Shipping"],
@@ -49,6 +54,8 @@ type MomentsProps = {
 
 const Moments = ({ active }: MomentsProps) => {
   const [momentClaimOpen, setMomentClaimOpen] = useState(false);
+  const [momentClaimLink, setMomentClaimLink] = useState<string>();
+  const [momentClaimLinkLoading, setMomentClaimLinkLoading] = useState(false);
   const [momentForClaimWindow, setMomentForClaimWindow] = useState<MomentData>(
     MOMENT_DATA[0]
   );
@@ -74,8 +81,29 @@ const Moments = ({ active }: MomentsProps) => {
       <MomentClaim
         isOpen={momentClaimOpen}
         onClose={toggleMomentClaimOpen}
+        link={momentClaimLink}
+        loading={momentClaimLinkLoading}
         moment={{ title: momentForClaimWindow.title }}
-        claimMoment={() => {}}
+        claimMoment={async () => {
+          setMomentClaimLinkLoading(true);
+          const res = await axios.post("/api/link", {
+            stripeUrlIdentifier: momentForClaimWindow.stripeUrlIdentifier,
+          });
+
+          const linkData = res.data as {
+            address: string;
+            link: {
+              id: string;
+              stripeUrlIdentifier: string;
+              resolved_link: string;
+            };
+          };
+
+          setMomentClaimLink(linkData.link.resolved_link);
+
+          window.open(linkData.link.resolved_link, "_blank");
+          setMomentClaimLinkLoading(false);
+        }}
       />
     </Tab>
   );

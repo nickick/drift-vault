@@ -5,6 +5,7 @@ export async function up(db) {
     .createTable("links")
     .addColumn("id", "uuid", (col) => col.primaryKey())
     .addColumn("address", "text", (col) => col.notNull())
+    .addColumn("stripeUrlIdentifier", "text", (col) => col.notNull())
     .addColumn("resolved_link", "text", (col) => col.notNull())
     .addColumn("created_at", "timestamp", (col) =>
       col.notNull().defaultTo(sql`now()`)

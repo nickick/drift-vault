@@ -9,6 +9,8 @@ import { Spinner } from "../Spinner";
 type MomentClaimProps = {
   isOpen: boolean;
   onClose: () => void;
+  link?: string;
+  loading: boolean;
   moment: {
     title: ReactNode;
   };
@@ -19,6 +21,7 @@ const MomentClaim = ({
   isOpen,
   onClose,
   moment,
+  loading,
   claimMoment,
 }: MomentClaimProps) => {
   const closeModal = () => {
@@ -87,15 +90,16 @@ const MomentClaim = ({
             </div>
             <button
               className={cx({
-                "px-3 py-2 border border-gray-300 w-48 mt-4": true,
+                "px-3 py-2 border border-gray-300 w-56 mt-4": true,
                 ...selectedBorderClasses(true),
               })}
               onClick={() => {
                 claimMoment();
-                closeModal();
+                // closeModal();
               }}
             >
-              Your Exclusive Link
+              Your Exclusive Link{" "}
+              {loading ? <Spinner className="ml-2" /> : null}
             </button>
           </>
         ) : (

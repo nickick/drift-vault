@@ -100,16 +100,16 @@ export async function GET(request: Request) {
 
   await PromisePool.withConcurrency(2)
     .for(addressTokenIds)
-    .process(async (data, index, pool) => {
+    .process(async (data) => {
       const tokenId = data[1] as number;
       const points = await getPoints(tokenId, publicClient);
       const vaulted = await getVaulted(tokenId, publicClient);
+      const address = data[0] as `0x${string}`;
 
-      addressToTokenIds[data[0] as `0x${string}`].points += Number(points);
-      addressToTokenIds[data[0] as `0x${string}`].cumulativeMultiplier +=
-        Number(vaulted[3]);
+      addressToTokenIds[address].points += Number(points);
+      addressToTokenIds[address].cumulativeMultiplier += Number(vaulted[3]);
       if (Number(points) > 0) {
-        addressToTokenIds[data[0] as `0x${string}`].numPieces++;
+        addressToTokenIds[address].numPieces++;
       }
     });
 

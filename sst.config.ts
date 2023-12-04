@@ -4,6 +4,7 @@ import { IServerlessCluster } from "aws-cdk-lib/aws-rds";
 import { SSTConfig } from "sst";
 import {
   Bucket,
+  Config,
   NextjsSite,
   RDS,
   RDSCdkServerlessClusterProps,
@@ -55,10 +56,10 @@ export default {
         },
       });
 
-      // todo: add a site config with the db bound
-      // todo 2: abstract out the db stack so that it isn't bound to the overal site stack
+      const passphrase = new Config.Secret(stack, "PASSPHRASE");
+
       const site = new NextjsSite(stack, "Site", {
-        bind: [db, bucket],
+        bind: [passphrase, db, bucket],
         environment: {
           NEXT_PUBLIC_ALCHEMY_API_KEY: isProd
             ? "zaadypAvZDXaqY2ydt2xPTemCsffPodJ"
