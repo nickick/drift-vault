@@ -57,9 +57,10 @@ export default {
       });
 
       const passphrase = new Config.Secret(stack, "PASSPHRASE");
+      const snapshotPassword = new Config.Secret(stack, "SNAPSHOT_PASSWORD");
 
       const site = new NextjsSite(stack, "Site", {
-        bind: [passphrase, db, bucket],
+        bind: [passphrase, snapshotPassword, db, bucket],
         environment: {
           NEXT_PUBLIC_ALCHEMY_API_KEY: isProd
             ? "zaadypAvZDXaqY2ydt2xPTemCsffPodJ"
