@@ -10,22 +10,25 @@ import { Spinner } from "../Spinner";
 import { numberFormatter } from "@/utils/format";
 import cx from "classnames";
 import { useIsMobile } from "@/utils/useIsMobile";
+import { Moments } from "./Moments";
 
 enum TabNames {
   VAULTED = "Wallet",
   YOUR_VAULT = "Vault",
   LEADERBOARD = "Leaderboard",
+  MOMENTS = "Moments",
 }
 
 const tabTitles: { [key in TabNames]: ReactNode } = {
   [TabNames.VAULTED]: "Vaulted",
   [TabNames.LEADERBOARD]: "Leaderboard",
   [TabNames.YOUR_VAULT]: "Your Vault",
+  [TabNames.MOMENTS]: "Moments",
 };
 
 const tabExplanations: { [key in TabNames]: ReactNode } = {
   [TabNames.VAULTED]: (
-    <div className="space-y-4 font-serif">
+    <div className="space-y-4 font-sans">
       <div className="text-sm leading-6 sm:text-lg sm:leading-1 text-center sm:text-left">
         Art is created as a complete expression, not as means to another end.
         Art is created to exist, not burned for value. Art is the journey we are
@@ -41,7 +44,7 @@ const tabExplanations: { [key in TabNames]: ReactNode } = {
     </div>
   ),
   [TabNames.LEADERBOARD]: (
-    <div className="font-serif">
+    <div className="font-sans">
       <div className="hidden sm:block">
         Store your First Day Out pieces in the Vaulted smart contract and build
         up vaulted points to access special experiences with Drift. Vault points
@@ -57,10 +60,26 @@ const tabExplanations: { [key in TabNames]: ReactNode } = {
     </div>
   ),
   [TabNames.YOUR_VAULT]: (
-    <div className="font-serif">
+    <div className="font-sans">
       See your vaulted NFTs and the points you’ve accumulated. To unvault an
       eligible piece, select it and press “Unvault”. If a piece is still in
       lockup, you’ll need to wait until that date to unvault.
+    </div>
+  ),
+  [TabNames.MOMENTS]: (
+    <div className="space-y-4 font-sans">
+      <div className="text-sm leading-6 sm:text-lg sm:leading-1 text-center sm:text-left">
+        Art is created as a complete expression, not as means to another end.
+        Art is created to exist, not burned for value. Art is the journey we are
+        all on together, and we hope to pass it on to our children.
+      </div>
+      <div className="text-slate-gray hidden sm:block">
+        Vault your ‘First Day Out’ in the Vaulted contract. The number of pieces
+        vaulted and how long they’ve been vaulted for are recorded in an
+        on-chain leaderboard, which gives the most fervent collectors
+        opportunities to walk alongside Drift’s journey, including special
+        events, signed prints, in-person dinners and climbs, and more.
+      </div>
     </div>
   ),
 };
@@ -79,7 +98,7 @@ export const Vaulted = () => {
   const tabData: { [key in TabNames]: ReactNode } = {
     [TabNames.VAULTED]: null,
     [TabNames.LEADERBOARD]: (
-      <div className="px-12 py-2 border max-w-fit text-center border-sprite-green text-sprite-green mt-2 font-medium font-serif">
+      <div className="px-12 py-2 border max-w-fit text-center border-sprite-green text-sprite-green mt-2 font-medium font-sans">
         {state.leaderboard?.loading ? (
           <div className="px-8">
             <Spinner />
@@ -101,7 +120,7 @@ export const Vaulted = () => {
       </div>
     ),
     [TabNames.YOUR_VAULT]: (
-      <div className="px-12 py-2 border max-w-fit text-center border-blue-purple text-blue-purple mt-2 font-medium font-serif">
+      <div className="px-12 py-2 border max-w-fit text-center border-blue-purple text-blue-purple mt-2 font-medium font-sans">
         {state.vault?.loading ? (
           <div className="px-8">
             <Spinner />
@@ -111,6 +130,7 @@ export const Vaulted = () => {
         )}
       </div>
     ),
+    [TabNames.MOMENTS]: null,
   };
 
   return (
@@ -132,7 +152,7 @@ export const Vaulted = () => {
                   className={cx({
                     "text-white bg-[#161616]": currentTab === tabName,
                     "text-white text-opacity-30": currentTab !== tabName,
-                    "transition-colors h-full flex py-3 w-[12rem] justify-center font-serif":
+                    "transition-colors h-full flex py-3 w-[12rem] justify-center font-sans":
                       true,
                     "hidden sm:flex": tabName === TabNames.YOUR_VAULT,
                   })}
@@ -171,6 +191,7 @@ export const Vaulted = () => {
               {currentTab === TabNames.YOUR_VAULT && <Vault active />}
             </div>
             {currentTab === TabNames.LEADERBOARD && <Leaderboard active />}
+            {currentTab === TabNames.MOMENTS && <Moments active />}
           </div>
         </div>
       </div>
