@@ -4,18 +4,23 @@ import Image from "next/image";
 import cx from "classnames";
 import { MomentClaim } from "../modals/MomentClaim";
 import axios from "axios";
+import { useAccount } from "wagmi";
 
 type MomentData = {
-  current: boolean;
   stripeUrlIdentifier: string;
-  eligible: boolean;
   title: ReactNode;
   details: ReactNode[];
   description: ReactNode;
   imgSrc: string;
 };
 
-const MOMENT_DATA: MomentData[] = [
+type MomentCTAData = {
+  current: boolean;
+  eligible: boolean;
+  wallet?: `0x${string}`;
+};
+
+const MOMENT_DATA: (MomentData & MomentCTAData)[] = [
   {
     current: true,
     stripeUrlIdentifier: "test_28o4k88qHaXD5lCeUU",
@@ -23,7 +28,7 @@ const MOMENT_DATA: MomentData[] = [
     title: "Drift Zine #1",
     details: ["Edition of 75, Signed and Numbered", "$20 + Shipping"],
     description:
-      "The first photography Zine to come from Isaac Wright, aka DrifterShoots. Zine #1 features photos from his 2023 explorations across various countries, including Egypt, China, Dubai, and ..........",
+      "Learning How To Die is a photographic zine covering three years of Drift’s work documenting the Deer Isle Bridge and the lessons and milestones marked throughout. Through the still photographs and writing included the viewer is taken on a journey through one of the most sensitive and volatile times in the artist’s life.",
     imgSrc: "/images/moment-1.png",
   },
   {
@@ -33,7 +38,7 @@ const MOMENT_DATA: MomentData[] = [
     title: "Past Moment #1",
     details: ["Edition of 75, Signed and Numbered", "$20 + Shipping"],
     description:
-      "The first photography Zine to come from Isaac Wright, aka DrifterShoots. Zine #1 features photos from his 2023 explorations across various countries, including Egypt, China, Dubai, and ..........",
+      "The first photography Zine to come from Isaac Wright, aka DrifterShoots. Zine #1 features photos from his 2023 explorations across various countries, including Egypt, China, Dubai, and...",
     imgSrc: "/images/moment-1.png",
   },
   {
@@ -43,7 +48,7 @@ const MOMENT_DATA: MomentData[] = [
     title: "Past Moment #2",
     details: ["Edition of 75, Signed and Numbered", "$20 + Shipping"],
     description:
-      "The first photography Zine to come from Isaac Wright, aka DrifterShoots. Zine #1 features photos from his 2023 explorations across various countries, including Egypt, China, Dubai, and ..........",
+      "The first photography Zine to come from Isaac Wright, aka DrifterShoots. Zine #1 features photos from his 2023 explorations across various countries, including Egypt, China, Dubai, and...",
     imgSrc: "/images/moment-1.png",
   },
 ];
@@ -64,12 +69,15 @@ const Moments = ({ active }: MomentsProps) => {
     setMomentClaimOpen(!momentClaimOpen);
   };
 
+  const { address } = useAccount();
+
   return (
-    <Tab active={active} walletRequired>
+    <Tab active={active} walletRequired={false}>
       <div className="flex flex-col p-4 space-y-4">
         {MOMENT_DATA.map((moment, index) => (
           <MomentsRow
             key={index}
+            wallet={address}
             {...moment}
             setMoment={() => {
               setMomentForClaimWindow(moment);
@@ -117,31 +125,51 @@ const MomentsRow = ({
   description,
   imgSrc,
   setMoment,
-}: MomentData & { setMoment: () => void }) => (
-  <div className="flex w-full border border-border-gray">
-    <Image
-      src={imgSrc}
-      alt={title?.toString() ?? ""}
-      width={212}
-      height={212}
-    />
-    <div className="flex flex-col p-4">
-      <div className="text-2xl">{title}</div>
-      <div className="italic">
+  wallet,
+}: MomentData & MomentCTAData & { setMoment: () => void }) => (
+  <div className="grid grid-cols-12 border border-border-gray bg-moments-gray flex-shrink-0">
+    <div className="w-full col-span-3">
+      <Image
+        src={imgSrc}
+        alt={title?.toString() ?? ""}
+        width={212}
+        height={212}
+        className="object-cover h-full w-full"
+      />
+    </div>
+    <div className="flex flex-col p-4 px-10 space-y-2 col-span-9">
+      <div className="text-lg font-semibold">{title}</div>
+      <div className="text-sm">
         {details.map((detail) => (
           <div key={detail?.toString().length}>{detail}</div>
         ))}
       </div>
-      <div>{description}</div>
+      <div className="opacity-50 text-sm">{description}</div>
+      <MomentsRowCTA {...{ wallet, current, eligible, setMoment }} />
     </div>
-    <div className="flex flex-col justify-center p-4 text-center space-y-4">
+  </div>
+);
+
+const MomentsRowCTA = ({
+  wallet,
+  current,
+  eligible,
+  setMoment,
+}: MomentCTAData & { setMoment: () => void }) => {
+  return (
+    <div className="flex justify-end items-center pt-4 text-center space-x-4 -mr-2">
+      <div className="px-6 py-2 text-md font-semibold border">
+        View snapshot
+      </div>
       <div
         className={cx({
-          "rounded-lg p-4 text-xl w-48 h-36 flex items-center justify-center text-center":
+          "px-12 py-2 flex items-center justify-center text-center border font-semibold":
             true,
-          "bg-green-700 cursor-pointer": eligible && current,
-          "bg-gray-700": !eligible && current,
-          "bg-gray-300 text-gray-500": !current,
+          "bg-green-700 border-green-700 cursor-pointer px-8":
+            wallet && eligible && current,
+          "bg-gray-700 border-gray-700": wallet && !eligible && current,
+          "bg-white border text-black": !wallet && current,
+          "bg-blue-purple border-blue-purple text-white opacity-50": !current,
         })}
         onClick={() => {
           if (current && eligible) {
@@ -150,14 +178,16 @@ const MomentsRow = ({
         }}
       >
         {current ? (
-          <>{eligible ? "You're eligible!" : "Not eligible"}</>
+          <>
+            {!wallet ? "Connect to check eligibility" : ""}
+            {eligible && wallet ? "You're Eligible!" : ""}
+          </>
         ) : (
           "Completed"
         )}
       </div>
-      <div>View snapshot</div>
     </div>
-  </div>
-);
+  );
+};
 
 export { Moments };

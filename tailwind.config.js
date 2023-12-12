@@ -17,6 +17,7 @@ module.exports = {
         "sprite-green": "#6dc871",
         "slate-gray": "#939393",
         "border-gray": "#5c5c5c",
+        "moments-gray": "#303030",
         "dark-gray": "#161616",
       },
       fontFamily: {
