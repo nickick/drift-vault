@@ -216,49 +216,42 @@ export const Leaderboard = (props: LeaderboardProps) => {
   const getRows = useCallback(async () => {
     setIsLoading(true);
 
-    if (state.demoMode) {
-      const rows = (await fakeLoader(address)) as (string | number)[][];
-      setRows(rows);
-    } else {
-      setRows([]);
-      const leaderboardRes = await fetch("/api/leaderboard");
-      const res = (await leaderboardRes.json()) as {
-        transferMap: {
-          [key: `0x${string}`]: {
-            numPieces: number;
-            cumulativeMultiplier: number;
-            points: number;
-          };
+    setRows([]);
+    const leaderboardRes = await fetch("/api/leaderboard");
+    const res = (await leaderboardRes.json()) as {
+      transferMap: {
+        [key: `0x${string}`]: {
+          numPieces: number;
+          cumulativeMultiplier: number;
+          points: number;
         };
       };
+    };
 
-      const realRows = Object.keys(res.transferMap).map((wallet) => {
-        const walletString = wallet as `0x${string}`;
-        const row = res.transferMap[walletString];
-        return rowCreator(
-          walletString,
-          row.numPieces,
-          // points are in 100s representing per second accumulation, so 86400 seconds in a day / 100 * point multiplier for cumulative daily score
-          row.cumulativeMultiplier * 864,
-          row.points
-        );
-      });
+    const realRows = Object.keys(res.transferMap).map((wallet) => {
+      const walletString = wallet as `0x${string}`;
+      const row = res.transferMap[walletString];
+      return rowCreator(
+        walletString,
+        row.numPieces,
+        // points are in 100s representing per second accumulation, so 86400 seconds in a day / 100 * point multiplier for cumulative daily score
+        row.cumulativeMultiplier * 864,
+        row.points
+      );
+    });
 
-      setRows(realRows);
-    }
+    setRows(realRows);
+
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, state.demoMode]);
+  }, [address]);
 
   useEffect(() => {
     getRows();
-  }, [address, getRows, state.demoMode]);
+  }, [address, getRows]);
 
   return (
-    <Tab
-      active={props.active}
-      walletRequired={false}
-    >
+    <Tab active={props.active} walletRequired={false}>
       <div className="w-full relative">
         {yourRow && !loading ? (
           <div className="absolute left-0 right-0 bottom-0 sm:px-14 bg-blue-purple transition-opacity font-bold text-xl text-center">

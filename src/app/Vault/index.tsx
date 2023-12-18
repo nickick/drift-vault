@@ -164,26 +164,6 @@ export const Vaulted = () => {
                 </a>
               );
             })}
-            {currentTab === TabNames.LEADERBOARD ? (
-              <div className="form-control absolute top-2 right-2 hidden sm:block">
-                <label className="label cursor-pointer">
-                  <span
-                    className={cx({
-                      "label-text mr-2 transition-opacity": true,
-                      "opacity-20": !state.demoMode,
-                    })}
-                  >
-                    Demo mode
-                  </span>
-                  <input
-                    type="checkbox"
-                    className="toggle"
-                    checked={state.demoMode}
-                    onChange={(e) => setState({ demoMode: !state.demoMode })}
-                  />
-                </label>
-              </div>
-            ) : null}
           </div>
           <div className="mb-4">
             {currentTab === TabNames.VAULTED && <Wallet active />}
