@@ -12,6 +12,7 @@ type MomentData = {
   details: ReactNode[];
   description: ReactNode;
   expectedDate: ReactNode;
+  bgHex: string;
   imgSrc: string;
 };
 
@@ -34,8 +35,9 @@ const MOMENT_DATA: (MomentData & MomentCTAData)[] = [
     details: ["Top 3 holders"],
     description:
       "Learning How To Die is a photographic zine covering three years of Drift’s work documenting the Deer Isle Bridge and the lessons and milestones marked throughout. Through the still photographs and writing included the viewer is taken on a journey through one of the most sensitive and volatile times in the artist’s life.",
-    expectedDate: "Coming February 2024",
+    expectedDate: "Coming Feb 2024",
     imgSrc: "/images/drift-zine-1-moment.png",
+    bgHex: "#ffffff",
   },
   {
     current: false,
@@ -44,12 +46,13 @@ const MOMENT_DATA: (MomentData & MomentCTAData)[] = [
     title: "Drift Zine #1",
     details: [
       "First 50 out of 250 limited editions, Signed and Numbered",
-      "$20 + Shipping",
+      "$65 + Shipping",
     ],
     description:
       "Learning How To Die is a photographic zine covering three years of Drift’s work documenting the Deer Isle Bridge and the lessons and milestones marked throughout. Through the still photographs and writing included the viewer is taken on a journey through one of the most sensitive and volatile times in the artist’s life.",
-    expectedDate: "Coming February 2024",
-    imgSrc: "/images/drift-zine-1-moment.png",
+    expectedDate: "Coming Feb 2024",
+    imgSrc: "/images/moment-print-1.jpeg",
+    bgHex: "#000000",
   },
 ];
 
@@ -73,7 +76,7 @@ const Moments = ({ active }: MomentsProps) => {
 
   return (
     <Tab active={active} walletRequired={false}>
-      <div className="flex flex-col p-4 space-y-4">
+      <div className="flex flex-col px-4 py-6 sm:py-4 space-y-4">
         {MOMENT_DATA.map((moment, index) => (
           <MomentsRow
             key={index}
@@ -124,13 +127,19 @@ const MomentsRow = ({
   details,
   description,
   imgSrc,
+  bgHex,
   setMoment,
   snapshotUrl,
   expectedDate,
   wallet,
 }: MomentData & MomentCTAData & { setMoment: () => void }) => (
-  <div className="grid grid-cols-12 border border-border-gray bg-moments-gray flex-shrink-0">
-    <div className="w-full col-span-3 bg-white">
+  <div className="flex flex-col sm:grid sm:grid-cols-12 border border-border-gray bg-moments-gray flex-shrink-0">
+    <div
+      className="w-full col-span-3"
+      style={{
+        backgroundColor: bgHex,
+      }}
+    >
       <Image
         src={imgSrc}
         alt={title?.toString() ?? ""}
@@ -139,7 +148,7 @@ const MomentsRow = ({
         className="object-contain h-full w-full"
       />
     </div>
-    <div className="flex flex-col p-4 px-10 space-y-2 col-span-9">
+    <div className="flex flex-col pt-6 sm:p-4 px-6 sm:px-10 space-y-2 col-span-9">
       <div className="text-lg font-semibold">{title}</div>
       <div className="text-sm">
         {details.map((detail) => (
