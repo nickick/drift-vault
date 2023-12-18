@@ -99,8 +99,10 @@ const LoadSelectTransact = (props: Props) => {
 
   useEffect(() => {
     if (
-      currentTxn?.name === "Vault NFTs" &&
-      currentTxn?.status === "succeeded"
+      (currentTxn?.name === "Vault NFTs" &&
+        currentTxn?.status === "succeeded") ||
+      (currentTxn?.name === "Unvault NFTs" &&
+        currentTxn?.status === "succeeded")
     ) {
       setNftAssets([]);
       fetchNftsCb();
@@ -156,10 +158,10 @@ const LoadSelectTransact = (props: Props) => {
         {!nftsLoading && !nfts.length && (
           <div className="h-96 mb-16 w-full flex items-center justify-center">
             <div className="hidden sm:flex sm:flex-col">
-              <div className="text-center text-white text-opacity-70 font-serif">
+              <div className="text-center text-white text-opacity-70">
                 {noNftsMessage}
               </div>
-              <div className="text-center font-serif flex justify-center">
+              <div className="text-center flex justify-center">
                 <p className="text-white text-opacity-70">
                   Buy them on secondary at
                 </p>

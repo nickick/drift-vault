@@ -169,7 +169,7 @@ function TransactionModal(props: Props) {
                 : props.currentTxn.description}
             </p>
             {hash ? (
-              <p className="text-sm text-gray-300">
+              <p className="text-sm text-gray-300 pt-2">
                 Transaction:{" "}
                 <a
                   href={`${etherscanUrl}/${hash}`}

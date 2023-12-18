@@ -160,7 +160,7 @@ export const Vault = (props: YourVaultProps) => {
       fn: writeAsync,
       description: `Unvault selected ${tokenName} NFT(s)`,
       status: "pending",
-      processingText: "Vaulting",
+      processingText: "Unvaulting",
     };
 
     setWriteQueue([vaultContractNamedTransaction]);
@@ -196,10 +196,7 @@ export const Vault = (props: YourVaultProps) => {
   }, [loading]);
 
   return (
-    <Tab
-      active={props.active}
-      walletRequired
-    >
+    <Tab active={props.active} walletRequired>
       <div className="w-full max-h-screen overflow-y-auto overflow-x-hidden">
         <LoadSelectTransact
           contractAddress={process.env.NEXT_PUBLIC_SBT_ADDRESS as `0x${string}`}
