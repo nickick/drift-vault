@@ -18,7 +18,7 @@ const vaultOptions = [
     unlockableTime: dayjs()
       .set("year", year + 1)
       .format("MM/DD/YYYY"),
-    multiplier: "2x",
+    multiplier: "1.5x",
     timeDescriptor: "for 1 year",
     timeOption: 1,
   },
@@ -27,7 +27,7 @@ const vaultOptions = [
     unlockableTime: dayjs()
       .set("year", year + 5)
       .format("MM/DD/YYYY"),
-    multiplier: "3x",
+    multiplier: "2.5x",
     timeDescriptor: "for 5 years",
     timeOption: 5,
   },
@@ -36,7 +36,7 @@ const vaultOptions = [
     unlockableTime: dayjs()
       .set("year", year + 10)
       .format("MM/DD/YYYY"),
-    multiplier: "5x",
+    multiplier: "4x",
     timeDescriptor: "for 10 years",
     timeOption: 10,
   },

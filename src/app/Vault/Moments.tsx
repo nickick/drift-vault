@@ -31,10 +31,10 @@ const MOMENT_DATA: (MomentData & MomentCTAData)[] = [
     //   "https://github.com/nickick/drift-vault/blob/main/snapshots/12-6-2023.json",
     stripeUrlIdentifier: "test_28o4k88qHaXD5lCeUU",
     eligible: true,
-    title: "Large format print",
+    title: "Signed Fine Art Prints",
     details: ["Top 3 holders"],
     description:
-      "Learning How To Die is a photographic zine covering three years of Drift’s work documenting the Deer Isle Bridge and the lessons and milestones marked throughout. Through the still photographs and writing included the viewer is taken on a journey through one of the most sensitive and volatile times in the artist’s life.",
+      "Three signed fine art prints will be raffled to First Day Out holders who have vaulted at least two pieces for a year. The winners will be announced February 2024 and will have the chance to visit Drift’s studio or have the print shipped to them.",
     expectedDate: "Coming Feb 2024",
     imgSrc: "/images/drift-zine-1-moment.png",
     bgHex: "#ffffff",
