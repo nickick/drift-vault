@@ -144,7 +144,7 @@ export const Vaulted = () => {
           <div className="px-4 sm:px-0 mt-2">{tabExplanations[currentTab]}</div>
         </div>
         <div className="mt-8">
-          <div className="text-slate-gray border-t border-l border-r border-black sm:border-border-gray flex">
+          <div className="text-slate-gray border-t border-l border-r border-black sm:border-border-gray flex overflow-x-scroll">
             {Object.values(TabNames).map((tabName) => {
               return (
                 <a
