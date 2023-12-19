@@ -19,6 +19,7 @@ module.exports = {
         "border-gray": "#5c5c5c",
         "moments-gray": "#303030",
         "dark-gray": "#161616",
+        "mainsite-mobile-gray": "#353535",
       },
       fontFamily: {
         sans: ["Karla", "sans-serif"],

@@ -9,6 +9,8 @@ import { DriftLogo } from "../../icons/DriftLogo";
 import { Instagram } from "../../icons/Instagram";
 import Twitter from "../../icons/Twitter";
 import "./header.css";
+import DownArrow from "@/app/icons/DownArrow";
+import { OpsItemSeverity } from "aws-cdk-lib/aws-cloudwatch-actions";
 
 export type NavItem = {
   name?: string;
@@ -20,15 +22,15 @@ export type NavItem = {
 export const leftNavItems: NavItem[] = [
   {
     name: "Prints",
-    link: "",
+    link: "https://driftershoots.com/prints",
   },
   {
     name: "Gallery",
-    link: "",
+    link: "https://driftershoots.com/gallery",
   },
   {
     name: "Publications",
-    link: "",
+    link: "https://driftershoots.com/publications",
   },
   {
     name: "Apps",
@@ -36,40 +38,40 @@ export const leftNavItems: NavItem[] = [
     subItems: [
       {
         name: "WMVG Migration",
-        link: "",
+        link: "https://www.wheremyvansgo.com/",
       },
       {
         name: "First Day Out",
-        link: "",
+        link: "https://firstdayout.driftershoots.com/",
+      },
+      {
+        name: "Driftershoots Vault",
+        link: "/",
       },
     ],
-  },
-  {
-    name: "Vault",
-    link: "",
   },
 ];
 
 export const rightNavItems: NavItem[] = [
   {
     name: "About",
-    link: "",
+    link: "https://driftershoots.com/about",
   },
   {
     name: "Contact",
-    link: "",
+    link: "https://driftershoots.com/contact",
   },
   {
     icon: <Instagram size={22} />,
-    link: "",
+    link: "https://www.instagram.com/driftershoots",
   },
   {
     icon: <Twitter size={18} />,
-    link: "",
+    link: "https://twitter.com/driftershoots",
   },
   {
     icon: <Discord size={22} />,
-    link: "",
+    link: "https://discord.com/invite/kr65XUgPYw",
   },
 ];
 
@@ -85,28 +87,15 @@ export const Header = () => {
     <div className="flex items-center justify-center pt-[3.62rem] pb-16 max-w-between-lg-xl mx-auto relative">
       <div className="flex space-x-6 justify-between items-center absolute left-[0.7rem]">
         {leftNavItems.map((item) => {
-          return (
-            <NavbarItem
-              key={item.name}
-              item={item}
-            />
-          );
+          return <NavbarItem key={item.name} item={item} />;
         })}
       </div>
-      <Link
-        href="/"
-        className="py-1"
-      >
+      <Link href="/" className="py-1">
         <DriftLogo />
       </Link>
       <div className="flex space-x-6 justify-between items-center absolute right-4">
         {rightNavItems.map((item, index) => {
-          return (
-            <NavbarItem
-              key={item.name || "" + index}
-              item={item}
-            />
-          );
+          return <NavbarItem key={item.name || "" + index} item={item} />;
         })}
         {address && loaded && (
           <div className="flex space-x-2">
@@ -119,13 +108,36 @@ export const Header = () => {
 };
 
 const NavbarItem = ({ item }: { item: NavItem }) => {
+  if (item.subItems) {
+    return (
+      <details className="dropdown">
+        <summary className="uppercase font-sans text-xs tracking-[0.09em] btn bg-black border-none p-0 m-0 hover:bg-black gap-0">
+          {item.name} <DownArrow />
+        </summary>
+        <ul className="p-2 shadow menu dropdown-content z-[1] w-52">
+          {item.subItems.map((subItem) => {
+            return (
+              <li key={item.link}>
+                <NavbarItem item={subItem} />
+              </li>
+            );
+          })}
+        </ul>
+      </details>
+    );
+  }
   return (
-    <a
-      key={item.name}
-      href={item.link}
-      className="uppercase font-sans text-xs tracking-[0.09em]"
-    >
-      {item.name ? item.name : <div className="w-[1.2rem]">{item.icon}</div>}
-    </a>
+    <div className="flex items-center">
+      <a
+        key={item.name}
+        href={item.link}
+        className="uppercase font-sans text-xs tracking-[0.09em]"
+        target="_blank"
+        rel="noreferrer"
+      >
+        {item.name ? item.name : <div className="w-[1.2rem]">{item.icon}</div>}
+      </a>
+      {item.subItems && <DownArrow />}
+    </div>
   );
 };
