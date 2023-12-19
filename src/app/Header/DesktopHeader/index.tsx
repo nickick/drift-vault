@@ -10,7 +10,6 @@ import { Instagram } from "../../icons/Instagram";
 import Twitter from "../../icons/Twitter";
 import "./header.css";
 import DownArrow from "@/app/icons/DownArrow";
-import { OpsItemSeverity } from "aws-cdk-lib/aws-cloudwatch-actions";
 
 export type NavItem = {
   name?: string;

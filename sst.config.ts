@@ -70,8 +70,8 @@ export default {
             : "P2PDQNPZBG55M9UHD7N19Y4S1J6M8F3G2Q",
           NEXT_PUBLIC_CHAIN_NAME: isProd ? "mainnet" : "goerli",
           NEXT_PUBLIC_VAULT_ADDRESS: isProd
-            ? "0xb7b168b1f211e9335eef329a8b539041bf70585e"
-            : "0xb7b168b1f211e9335eef329a8b539041bf70585e",
+            ? "0x2d28bb6b1a395fc4210a5c3bd5f8f79647b599a0"
+            : "0x2d28bb6b1a395fc4210a5c3bd5f8f79647b599a0",
           NEXT_PUBLIC_VAULT_FROM_ADDRESS: isProd
             ? "0xc18c94afc87675b4b3acafdecdac35acd4526d66"
             : "0xc18c94afc87675b4b3acafdecdac35acd4526d66",
