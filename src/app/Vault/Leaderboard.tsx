@@ -1,6 +1,6 @@
 import { useAccount, useEnsName } from "wagmi";
 import { Tab } from "./Tab";
-import { formatAddress, numberFormatter } from "@/utils/format";
+import { POINTS_DIVIDER, formatAddress, numberFormatter } from "@/utils/format";
 import cx from "classnames";
 import { InView, useInView } from "react-intersection-observer";
 import { ReactNode, useCallback, useContext, useEffect, useState } from "react";
@@ -119,10 +119,10 @@ const LeaderboardRow = (props: LeaderboardRowProps) => {
             </div>
             <div className="text-center hidden sm:block">{pieces}</div>
             <div className="text-center hidden sm:block">
-              {numberFormatter.format(pointsDaily)}
+              {numberFormatter.format(Number(pointsDaily) / POINTS_DIVIDER)}
             </div>
             <div className="text-center">
-              {numberFormatter.format(pointsTotal)}
+              {numberFormatter.format(Number(pointsTotal) / POINTS_DIVIDER)}
             </div>
           </div>
         </div>

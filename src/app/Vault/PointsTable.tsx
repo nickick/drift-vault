@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import Image from "next/image";
 import { NftItemsProps, NftWithVaultedData } from "./LoadSelectTransact";
 import { selectedBorderClasses } from "@/utils/styling";
-import { numberFormatter } from "@/utils/format";
+import { POINTS_DIVIDER, numberFormatter } from "@/utils/format";
 
 interface Props {
   nft: NftWithVaultedData;
@@ -115,7 +115,9 @@ const TableRow = ({ nft, selected, toggleCheckedTokenId, index }: Props) => {
         </div>
         <VaultedDetails
           details={nft.vaultedData}
-          points={numberFormatter.format(nft.points || 0)}
+          points={numberFormatter.format(
+            Number(nft.points || 0) / POINTS_DIVIDER
+          )}
         />
       </div>
     </label>

@@ -39,7 +39,7 @@ export const addressLinkUrl = (address: string) => {
 
 export const numberFormatter = Intl.NumberFormat("en-US", {
   notation: "compact",
-  maximumFractionDigits: 1,
+  maximumFractionDigits: 3,
 });
 
 export const formatOpenseaLink = (contractAddress: string, tokenId: string) => {
@@ -51,3 +51,5 @@ export const formatOpenseaLink = (contractAddress: string, tokenId: string) => {
 };
 
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+
+export const POINTS_DIVIDER = 1_000_000;
