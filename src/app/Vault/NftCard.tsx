@@ -26,14 +26,18 @@ const NftCard = ({ nft, selected, toggleCheckedTokenId }: Props) => {
           })}
         >
           <div className="relative overflow-hidden flex justify-center items-center w-full pb-[125%]">
-            {nft.rawMetadata?.animation ? (
+            {nft.rawMetadata?.animation || nft.rawMetadata?.animation_url ? (
               <video
                 autoPlay
                 loop
                 muted
                 className="group-hover:scale-[1.7] scale-[1.5] transition-transform absolute left-0 top-0 min-w-full min-h-full w-auto h-auto overflow-hidden bg-cover object-cover"
               >
-                <source src={nft.rawMetadata.animation} />
+                <source
+                  src={
+                    nft.rawMetadata.animation || nft.rawMetadata?.animation_url
+                  }
+                />
               </video>
             ) : (
               <Image

@@ -14,7 +14,7 @@ function NetworkSwitch() {
 
   return (
     <div className="flex space-x-2 items-center justify-center">
-      {chain && chain.name === "Goerli" && (
+      {chain && ["Goerli", "Ethereum"].includes(chain.name) && (
         <details className="dropdown">
           <summary className="m-1 flex items-center border border-gray-200 py-2 px-3 cursor-pointer">
             Connected <Dot okay />
