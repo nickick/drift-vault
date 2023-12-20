@@ -1,4 +1,5 @@
 import { RemovalPolicy, type Stack } from "aws-cdk-lib";
+import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import { IServerlessCluster } from "aws-cdk-lib/aws-rds";
 import { SSTConfig } from "sst";
@@ -6,6 +7,7 @@ import {
   Bucket,
   Config,
   NextjsSite,
+  NextjsSiteProps,
   RDS,
   RDSCdkServerlessClusterProps,
 } from "sst/constructs";
@@ -59,7 +61,7 @@ export default {
       const passphrase = new Config.Secret(stack, "PASSPHRASE");
       const snapshotPassword = new Config.Secret(stack, "SNAPSHOT_PASSWORD");
 
-      const site = new NextjsSite(stack, "Site", {
+      const siteConfig: NextjsSiteProps = {
         bind: [passphrase, snapshotPassword, db, bucket],
         environment: {
           NEXT_PUBLIC_ALCHEMY_API_KEY: isProd
@@ -79,7 +81,26 @@ export default {
             ? "0xa5ced5b681cb205eadf2fc89837278bd218dfaac"
             : "0xa5ced5b681cb205eadf2fc89837278bd218dfaac",
         },
-      });
+      };
+
+      const certArn =
+        "arn:aws:acm:us-east-1:741806023721:certificate/7d0e5edb-1ff0-467d-8c46-ed9155d83c21";
+
+      if (isProd) {
+        siteConfig.customDomain = {
+          domainName: "vault.driftershoots.com",
+          isExternalDomain: true,
+          cdk: {
+            certificate: Certificate.fromCertificateArn(
+              stack,
+              "Certificate",
+              certArn
+            ) as any,
+          },
+        };
+      }
+
+      const site = new NextjsSite(stack, "Site", siteConfig);
 
       stack.addOutputs({ BucketName: bucket.bucketName });
 
