@@ -6,19 +6,20 @@ import { Metadata } from "next";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Drift Vault",
+  title: "Vaulted by Driftershoots",
   description: "Vault for FDO NFTs",
   metadataBase: new URL("https://vault.driftershoots.com"),
   openGraph: {
-    title: "Drift Vault",
+    title: "Vaulted by Driftershoots",
     description: "Vault for FDO NFTs",
-    images: "/opengraph-image.png",
+    images: "/opengraph-image.jpg",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Drift Vault",
+    title: "Vaulted by Driftershoots",
     description: "Vault for FDO NFTs",
     creator: "@driftershoots",
+    images: "/opengraph-image.jpg",
     creatorId: "413571172",
   },
 };
