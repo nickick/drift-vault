@@ -12,14 +12,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Vaulted by Driftershoots",
     description: "Vault for FDO NFTs",
-    images: "/opengraph-image.jpg",
+    images: "/images/opengraph-image.jpg",
   },
   twitter: {
     card: "summary_large_image",
     title: "Vaulted by Driftershoots",
     description: "Vault for FDO NFTs",
     creator: "@driftershoots",
-    images: "/opengraph-image.jpg",
+    images: "/images/opengraph-image.jpg",
     creatorId: "413571172",
   },
 };
