@@ -12,31 +12,36 @@ function NetworkSwitch() {
     (c) => c.name.toLowerCase() === environtmentChainName!
   );
 
+  const onCorrectNetwork =
+    chain && chain.name.toLowerCase() === environtmentChainName;
+
   return (
     <div className="flex space-x-2 items-center justify-center">
-      {chain && ["Goerli", "Ethereum"].includes(chain.name) && (
-        <details className="dropdown">
-          <summary className="m-1 flex items-center border border-gray-200 py-2 px-3 cursor-pointer">
-            Connected <Dot okay />
-          </summary>
-          <ul className="shadow menu dropdown-content z-[1] bg-base-100 w-32 relative left-1">
-            <li
-              onClick={() => {
-                disconnect();
-              }}
-            >
-              <button
+      {chain &&
+        ["Goerli", "Ethereum"].includes(chain.name) &&
+        onCorrectNetwork && (
+          <details className="dropdown">
+            <summary className="m-1 flex items-center border border-gray-200 py-2 px-3 cursor-pointer">
+              Connected <Dot okay />
+            </summary>
+            <ul className="shadow menu dropdown-content z-[1] bg-base-100 w-32 relative left-1">
+              <li
                 onClick={() => {
                   disconnect();
                 }}
               >
-                Disconnect
-              </button>
-            </li>
-          </ul>
-        </details>
-      )}
-      {chain && chain.name.toLowerCase() !== environtmentChainName && (
+                <button
+                  onClick={() => {
+                    disconnect();
+                  }}
+                >
+                  Disconnect
+                </button>
+              </li>
+            </ul>
+          </details>
+        )}
+      {!onCorrectNetwork && (
         <button onClick={() => switchNetwork?.(environmentChain!.id)}>
           <div className="flex items-center border border-gray-200 py-2 px-5">
             Switch network

@@ -7,19 +7,31 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Vaulted by Driftershoots",
-  description: "Vault for FDO NFTs",
+  description: "Vault for FirstDayOut NFTs with leaderboard and rewards",
   metadataBase: new URL("https://vault.driftershoots.com"),
   openGraph: {
     title: "Vaulted by Driftershoots",
-    description: "Vault for FDO NFTs",
-    images: "/images/opengraph-image.jpg",
+    description: "Vault for FirstDayOut NFTs with leaderboard and rewards",
+    images: [
+      {
+        url: "https://vault.driftershoots.com/images/opengraph-image.jpg",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Vaulted by Driftershoots",
-    description: "Vault for FDO NFTs",
+    description: "Vault for FirstDayOut NFTs with leaderboard and rewards",
     creator: "@driftershoots",
-    images: "/images/opengraph-image.jpg",
+    images: [
+      {
+        url: "https://vault.driftershoots.com/images/opengraph-image.jpg",
+        width: 1200,
+        height: 630,
+      },
+    ],
     creatorId: "413571172",
   },
 };
