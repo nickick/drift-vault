@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Drift Vault",
     description: "Vault for FDO NFTs",
-    images: "/images/opengraph-image.png",
+    images: "/opengraph-image.png",
   },
   twitter: {
     card: "summary_large_image",

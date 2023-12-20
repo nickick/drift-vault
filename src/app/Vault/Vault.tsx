@@ -28,6 +28,7 @@ export const Vault = (props: YourVaultProps) => {
 
   const [checkedTokenIds, setCheckedTokenIds] = useState<string[]>([]);
   const [selectAllChecked, setSelectAllChecked] = useState(false);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const publicClient = usePublicClient();
 
@@ -196,6 +197,10 @@ export const Vault = (props: YourVaultProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
+  useEffect(() => {
+    setError(undefined);
+  }, [checkedTokenIds]);
+
   return (
     <Tab active={props.active} walletRequired>
       <div className="w-full max-h-screen overflow-y-auto overflow-x-hidden">
@@ -219,6 +224,11 @@ export const Vault = (props: YourVaultProps) => {
                 <PointsTable {...props} />
                 {props.nfts.length > 0 ? (
                   <div className="mt-4">
+                    {error && (
+                      <div className="text-red-600 font-medium w-full mb-4">
+                        Error: {error}
+                      </div>
+                    )}
                     <div className="flex space-x-4">
                       <div className="flex items-center justify-between w-full">
                         <label className="flex items-center cursor-pointer">
@@ -235,13 +245,34 @@ export const Vault = (props: YourVaultProps) => {
                             {selectAllChecked ? "Deselect all" : "Select all"}
                           </span>
                         </label>
+
                         <button
                           className="p-2 border font-medium bg-white text-black border-gray-200 h-12 w-36 cursor-pointer hover:bg-slate-200 transition-colors disabled:cursor-not-allowed disabled:hover:bg-red-900 disabled:hover:text-white"
                           disabled={
                             checkedTokenIds.length === 0 ||
-                            currentTxn !== undefined
+                            currentTxn?.fn !== undefined
                           }
-                          onClick={toggleUnvaultOpen}
+                          onClick={() => {
+                            const isFullyUnlocked = props.nfts.reduce(
+                              (acc, nft) => {
+                                return (
+                                  (!checkedTokenIds.includes(nft.tokenId) ||
+                                    Number(nft.vaultedData?.[2] || 0) <
+                                      Date.now() / 1000) &&
+                                  acc
+                                );
+                              },
+                              true
+                            );
+
+                            if (isFullyUnlocked) {
+                              toggleUnvaultOpen();
+                            } else {
+                              setError(
+                                "One or more of the selected NFTs are still locked. Wait until they are unlocked before unvaulting."
+                              );
+                            }
+                          }}
                         >
                           Unvault
                         </button>
