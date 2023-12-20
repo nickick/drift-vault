@@ -87,7 +87,7 @@ const TableRow = ({ nft, selected, toggleCheckedTokenId, index }: Props) => {
       </div>
       <div className="flex w-full">
         <div className="relative overflow-hidden border-[3px] my-1.5 border-white w-[5.875rem] min-w-[5.875rem] pb-[14%]">
-          {nft.rawMetadata?.animation ? (
+          {nft.rawMetadata?.animation || nft.rawMetadata?.animation_url ? (
             <video
               autoPlay
               loop
@@ -96,7 +96,11 @@ const TableRow = ({ nft, selected, toggleCheckedTokenId, index }: Props) => {
               width="100%"
               height="100%"
             >
-              <source src={nft.rawMetadata.animation} />
+              <source
+                src={
+                  nft.rawMetadata.animation || nft.rawMetadata?.animation_url
+                }
+              />
             </video>
           ) : (
             <Image
