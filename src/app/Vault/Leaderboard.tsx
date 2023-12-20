@@ -234,8 +234,8 @@ export const Leaderboard = (props: LeaderboardProps) => {
       return rowCreator(
         walletString,
         row.numPieces,
-        // points are in 100s representing per second accumulation, so 86400 seconds in a day / 100 * point multiplier for cumulative daily score
-        row.cumulativeMultiplier * 864,
+        // points are in 100s representing per second accumulation
+        row.cumulativeMultiplier * 86400,
         row.points
       );
     });
