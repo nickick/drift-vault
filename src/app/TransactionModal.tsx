@@ -52,6 +52,13 @@ function TransactionModal(props: Props) {
     confirmations: 3,
   });
 
+  useEffect(() => {
+    if (!isLoading && (isError || isSuccess)) {
+      props.writeQueue[processingIndexNumber].onResult?.(data);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, isError, isSuccess, hash]);
+
   // if no currentTxn, set currentTxn to first item in queue
   useEffect(() => {
     if (
@@ -62,7 +69,7 @@ function TransactionModal(props: Props) {
       const updatedQueue = [...props.writeQueue];
       updatedQueue[processingIndexNumber].status = "in progress";
 
-      props.setWriteQueue([...updatedQueue]);
+      props.setWriteQueue(updatedQueue);
       props.setCurrentTxn(props.writeQueue[processingIndexNumber]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

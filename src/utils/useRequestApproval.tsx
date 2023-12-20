@@ -6,12 +6,16 @@ import {
 } from "wagmi";
 import manifoldAbi from "../app/manifoldAbi.json";
 
-const useRequestApproval = (approval: boolean) => {
+const useRequestApproval = ({
+  requestingApproval,
+}: {
+  requestingApproval: boolean;
+}) => {
   const { address } = useAccount();
   const {
-    data: isAlreadyApproved,
-    isRefetching: isRefetchingAlreadyLoaded,
-    refetch: refetchIsAlreadyLoaded,
+    data: approved,
+    isRefetching,
+    refetch,
   } = useContractRead({
     abi: manifoldAbi,
     address: process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`,
@@ -26,15 +30,18 @@ const useRequestApproval = (approval: boolean) => {
     abi: manifoldAbi,
     address: process.env.NEXT_PUBLIC_VAULT_FROM_ADDRESS as `0x${string}`,
     functionName: "setApprovalForAll",
-    args: [process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`, approval],
+    args: [
+      process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
+      requestingApproval,
+    ],
   });
 
   const write = useContractWrite(config);
 
   return {
-    isAlreadyApproved,
-    isRefetchingAlreadyLoaded,
-    refetchIsAlreadyLoaded,
+    approved,
+    isRefetching,
+    refetch,
     ...write,
   };
 };

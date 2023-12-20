@@ -13,6 +13,7 @@ export type NamedTransaction = {
   name: string;
   description: string;
   fn?: WriteAsyncPromise;
+  onResult?: (result: any) => Promise<void>;
   status: NamedTransactionStatus;
   processingText: string;
 };

@@ -20,6 +20,8 @@ type YourVaultProps = {
   active: boolean;
 };
 
+type TokenIdAndAddress = [string, bigint];
+
 export const Vault = (props: YourVaultProps) => {
   const [vaultHash, setVaultHash] = useState<`0x${string}`>();
   const { address } = useAccount();
@@ -30,30 +32,28 @@ export const Vault = (props: YourVaultProps) => {
   const publicClient = usePublicClient();
 
   const nftsLoadTransform = async () => {
-    // get vaulted tokens count to iterate through for vaulted token data
-    const data = ((await publicClient.readContract({
-      address: process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
-      abi: vaultedAbi,
-      functionName: "getVaultedTokensCount",
-      args: [address as `0x${string}`],
-    })) || BigInt(0)) as BigInt;
-
-    const tokensIndexArray = [];
-    for (let i = 0; i < Number(data); i++) {
-      tokensIndexArray.push(i);
-    }
-
-    // Iterate through the count to get the vaulted token data
-    const nftsData = (await Promise.all(
-      tokensIndexArray.map((nft) => {
-        return publicClient.readContract({
+    // Recursively go through vaultedTokens until we get an error
+    const getData = async (
+      tokenId: number,
+      data: TokenIdAndAddress[]
+    ): Promise<TokenIdAndAddress[]> => {
+      try {
+        const nextTokenData = (await publicClient.readContract({
           address: process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
           abi: vaultedAbi,
           functionName: "vaultedTokens",
-          args: [address as `0x${string}`, nft],
-        });
-      })
-    )) as string[][]; // [contractAddress (FDO / Vaulting contract), tokenId as bigint][]
+          args: [address as `0x${string}`, tokenId],
+        })) as TokenIdAndAddress;
+
+        return await getData(tokenId + 1, [...data, nextTokenData]);
+      } catch (err) {
+        // We get a revert error when we've reached the end of the vaultedTokens array
+        // so we return the data we've collected
+        return data;
+      }
+    };
+
+    const nftsData = await getData(0, []);
 
     // convert tokenIds from bigint into strings
     const tokenIds = nftsData.map((nftData) => nftData[1].toString());
@@ -134,6 +134,7 @@ export const Vault = (props: YourVaultProps) => {
     abi: vaultedAbi,
     address: process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
     functionName: "unvaultBatch",
+    enabled: checkedTokenIds.length > 0,
     args: [
       [...checkedTokenIds],
       Array(checkedTokenIds.length).fill(

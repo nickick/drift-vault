@@ -21,7 +21,7 @@ type VaultedProps = {
 };
 
 export const Wallet = (props: VaultedProps) => {
-  const { setIsTransactionWindowOpen, setWriteQueue, currentTxn } =
+  const { setIsTransactionWindowOpen, setWriteQueue, writeQueue, currentTxn } =
     useContext(TransactionContext);
 
   const [checkedTokenIds, setCheckedTokenIds] = useState<string[]>([]);
@@ -37,10 +37,18 @@ export const Wallet = (props: VaultedProps) => {
 
   const [vaultTime, setVaultTime] = useState<number>(0);
 
+  const {
+    approved,
+    isRefetching: isRefetchingApproval,
+    refetch,
+    writeAsync: approvalWriteAsync,
+  } = useRequestApproval({ requestingApproval: true });
+
   const { config } = usePrepareContractWrite({
     abi: vaultedABI,
     address: process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`,
     functionName: "vaultBatch",
+    enabled: checkedTokenIds.length > 0 && !!approved,
     args: [
       Array(checkedTokenIds.length).fill(vaultTime),
       [...checkedTokenIds],
@@ -56,12 +64,6 @@ export const Wallet = (props: VaultedProps) => {
       setCheckedTokenIds([]);
     },
   });
-  const {
-    isAlreadyApproved,
-    isRefetchingAlreadyLoaded,
-    refetchIsAlreadyLoaded,
-    writeAsync: approvalWriteAsync,
-  } = useRequestApproval(true);
 
   const [vaultTimeSelectOpen, setVaultTimeSelectOpen] = useState(false);
   const openVaultTimeSelect = () => {
@@ -77,13 +79,16 @@ export const Wallet = (props: VaultedProps) => {
     let refetchedApprovalCheck;
 
     if (currentTxn) {
-      refetchedApprovalCheck = await refetchIsAlreadyLoaded();
+      refetchedApprovalCheck = await refetch();
     }
 
-    if (approvalWriteAsync && !isRefetchingAlreadyLoaded) {
+    if (approvalWriteAsync && !isRefetchingApproval) {
       const approveContractNamedTransaction: NamedTransaction = {
         name: "Approve Vault Contract",
         fn: approvalWriteAsync,
+        onResult: async (result) => {
+          await refetch();
+        },
         description: `Allows vaulting contract access to selected ${tokenName} NFT(s)`,
         status: "pending",
         processingText: "Approving",
@@ -97,7 +102,7 @@ export const Wallet = (props: VaultedProps) => {
         processingText: "Vaulting",
       };
 
-      if (isAlreadyApproved || refetchedApprovalCheck?.data) {
+      if (approved || refetchedApprovalCheck?.data) {
         setWriteQueue([vaultContractNamedTransaction]);
       } else {
         setWriteQueue([
@@ -107,6 +112,22 @@ export const Wallet = (props: VaultedProps) => {
       }
     }
   };
+
+  useEffect(() => {
+    if (approved && writeAsync && writeQueue?.length === 2) {
+      setWriteQueue([
+        writeQueue[0],
+        {
+          name: "Vault NFTs",
+          fn: writeAsync,
+          description: `Vaulting selected ${tokenName} NFT(s)`,
+          status: "pending",
+          processingText: "Vaulting",
+        },
+      ]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [writeQueue?.length, writeAsync?.toString(), approved]);
 
   return (
     <Tab active={props.active} walletRequired>
