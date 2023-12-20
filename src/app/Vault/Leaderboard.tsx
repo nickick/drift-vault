@@ -266,7 +266,7 @@ export const Leaderboard = (props: LeaderboardProps) => {
             />
           </div>
         ) : null}
-        <div className="flex flex-col w-full pt-4 sm:py-4 sm:px-6 max-h-[calc(100vh-15rem)] overflow-auto bg-[#161616]">
+        <div className="flex flex-col w-full pt-4 sm:py-4 sm:px-6 max-h-[calc(100vh-15rem)] overflow-auto bg-dark-gray">
           <div className="sm:p-8">
             <div className="flex text-gray-500">
               <div className="w-12" />

@@ -144,13 +144,13 @@ export const Vaulted = () => {
           <div className="px-4 sm:px-0 mt-2">{tabExplanations[currentTab]}</div>
         </div>
         <div className="mt-8">
-          <div className="text-slate-gray border-t border-l border-r border-black sm:border-border-gray flex overflow-x-scroll">
+          <div className="text-slate-gray border-t border-l border-r border-black sm:border-border-gray flex overflow-x-scroll md:overflow-x-hidden">
             {Object.values(TabNames).map((tabName) => {
               return (
                 <a
                   key={tabName}
                   className={cx({
-                    "text-white bg-[#161616]": currentTab === tabName,
+                    "text-white bg-dark-gray": currentTab === tabName,
                     "text-white text-opacity-30": currentTab !== tabName,
                     "transition-colors h-full flex py-3 w-[12rem] justify-center font-sans":
                       true,
